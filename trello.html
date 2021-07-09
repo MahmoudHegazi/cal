@@ -1,0 +1,260 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<style>
+
+html, body{
+width:100;
+min-height: 400px;
+height: auto;
+
+
+}
+
+.container {
+  min-height: 400px;
+  width: 100;
+  height: 100%;
+  display: flex;
+  flex-flow: column no-wrap;
+
+}
+.drop-list {
+  width: 25%;
+  height: auto;
+  padding: 10px;
+  border: 1px solid #aaaaaa;
+}
+
+.card {
+ 
+  max-width: 95%;
+
+  width: 95%;
+  border: 1px solid gray;
+  padding: 5px;
+  background: yellowgreen;
+  color: black;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.missin_text {
+  height: 70%;
+  overflow: auto;
+}
+
+
+@media only screen and (max-width: 600px) {
+  .card {
+     width: 90%;
+  }
+}
+
+#add_new_card{
+  font-size: 1.2em;
+  cursor: pointer;
+  color: black;
+  background: ghostwhite;
+  border: 2px solid black;
+}
+
+
+</style>
+<script>
+
+
+</script>
+</head>
+<body>
+
+<p>Drag the W3Schools image into the rectangle:</p>
+
+<button id="add_new_card">+</button>
+<div class="container">
+<!-- created card -->
+<div class="drop-list drop-columns" id="div1"  data-status="Created" ondrop="drop(event)" ondragover="allowDrop(event)">
+
+
+</div>
+<div class="drop-list drop-columns" id="div2" data-status="Ready" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+<div class="drop-list drop-columns" id="div3" data-status="in proggress" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+<div class="drop-list drop-columns" id="div4" data-status="complete" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+</div>
+<br>
+<img id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69">
+
+<script>
+
+let edit = true;
+window.addEventListener('DOMContentLoaded', (event) => {
+
+let addCardBtn = document.querySelector("#add_new_card");
+
+
+let cardindex = 0;
+/* add new card */
+let mession_text = `Drag and drop is a very common feature. It is when you "grab" an object and drag it to a different location.`;
+function createCard() {
+  let now = new Date();
+  let time_stamp = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
+  time_stamp += ` ${now.getHours()}:${now.getMinutes()}`;
+  cardindex += 1;
+  let card_html = document.createElement("div");
+  card_html.innerHTML = `<div draggable="true" ondragstart="drag(event)" width="336" class="card" id="card-i${cardindex}">
+  <p>Status: <span class="data-status" data-drop="no">Created</span></p>
+  <p>Some Task</p>
+  <p class="missin_text" oninput="myinput(event)" contenteditable="false" ondblclick="open_edit(event)">${mession_text}</p>
+  <p>Created At: ${time_stamp}</p>
+</div>`;
+  
+  document.getElementById("div1").appendChild(card_html);
+  
+}
+
+
+addCardBtn.addEventListener("click", createCard);
+
+});
+
+
+/* edit content on douple click*/
+function open_edit(ev){
+
+  if (edit == true) {
+  
+  if (ev.target.getAttribute("contenteditable") == "false"){
+    ev.target.setAttribute("contenteditable", true);
+    ev.target.parentElement.innerHTML += "<button class='submit_edit_card' onclick='force_edit(event)'>x</button>";
+    edit = false;
+  } else {
+    if (document.querySelector(".submit_edit_card")) {
+       document.querySelector(".submit_edit_card").remove();
+    };
+    ev.target.setAttribute("contenteditable", false);
+    edit = true;
+  }
+  }
+}
+
+let last_cared_entered_text = "";
+let inital_open_content = "";
+var mytimeout;
+
+
+// function for edit submit button
+function force_edit(ev) {
+  
+  //ev.target.querySelector("p.missin_text").setAttribute("contenteditable", false);
+  edit = true;
+  let cardContent = ev.target.parentElement.querySelector("p.missin_text");
+  cardContent.setAttribute("contenteditable", false);
+  ev.target.remove();
+  if (mytimeout){
+     clearTimeout(mytimeout);
+  }
+  alert("time to send new Request to save that content" + cardContent.innerText);
+}
+
+
+/* Function That Check Every 2 seconds if user stop enter new text */
+
+function isStillSameText(text,elm){
+   if (text == last_cared_entered_text) {
+     console.log(text);
+     alert("send Fetch Request to update The content User wait 3 seconds for type \n " + last_cared_entered_text);
+     elm.setAttribute("contenteditable", false);
+     
+     // check for old submit edit button and remove
+     if (document.querySelector(".submit_edit_card")) {
+       document.querySelector(".submit_edit_card").remove();
+    };
+     edit = true;
+     // send Fetch Request to update The content
+   }
+   
+
+}
+function check_end_type(new_message, elm){
+   if (new_message != last_cared_entered_text) {
+     last_cared_entered_text = new_message;
+      // user wait 3 seconds and did not change
+     mytimeout = setTimeout(function(){ isStillSameText(new_message, elm); }, 2000);
+   } else {
+     
+   }
+}
+function myinput(ev){
+  ev.preventDefault();
+  check_end_type(ev.target.innerText, ev.target);
+}
+
+function allowDrop(ev) {
+  ev.preventDefault();
+}
+
+
+function drag(ev) {
+
+  ev.dataTransfer.setData("text", ev.target.id);
+}
+
+
+
+/* Drop Card Function */
+function drop(ev) {
+  ev.preventDefault();
+  var data = ev.dataTransfer.getData("text");
+
+
+/*
+  ########### Case 1 when Drop card on drop container ###########
+  append it and set the values column-id and data-status
+  ########## loop for up to get if drop-column parent ###########
+*/
+  if (ev.target.classList.contains("drop-columns")) { 
+  
+      var card = document.getElementById(data);
+      let column_status = ev.target.getAttribute("data-status");
+      card.setAttribute("data-status", column_status);
+      card.querySelector("span.data-status").innerText = column_status;     
+      card.setAttribute("data-column-id", ev.target.getAttribute("id"));
+      ev.target.appendChild(card);
+      return true;
+        
+  } else {
+
+  
+
+      /*
+       ########### Case 2 when Drop card on non drop column ###########
+       search for parents if drop container found append the card to it
+       and do the tasks change text
+       ########### loop for up to get if drop-column parent ###########
+        */
+     let ourtarget = ev.target;
+     for (var i=0; i < 4; i++) {
+       ourtarget = ourtarget.parentElement;
+       
+       if (ourtarget.classList.contains("drop-columns")){
+         // in case found parent
+         var card = document.getElementById(data);
+         let column_status = ourtarget.getAttribute("data-status");
+         card.setAttribute("data-status", column_status);
+         card.querySelector("span.data-status").innerText = column_status;
+         ourtarget.appendChild(card);
+         card.setAttribute("data-column-id", ourtarget.getAttribute("id"));
+         break;
+       } else {
+         continue;
+       }
+     }
+  }
+}
+
+
+</script>
+</body>
+</html>
