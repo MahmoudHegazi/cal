@@ -61,7 +61,25 @@ height: auto;
   border: 2px solid black;
 }
 
+.missin_text{
+  width: 100%;
+  min-height: 10px;
+}
+.text_editing_mode {
+  border: 2px solid red;
+  background: white;
+  
+}
+.normal_mode {
+  border: none;
+  background: transparent;
+}
 
+
+p.missin_text {
+  display: block;
+  margin-bottom: 0px;
+}
 </style>
 <script>
 
@@ -75,13 +93,18 @@ height: auto;
 <button id="add_new_card">+</button>
 <div class="container">
 <!-- created card -->
-<div class="drop-list drop-columns" id="div1"  data-status="Created" ondrop="drop(event)" ondragover="allowDrop(event)">
+<div class="drop-list drop-columns" id="div1"  data-status="Created" ondrop="drop(event)" ondragover="allowDrop(event)">Created 
 
 
 </div>
-<div class="drop-list drop-columns" id="div2" data-status="Ready" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-<div class="drop-list drop-columns" id="div3" data-status="in proggress" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
-<div class="drop-list drop-columns" id="div4" data-status="complete" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+<div class="drop-list drop-columns" id="div2" data-status="Ready" ondrop="drop(event)" ondragover="allowDrop(event)">Ready
+
+</div>
+<div class="drop-list drop-columns" id="div3" data-status="in proggress" ondrop="drop(event)" ondragover="allowDrop(event)">In Proggress
+</div>
+<div class="drop-list drop-columns" id="div4" data-status="complete" ondrop="drop(event)" ondragover="allowDrop(event)">Completed
+
+</div>
 </div>
 <br>
 <img id="drag1" src="img_logo.gif" draggable="true" ondragstart="drag(event)" width="336" height="69">
@@ -100,16 +123,20 @@ let mession_text = `Drag and drop is a very common feature. It is when you "grab
 function createCard() {
   let now = new Date();
   let time_stamp = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
-  time_stamp += ` ${now.getHours()}:${now.getMinutes()}`;
+  
+  
+  time_stamp += now.getHours() < 9 ? " 0" + now.getHours() : " " + now.getHours();
+  time_stamp += now.getMinutes() < 9 ? ":0" + now.getMinutes() : ":" + now.getMinutes();
   cardindex += 1;
   let card_html = document.createElement("div");
   card_html.innerHTML = `<div draggable="true" ondragstart="drag(event)" width="336" class="card" id="card-i${cardindex}">
   <p>Status: <span class="data-status" data-drop="no">Created</span></p>
-  <p>Some Task</p>
+  <p class="card_title" contenteditable="false" ondblclick="open_edit_title(event)">Some Task</p>
   <p class="missin_text" oninput="myinput(event)" contenteditable="false" ondblclick="open_edit(event)">${mession_text}</p>
   <p>Created At: ${time_stamp}</p>
+  <p>EndOn: <input "input type="date"></p>
 </div>`;
-  
+
   document.getElementById("div1").appendChild(card_html);
   
 }
@@ -119,7 +146,22 @@ addCardBtn.addEventListener("click", createCard);
 
 });
 
+/* edit title */
 
+
+function open_edit_title(ev){
+
+  if (edit == true) {
+     ev.target.setAttribute("contenteditable", true);
+     ev.target.classList.add("text_editing_mode");
+     let newEditBtn = document.createElement("button");
+     newEditBtn.innerText = "OK";
+     newEditBtn.classList.add('submit_edit_card');
+     newEditBtn.addEventListener("click", ()=> {
+     force_edit(event);
+    });
+  }
+}
 /* edit content on douple click*/
 function open_edit(ev){
 
@@ -127,12 +169,29 @@ function open_edit(ev){
   
   if (ev.target.getAttribute("contenteditable") == "false"){
     ev.target.setAttribute("contenteditable", true);
-    ev.target.parentElement.innerHTML += "<button class='submit_edit_card' onclick='force_edit(event)'>x</button>";
+    ev.target.classList.add("text_editing_mode");
+    //ev.target.parentElement.innerHTML += "<button class='submit_edit_card' onclick='force_edit(event)'>x</button>";
+    let newEditBtn = document.createElement("button");
+    newEditBtn.innerText = "OK";
+    newEditBtn.classList.add('submit_edit_card');
+    newEditBtn.addEventListener("click", ()=> {
+      force_edit(event);
+    });
+    
+    ev.target.parentElement.insertBefore(newEditBtn, ev.target.nextSibling);
+    // add edit class to text
+    
     edit = false;
   } else {
     if (document.querySelector(".submit_edit_card")) {
        document.querySelector(".submit_edit_card").remove();
     };
+    
+    // add edit class if it exist
+    if (ev.target.classList.contains("text_editing_mode")){
+       ev.target.classList.remove("text_editing_mode");
+    }
+    
     ev.target.setAttribute("contenteditable", false);
     edit = true;
   }
@@ -155,6 +214,10 @@ function force_edit(ev) {
   if (mytimeout){
      clearTimeout(mytimeout);
   }
+  // add edit class if it exist
+  if (cardContent.classList.contains("text_editing_mode")){
+      cardContent.classList.remove("text_editing_mode");
+  }
   alert("time to send new Request to save that content" + cardContent.innerText);
 }
 
@@ -171,6 +234,11 @@ function isStillSameText(text,elm){
      if (document.querySelector(".submit_edit_card")) {
        document.querySelector(".submit_edit_card").remove();
     };
+    
+  // add edit class if it exist
+  if (elm.classList.contains("text_editing_mode")){
+      elm.classList.remove("text_editing_mode");
+  }
      edit = true;
      // send Fetch Request to update The content
    }
@@ -180,7 +248,7 @@ function isStillSameText(text,elm){
 function check_end_type(new_message, elm){
    if (new_message != last_cared_entered_text) {
      last_cared_entered_text = new_message;
-      // user wait 3 seconds and did not change
+      // user wait 7 seconds and did not change
      mytimeout = setTimeout(function(){ isStillSameText(new_message, elm); }, 2000);
    } else {
      
