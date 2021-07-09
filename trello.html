@@ -1,3 +1,4 @@
+  
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -27,11 +28,11 @@ height: auto;
 }
 
 .card {
- 
+  
   max-width: 95%;
-
-  width: 95%;
-  border: 1px solid gray;
+  max-width: 200px;
+  width: 90%;
+  border: 1px solid black;
   padding: 5px;
   background: yellowgreen;
   color: black;
@@ -44,6 +45,7 @@ height: auto;
 .missin_text {
   height: 70%;
   overflow: auto;
+  padding: 3px;
 }
 
 
@@ -62,13 +64,22 @@ height: auto;
 }
 
 .missin_text{
-  width: 100%;
+  width: 97%;
   min-height: 10px;
+  max-height: 120px;
+  height: auto;
+  over-flow: auto;
+  text-align: justify;
+  background: lightblue;
+  cursor: pointer;
+  
 }
+
+
 .text_editing_mode {
   border: 2px solid red;
   background: white;
-  
+  cursor: auto !important;
 }
 .normal_mode {
   border: none;
@@ -79,6 +90,20 @@ height: auto;
 p.missin_text {
   display: block;
   margin-bottom: 0px;
+}
+p.card_title {
+  margin-bottom: 0px;
+  min-height: 25px;
+  max-height: 40px;
+  overflow: auto;
+  background: orange;
+  cursor: pointer;
+  
+}
+input.date_input_edit {
+  text-align: left;
+  width: 98%;
+  margin: 0px;
 }
 </style>
 <script>
@@ -134,7 +159,7 @@ function createCard() {
   <p class="card_title" contenteditable="false" ondblclick="open_edit_title(event)">Some Task</p>
   <p class="missin_text" oninput="myinput(event)" contenteditable="false" ondblclick="open_edit(event)">${mession_text}</p>
   <p>Created At: ${time_stamp}</p>
-  <p>EndOn: <input "input type="date"></p>
+  <p>EndOn: <input class="date_input_edit" readonly="true" ondblclick="open_edit_enddate(event)" "input type="date"></p>
 </div>`;
 
   document.getElementById("div1").appendChild(card_html);
@@ -146,22 +171,53 @@ addCardBtn.addEventListener("click", createCard);
 
 });
 
+/* edit enddate */
+
+
+function open_edit_enddate(ev){
+
+  if (edit == true) {
+  
+   if (ev.target.getAttribute("readonly") || ev.target.getAttribute("readonly") == "readonly"){
+     ev.target.removeAttribute("readonly");
+     ev.target.classList.add("text_editing_mode");
+     let newEditBtn = document.createElement("button");
+     newEditBtn.innerText = "OK";
+     newEditBtn.classList.add('submit_edit_card_date');
+     newEditBtn.addEventListener("click", ()=> {
+     force_edit(event, ev.target, "date");
+     
+    });
+    ev.target.parentElement.insertBefore(newEditBtn, ev.target.nextSibling);
+    }
+  }
+}
+
+
+
 /* edit title */
 
 
 function open_edit_title(ev){
 
   if (edit == true) {
+  
+   if (ev.target.getAttribute("contenteditable") == "false"){
      ev.target.setAttribute("contenteditable", true);
      ev.target.classList.add("text_editing_mode");
      let newEditBtn = document.createElement("button");
      newEditBtn.innerText = "OK";
-     newEditBtn.classList.add('submit_edit_card');
+     newEditBtn.classList.add('submit_edit_card_title');
      newEditBtn.addEventListener("click", ()=> {
-     force_edit(event);
+     force_edit(event, ev.target, "title");
+     
     });
+    ev.target.parentElement.insertBefore(newEditBtn, ev.target.nextSibling);
+    }
   }
 }
+
+
 /* edit content on douple click*/
 function open_edit(ev){
 
@@ -175,7 +231,7 @@ function open_edit(ev){
     newEditBtn.innerText = "OK";
     newEditBtn.classList.add('submit_edit_card');
     newEditBtn.addEventListener("click", ()=> {
-      force_edit(event);
+      force_edit(event, ev.target, "content");
     });
     
     ev.target.parentElement.insertBefore(newEditBtn, ev.target.nextSibling);
@@ -204,21 +260,37 @@ var mytimeout;
 
 
 // function for edit submit button
-function force_edit(ev) {
+function force_edit(ev, textElm, request_type) {
   
   //ev.target.querySelector("p.missin_text").setAttribute("contenteditable", false);
   edit = true;
-  let cardContent = ev.target.parentElement.querySelector("p.missin_text");
-  cardContent.setAttribute("contenteditable", false);
-  ev.target.remove();
-  if (mytimeout){
-     clearTimeout(mytimeout);
-  }
-  // add edit class if it exist
+  let cardContent = textElm;
+  
+
+  // remove edit class if it cotent
   if (cardContent.classList.contains("text_editing_mode")){
       cardContent.classList.remove("text_editing_mode");
   }
-  alert("time to send new Request to save that content" + cardContent.innerText);
+  
+  
+  // date only actions
+  if (request_type == "date") {
+   cardContent.setAttribute("readonly", "readonly");
+   ev.target.remove();
+   alert("time to send new Request Type: " + request_type + ". " + cardContent.value);
+   return true;
+  } else {
+  
+    cardContent.setAttribute("contenteditable", false);
+    ev.target.remove();
+    if (mytimeout){
+      clearTimeout(mytimeout);
+    }
+    alert("time to send new Request Type: " + request_type + ". " + cardContent.innerText);
+    return true;
+  }
+  
+  return false;
 }
 
 
@@ -285,16 +357,25 @@ function drop(ev) {
   if (ev.target.classList.contains("drop-columns")) { 
   
       var card = document.getElementById(data);
+      
+      if (card.classList.contains("card")){
       let column_status = ev.target.getAttribute("data-status");
       card.setAttribute("data-status", column_status);
       card.querySelector("span.data-status").innerText = column_status;     
       card.setAttribute("data-column-id", ev.target.getAttribute("id"));
       ev.target.appendChild(card);
       return true;
+      } else {
+        return false;
+      }
         
   } else {
 
-  
+    
+    
+      if (!document.getElementById(data).classList.contains("card")){
+         return false;
+      }
 
       /*
        ########### Case 2 when Drop card on non drop column ###########
@@ -309,6 +390,7 @@ function drop(ev) {
        if (ourtarget.classList.contains("drop-columns")){
          // in case found parent
          var card = document.getElementById(data);
+         
          let column_status = ourtarget.getAttribute("data-status");
          card.setAttribute("data-status", column_status);
          card.querySelector("span.data-status").innerText = column_status;
