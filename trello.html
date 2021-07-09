@@ -1,4 +1,5 @@
   
+  
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -30,8 +31,8 @@ height: auto;
 .card {
   
   max-width: 95%;
-  max-width: 200px;
-  width: 90%;
+  max-width: 230px;
+  width: 95%;
   border: 1px solid black;
   padding: 5px;
   background: yellowgreen;
@@ -49,9 +50,13 @@ height: auto;
 }
 
 
-@media only screen and (max-width: 600px) {
-  .card {
-     width: 90%;
+@media only screen and (max-width: 290px) {
+  .container {
+     width: 300px;
+  }
+  .container div,p {
+    width: 100% !important;
+    min-width: 45%;
   }
 }
 
@@ -98,12 +103,27 @@ p.card_title {
   overflow: auto;
   background: orange;
   cursor: pointer;
-  
+  margin-left: auto;
+  margin-right: auto;
 }
 input.date_input_edit {
   text-align: left;
   width: 98%;
   margin: 0px;
+}
+
+.card_title div {
+  width: 80%;
+  opacity: .6;
+  background: lightyellow;
+}
+
+.card_title div:hover{
+  
+  cursor: not-allowed;
+}
+.card_title:hover{
+  opacity: .8;
 }
 </style>
 <script>
@@ -144,7 +164,9 @@ let addCardBtn = document.querySelector("#add_new_card");
 
 let cardindex = 0;
 /* add new card */
-let mession_text = `Drag and drop is a very common feature. It is when you "grab" an object and drag it to a different location.`;
+/* First Content  and title */
+let mession_text = "Enter Task Details.";
+let inital_title = "Task Title"
 function createCard() {
   let now = new Date();
   let time_stamp = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
@@ -156,10 +178,11 @@ function createCard() {
   let card_html = document.createElement("div");
   card_html.innerHTML = `<div draggable="true" ondragstart="drag(event)" width="336" class="card" id="card-i${cardindex}">
   <p>Status: <span class="data-status" data-drop="no">Created</span></p>
-  <p class="card_title" contenteditable="false" ondblclick="open_edit_title(event)">Some Task</p>
+  <p class="card_title" contenteditable="false" ondblclick="open_edit_title(event)">${inital_title}</p>
   <p class="missin_text" oninput="myinput(event)" contenteditable="false" ondblclick="open_edit(event)">${mession_text}</p>
-  <p>Created At: ${time_stamp}</p>
+  
   <p>EndOn: <input class="date_input_edit" readonly="true" ondblclick="open_edit_enddate(event)" "input type="date"></p>
+  <p>Created: ${time_stamp}</p>
 </div>`;
 
   document.getElementById("div1").appendChild(card_html);
@@ -200,6 +223,8 @@ function open_edit_enddate(ev){
 
 function open_edit_title(ev){
 
+  
+
   if (edit == true) {
   
    if (ev.target.getAttribute("contenteditable") == "false"){
@@ -224,17 +249,51 @@ function open_edit(ev){
   if (edit == true) {
   
   if (ev.target.getAttribute("contenteditable") == "false"){
-    ev.target.setAttribute("contenteditable", true);
-    ev.target.classList.add("text_editing_mode");
+  
+
+     
+     let cardElem = ev.target;
+     
+     if (ev.target.classList.contains("missin_text") == false) {
+       console.log("We Have big Problem Not main text div it's child and going to solve");
+            let targetparageContent = ev.target;
+            targetparageContent.setAttribute("contenteditable", true);
+      
+      let whileIndex = 0;
+      // search for the parent div which has the class
+     while(targetparageContent.classList.contains("missin_text") == false){
+       
+       targetparageContent = ev.target.parentElement;
+       
+       targetparageContent.setAttribute("contenteditable", true);
+
+       if (targetparageContent.classList.contains("missin_text") == true){
+         
+         console.log("problem solved in" + whileIndex);
+         cardElem = targetparageContent;
+         break;
+       }
+       
+       if (whileIndex > 1000){
+         console.log("looped 1000times and not found");
+         break;
+       }
+       whileIndex += 1;
+     }
+   }
+     
+
+    cardElem.setAttribute("contenteditable", true);
+    cardElem.classList.add("text_editing_mode");
     //ev.target.parentElement.innerHTML += "<button class='submit_edit_card' onclick='force_edit(event)'>x</button>";
     let newEditBtn = document.createElement("button");
     newEditBtn.innerText = "OK";
     newEditBtn.classList.add('submit_edit_card');
     newEditBtn.addEventListener("click", ()=> {
-      force_edit(event, ev.target, "content");
+      force_edit(event, cardElem, "content");
     });
     
-    ev.target.parentElement.insertBefore(newEditBtn, ev.target.nextSibling);
+    cardElem.parentElement.insertBefore(newEditBtn, cardElem.nextSibling);
     // add edit class to text
     
     edit = false;
@@ -321,7 +380,7 @@ function check_end_type(new_message, elm){
    if (new_message != last_cared_entered_text) {
      last_cared_entered_text = new_message;
       // user wait 7 seconds and did not change
-     mytimeout = setTimeout(function(){ isStillSameText(new_message, elm); }, 2000);
+     mytimeout = setTimeout(function(){ isStillSameText(new_message, elm); }, 4000);
    } else {
      
    }
