@@ -1,5 +1,4 @@
   
-  
 <!DOCTYPE HTML>
 <html>
 <head>
@@ -14,7 +13,7 @@ height: auto;
 }
 
 .container {
-  min-height: 400px;
+  min-height: 50px;
   width: 100;
   height: 100%;
   display: flex;
@@ -26,8 +25,23 @@ height: auto;
   height: auto;
   padding: 10px;
   border: 1px solid #aaaaaa;
+  display: flex;
+  flex-direction: column;
 }
 
+.add_card_container {
+  order: 9;
+  width: 100%;
+  margin-top: 10px;
+  background: lightgrey;
+  padding: 2px;
+  margin-top: auto;
+}
+
+.add_text {
+  color: gray;
+  margin-left: 5px;
+}
 .card {
   
   max-width: 95%;
@@ -125,6 +139,10 @@ input.date_input_edit {
 .card_title:hover{
   opacity: .8;
 }
+
+.updating {
+  border: 2px solid pink;
+}
 </style>
 <script>
 
@@ -135,19 +153,28 @@ input.date_input_edit {
 
 <p>Drag the W3Schools image into the rectangle:</p>
 
-<button id="add_new_card">+</button>
+
 <div class="container">
 <!-- created card -->
-<div class="drop-list drop-columns" id="div1"  data-status="Created" ondrop="drop(event)" ondragover="allowDrop(event)">Created 
-
-
-</div>
-<div class="drop-list drop-columns" id="div2" data-status="Ready" ondrop="drop(event)" ondragover="allowDrop(event)">Ready
+<div class="drop-list drop-columns" id="div1"  data-status="Created" ondrop="drop(event)" ondragover="allowDrop(event)" ondragEnter="doSomthingBefore(event)">
+<div>Created</div>
+<div class="add_card_container"><button class="add_new_card" data-column-id="div1">+</button> <span class="add_text">Add another Card</span></div>
 
 </div>
-<div class="drop-list drop-columns" id="div3" data-status="in proggress" ondrop="drop(event)" ondragover="allowDrop(event)">In Proggress
+<div class="drop-list drop-columns" id="div2" data-status="Ready" ondrop="drop(event)" ondragover="allowDrop(event)" ondragEnter="doSomthingBefore(event)">
+<div>To Do</div>
+<div class="add_card_container"><button class="add_new_card" data-column-id="div2">+</button> <span class="add_text">Add another Card</span></div>
+
 </div>
-<div class="drop-list drop-columns" id="div4" data-status="complete" ondrop="drop(event)" ondragover="allowDrop(event)">Completed
+<div class="drop-list drop-columns" id="div3" data-status="in proggress" ondrop="drop(event)" ondragover="allowDrop(event)" ondragEnter="doSomthingBefore(event)">
+<div>Pendding</div>
+<div class="add_card_container"><button class="add_new_card" data-column-id="div3">+</button>
+ <span class="add_text">Add another Card</span></div>
+</div>
+<div class="drop-list drop-columns" id="div4" data-status="complete" ondrop="drop(event)" ondragover="allowDrop(event)" data-column-id="div4" ondragEnter="doSomthingBefore(event)">
+<div>Done</div>
+<div class="add_card_container"><button class="add_new_card" data-column-id="div4">+</button> <span class="add_text">Add another Card</span></div>
+
 
 </div>
 </div>
@@ -159,7 +186,7 @@ input.date_input_edit {
 let edit = true;
 window.addEventListener('DOMContentLoaded', (event) => {
 
-let addCardBtn = document.querySelector("#add_new_card");
+let addCardBtns = document.querySelectorAll(".add_new_card");
 
 
 let cardindex = 0;
@@ -167,17 +194,23 @@ let cardindex = 0;
 /* First Content  and title */
 let mession_text = "Enter Task Details.";
 let inital_title = "Task Title"
-function createCard() {
+function createCard(event) {
+
+  let tragetColumn = document.getElementById(event.target.getAttribute("data-column-id"));
+  
+  if (!tragetColumn){
+    return false;
+  }
   let now = new Date();
   let time_stamp = `${now.getMonth()+1}/${now.getDate()}/${now.getFullYear()}`;
-  
+  let cardStatus = tragetColumn.getAttribute("data-status");
   
   time_stamp += now.getHours() < 9 ? " 0" + now.getHours() : " " + now.getHours();
   time_stamp += now.getMinutes() < 9 ? ":0" + now.getMinutes() : ":" + now.getMinutes();
   cardindex += 1;
   let card_html = document.createElement("div");
   card_html.innerHTML = `<div draggable="true" ondragstart="drag(event)" width="336" class="card" id="card-i${cardindex}">
-  <p>Status: <span class="data-status" data-drop="no">Created</span></p>
+  <p>Status: <span class="data-status" data-drop="no">${cardStatus}</span></p>
   <p class="card_title" contenteditable="false" ondblclick="open_edit_title(event)">${inital_title}</p>
   <p class="missin_text" oninput="myinput(event)" contenteditable="false" ondblclick="open_edit(event)">${mession_text}</p>
   
@@ -185,12 +218,11 @@ function createCard() {
   <p>Created: ${time_stamp}</p>
 </div>`;
 
-  document.getElementById("div1").appendChild(card_html);
+  document.getElementById(event.target.getAttribute("data-column-id")).appendChild(card_html);
   
 }
 
-
-addCardBtn.addEventListener("click", createCard);
+addCardBtns.forEach( (elm)=> {elm.addEventListener("click", createCard);} ) 
 
 });
 
@@ -390,17 +422,44 @@ function myinput(ev){
   check_end_type(ev.target.innerText, ev.target);
 }
 
-function allowDrop(ev) {
-  ev.preventDefault();
-}
+
+
+
+let currentCardSize = 0;
 
 
 function drag(ev) {
 
   ev.dataTransfer.setData("text", ev.target.id);
+  currentCardSize = ev.target.offsetHeight;
+}
+
+function doSomthingBefore(event){
+
+  if (event.target.classList.contains("drop-columns")) { 
+  
+    let targetHeight = event.target.offsetHeight + currentCardSize;
+    if (document.querySelectorAll(".updating").length > 0){
+       document.querySelectorAll(".updating").forEach( (elm)=>{
+        if (elm.classList.contains("updating")) {
+          elm.classList.remove("updating");
+        }
+       
+       
+       });
+    } 
+    // document.querySelector(".updating").classList.remove("updating");
+     event.target.classList.add("updating");
+     return true;
+  } 
+ 
 }
 
 
+function allowDrop(ev) {
+  ev.preventDefault();
+  
+}
 
 /* Drop Card Function */
 function drop(ev) {
