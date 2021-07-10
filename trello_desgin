@@ -67,7 +67,7 @@ div.listcontainer{
 
 div.drop-list{
 
-  border: 2px solid white;
+  border: 2px solid lightgray;
   height: auto;
   margin-left: 10px;
   display: flex;
@@ -93,7 +93,7 @@ div.drop-list{
   padding: 5px;
 }
 button.add_new_list_btn {
-  background: rgba(9,30,66,.08);
+
   width: 100%;
   padding: 5px;
 }
@@ -107,25 +107,7 @@ button.add_new_list_btn {
 
 .plus_sign {
   color: rgb(120 120 120);
-}
-
-
-/* end cloumns [lists] */
-
-/* cards */
-
-.task_card {
-  background: rgba(250,255,255,.9);
-  margin-bottom: 10px;
-  min-height: 30px;
-  padding: 5px;
-  cursor: pointer;
-  font-size: 0.882em;
-}
-
-.card_container{
-  padding: 1px;
-
+  margin-right: 5px;
 }
 
 div.card-title {
@@ -137,6 +119,38 @@ div.card-title {
 .menu_sign {
   color: gray;
 }
+
+/* end cloumns [lists] */
+
+/* cards */
+
+.cards_container {
+
+}
+
+.task_card {
+  background: rgba(250,255,255,.9);
+  margin-bottom: 10px;
+  min-height: 30px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 0.882em;
+}
+
+.cards_container{
+  display: flex;
+  flex-flow: column nowrap;
+  justify-conntent: center;
+  align-items: stretch;
+  width: 100%;
+}
+.card_container{
+  padding: 1px;
+
+}
+
+
+
 
 /* fixed helper */
 .float_right{
@@ -156,57 +170,75 @@ div.card-title {
  <div class="container-fluid listcontainer ">
  
 
-    <!-- created card -->
-    <div class="drop-list drop-columns card" id="">
+    <!-- New List -->
+    <div class="drop-list drop-columns card" data-list-title="Client 19">
       <div class="card-body">
         <div class="card-title">
           <span>Client 19</span>
           <span><i class="fa fa-ellipsis-h float_right menu_sign" ></i></span>
         </div>
+        <!-- Group Of Cards -->
+        <div class="cards_container"></div>
+        
          <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
-    
+   
     
 
-    <!-- created card -->
-    <div class="drop-list drop-columns card" id="">
+    <!-- New List -->
+    <div class="drop-list drop-columns card" data-list-title="To Do">
       <div class="card-body">
         <div class="card-title">
           <span>To Do</span>
           <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
         </div>
-         <div class="card_container">
-           <div class="card task_card">Hello World</div>
-        </div>
+        
+        <!-- Group Of Cards -->
+        <div class="cards_container">
+          <!-- new Card -->
+           <div class="card_container">
+             <div class="card task_card">Hello World1</div>
+          </div>
+          <!-- newCard -->
+          <div class="card_container">
+             <div class="card task_card">Hello World2</div>
+          </div>
+       </div>
          <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
   
-     <!-- created card -->
-    <div class="drop-list drop-columns card" id="">
+     <!-- New List -->
+    <div class="drop-list drop-columns card" data-list-title="Pending">
       <div class="card-body">
         <div class="card-title">
           <span>Pending</span>
           <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
         </div>
-         <div class="card_container">
-           <div class="card task_card">Hello World</div>
-        </div>
-         <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+        <!-- Group Of Cards -->
+        <div class="cards_container">
+          <div class="card_container">
+            <div class="card task_card">Hello World3</div>
+          </div>
+        </div>  
+        <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
      
 
-     <!-- created card -->
-    <div class="drop-list drop-columns card" id="">
+     <!-- New List -->
+    <div class="drop-list drop-columns card" data-list-title="Done" >
       <div class="card-body">
         <div class="card-title">
           <span>Done</span>
           <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
         </div>
-         <div class="card_container">
-           <div class="card task_card">Hello World</div>
+         <!-- Group Of Cards -->
+        <div class="cards_container">
+          <div class="card_container">
+            <div class="card task_card">Hello World4</div>
+          </div>
         </div>
          <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
@@ -216,7 +248,7 @@ div.card-title {
    <!--- Create new List Part --> 
     
   <!-- created List -->
-    <div class="drop-list drop-columns card" id="static_add_list">
+    <div class="drop-list card" data-list-title="new" id="static_add_list">
       <div class="card-body">
         <div class="card-title hidden_title"></div>
          <button  class="add_new_list_btn btn stretched-link"> <i class="fa fa-plus plus_sign pluslist"></i> Add New List</button>
@@ -230,16 +262,40 @@ div.card-title {
 </div>
 <script>
 
-let edit = true;
+
 window.addEventListener('DOMContentLoaded', (event) => {
 
-let addCardBtns = document.querySelectorAll(".add_new_card");
-card_html.innerHTML = `    <div class="card bg-info">
-      <div class="card-body text-center">
-        <p class="card-text">Some text inside the sixth card</p>
-      </div>
-    </div>`
-
+  /* Global Variables */
+  
+  class todoList {
+    constructor(name, year) {
+      this.title = name;
+      this.year = year;
+    }
+  } 
+  
+  /* Apply order to cards  */
+  const setCardsMetaData = ()=> {
+  
+    // loop over columns [lists] and then get the cards to set the order of cards and status
+    let listsColumns = document.querySelectorAll("div.drop-columns"); 
+    
+    listsColumns.forEach( (list, lIndex)=> {
+    
+       let listCards = list.querySelectorAll("div.cards_container div.card_container");
+       listCards.forEach( (card, cIndex)=> {    
+          // asgin the list Title to the card 
+          card.setAttribute("data-list", list.getAttribute("data-list-name"));
+          /* set the order of the card which will be sent
+          to database to save order elements and query Db with it*/
+          card.setAttribute("data-card-order", cIndex);
+          card.style.order = cIndex;
+       });
+       
+    });
+    
+  };
+  setCardsMetaData();
 
 });
 
