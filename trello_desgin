@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  
+<style>
+
+html, body{
+  min-height: 100%;
+  height: 100%;
+  margin: auto;
+  padding: auto;
+  background-image: url("https://trello.com/images/backgrounds/purple-blur.png");
+  /* Full height */
+  /* Center and scale the image nicely */
+  background-position: left;
+  background-size: cover;
+  width: auto;
+  background-repeat: repeat;
+  color: #172b4d;
+  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  font-weight: 400;
+  overflow: auto;
+}
+
+
+/* columns parts lists */
+
+div.main_container {
+   
+     /* The image used */
+  background-image: url("https://trello.com/images/backgrounds/purple-blur.png");
+  /* Full height */
+  height: 100%; 
+  /* Center and scale the image nicely */
+  background-position: center;
+  background-size: cover;
+  width: 100%;
+  margin-top: 10px;
+  
+}
+
+div.mask_list {
+
+}
+
+/* columns that hold lists and cards */
+div.listcontainer{
+  display: flex;
+  flex-flow: column no-wrap;
+  align-items: flex-start;
+  justify-content: flex-start;
+  background: rgba(9,30,66,.05);
+}
+
+
+div.drop-list{
+
+  border: 2px solid white;
+  height: auto;
+  margin-left: 10px;
+  display: flex;
+  flex-flow: column no-wrap;
+  justify-content: flex-start;
+  min-width: 220px;
+  background: lightgray;
+}
+
+.card {
+  color: #172b4d;
+  
+}
+.card-body div.add_new{
+  
+  background: rgba(9,30,66,.08);
+  padding: 0;
+  margin: 0px;
+  background: rgba(9,30,66,.08);
+}
+
+.card-body {
+  padding: 5px;
+}
+button.add_new_list_btn {
+  background: rgba(9,30,66,.08);
+  width: 100%;
+  padding: 5px;
+}
+
+/* Hide title for new Created row
+   can be controled to show titile
+*/
+.hidden_title {
+  display: none;
+}
+/* end cloumns [lists] */
+
+/* cards */
+
+.task_card {
+  background: rgba(250,255,255,.9);
+  margin-bottom: 10px;
+  min-height: 30px;
+  padding: 5px;
+  cursor: pointer;
+  font-size: 0.882em;
+}
+
+.card_container{
+  padding: 1px;
+
+}
+</style>
+</head>
+<body> 
+<div class="bg"></div>
+<div class="container-fluid main_container">
+
+
+<!-- Columns Part [Lists] -->
+
+ <div class="container-fluid listcontainer ">
+ 
+
+    <!-- created card -->
+    <div class="drop-list drop-columns card" id="div4">
+      <div class="card-body">
+        <div class="card-title">
+          <p>Done</p>
+        </div>
+         <button class=" add_new_list_btn btn stretched-link"> + Add New Card</button>
+      </div>
+    </div>
+    
+    
+
+    <!-- created card -->
+    <div class="drop-list drop-columns card" id="div4">
+      <div class="card-body">
+        <div class="card-title"><p>Done</p></div>
+         <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+      </div>
+    </div>
+    
+     <!-- created card -->
+    <div class="drop-list drop-columns card" id="div3">
+      <div class="card-body">
+        <div class="card-title">
+          <p>Pending</p>
+        </div>
+        
+        <div class="card_container">
+           <div class="card task_card">Hello World</div>
+        </div>
+              <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+      </div>
+    </div>   
+    
+    <!-- created card -->
+    <div class="drop-list drop-columns card" id="div4">
+      <div class="card-body">
+        <div class="card-title">
+          <p>Done</p>
+        </div>
+         <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+      </div>
+    </div>
+    
+    
+   <!--- Create new List Part --> 
+    
+  <!-- created card -->
+    <div class="drop-list drop-columns card" id="static_add_list">
+      <div class="card-body">
+        <div class="card-title hidden_title"></div>
+         <button  class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+      </div>
+    </div>
+    
+    
+    
+ <!-- columns end List -->   
+</div>
+</div>
+<script>
+
+let edit = true;
+window.addEventListener('DOMContentLoaded', (event) => {
+
+let addCardBtns = document.querySelectorAll(".add_new_card");
+card_html.innerHTML = `    <div class="card bg-info">
+      <div class="card-body text-center">
+        <p class="card-text">Some text inside the sixth card</p>
+      </div>
+    </div>`
+
+
+});
+
+
+</script>
+
+</body>
+</html>
