@@ -4,6 +4,9 @@
   <title>Bootstrap Example</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
@@ -101,6 +104,12 @@ button.add_new_list_btn {
 .hidden_title {
   display: none;
 }
+
+.plus_sign {
+  color: rgb(120 120 120);
+}
+
+
 /* end cloumns [lists] */
 
 /* cards */
@@ -118,6 +127,23 @@ button.add_new_list_btn {
   padding: 1px;
 
 }
+
+div.card-title {
+  display: block;
+  background: rgba(250,255,255,.07);
+}
+
+
+.menu_sign {
+  color: gray;
+}
+
+/* fixed helper */
+.float_right{
+   float:right;
+}
+
+
 </style>
 </head>
 <body> 
@@ -131,57 +157,69 @@ button.add_new_list_btn {
  
 
     <!-- created card -->
-    <div class="drop-list drop-columns card" id="div4">
+    <div class="drop-list drop-columns card" id="">
       <div class="card-body">
         <div class="card-title">
-          <p>Done</p>
+          <span>Client 19</span>
+          <span><i class="fa fa-ellipsis-h float_right menu_sign" ></i></span>
         </div>
-         <button class=" add_new_list_btn btn stretched-link"> + Add New Card</button>
+         <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
     
     
 
     <!-- created card -->
-    <div class="drop-list drop-columns card" id="div4">
-      <div class="card-body">
-        <div class="card-title"><p>Done</p></div>
-         <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
-      </div>
-    </div>
-    
-     <!-- created card -->
-    <div class="drop-list drop-columns card" id="div3">
+    <div class="drop-list drop-columns card" id="">
       <div class="card-body">
         <div class="card-title">
-          <p>Pending</p>
+          <span>To Do</span>
+          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
         </div>
-        
-        <div class="card_container">
+         <div class="card_container">
            <div class="card task_card">Hello World</div>
         </div>
-              <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+         <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
-    </div>   
-    
-    <!-- created card -->
-    <div class="drop-list drop-columns card" id="div4">
+    </div>
+  
+     <!-- created card -->
+    <div class="drop-list drop-columns card" id="">
       <div class="card-body">
         <div class="card-title">
-          <p>Done</p>
+          <span>Pending</span>
+          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
         </div>
-         <button class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+         <div class="card_container">
+           <div class="card task_card">Hello World</div>
+        </div>
+         <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+      </div>
+    </div>
+     
+
+     <!-- created card -->
+    <div class="drop-list drop-columns card" id="">
+      <div class="card-body">
+        <div class="card-title">
+          <span>Done</span>
+          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
+        </div>
+         <div class="card_container">
+           <div class="card task_card">Hello World</div>
+        </div>
+         <button class=" add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
     
     
    <!--- Create new List Part --> 
     
-  <!-- created card -->
+  <!-- created List -->
     <div class="drop-list drop-columns card" id="static_add_list">
       <div class="card-body">
         <div class="card-title hidden_title"></div>
-         <button  class="add_new_list_btn btn stretched-link"> + Add New Card</button>
+         <button  class="add_new_list_btn btn stretched-link"> <i class="fa fa-plus plus_sign pluslist"></i> Add New List</button>
       </div>
     </div>
     
