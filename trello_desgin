@@ -306,6 +306,8 @@ input#new_list_name {
       </div>
     </div>
     
+    
+
   <!--- Create new List Part -->   
   
   
@@ -355,6 +357,7 @@ const addNewListsubmit = document.getElementById("new_list_submit");
 
 const canelAddNewList = document.getElementById("cancel_add_list");
 
+
   
  /* Helper Functions */
  
@@ -371,48 +374,9 @@ const canelAddNewList = document.getElementById("cancel_add_list");
   }
 
 
-  /* Classes and Objects */
+  /* Classes  */
 
   /* New List Class */
-
-let todoSystem = {
-   boardHeader : "Client 19",
-   /* DB/Server Must provide the CreatedTime for Board */
-   borderTimeStamp: "1625900349123",
-   borderTimeString: "7/10/2021 8:59 am",
-   createTimeList: () => {
-     /* timestamp */
-     let date_obect = new Date();
-     let timeStamp = date_obect.getTime();
-     
-     /* formated time */
-     let date = `${date_obect.getMonth()+1}/${date_obect.getDate()}`;
-     date += `/${date_obect.getFullYear()}`;
-     let timeString = `${date} ${formatAMPM(date_obect)}`;
-     
-     return {string: timeString, stamp: timeStamp};
-    
-   },
-   createListEditOpen: (event)=> {
-       event.target.style.display = "none";
-       addNewListinput.style.display = "block";
-       addNewListsubmit.style.display = "inline";
-       canelAddNewList.style.display = "inline";
-       addNewListContainer.style.background = "lightgray";
-   },
-   createListEditClose: (event)=> {
-
-       addNewListinput.style.display = "none";
-       addNewListsubmit.style.display = "none";
-       canelAddNewList.style.display = "none";
-       addNewListBtn.style.display = "block";
-       addNewListContainer.style.background = "hsla(0,0%,100%,.24)";
-   },
-   
-   
-};
-
-
 class TodoList {
   constructor(title) {
     this.title = title;
@@ -426,7 +390,12 @@ class TodoList {
     let dateString = `${date} ${formatAMPM(date_obect)}`;
     let createTimeStamp = date_obect.getTime();
     
-    const getAllLists = document.querySelectorAll("drop-columns");
+    // get last order
+    const getAllLists = document.querySelectorAll(".drop-columns");
+    let listOrder = 0;
+    if (getAllLists){
+       listOrder = getAllLists.length;
+    }
     // create List Container
 
     let listContainer = document.createElement("div");
@@ -469,6 +438,12 @@ class TodoList {
     listBody.appendChild(addNewCardBtn);
     listContainer.appendChild(listBody);
     
+    // set the metdadata for list 
+    listContainer.setAttribute("data-list-order", listOrder);
+    listContainer.style.order = listOrder;
+    // update the add new button order
+    addNewListContainer.style.order = listOrder +1;
+       
     // append the new list before the add new list btn
     let parentDiv = document.getElementById("static_add_list").parentNode;
     let static_addListElement = document.getElementById("static_add_list");
@@ -478,12 +453,67 @@ class TodoList {
   }
  };
 
+/* Objects */
+
+let todoSystem = {
+   boardHeader : "Client 19",
+   /* DB/Server Must provide the CreatedTime for Board */
+   borderTimeStamp: "1625900349123",
+   borderTimeString: "7/10/2021 8:59 am",
+   createTimeList: () => {
+     /* timestamp */
+     let date_obect = new Date();
+     let timeStamp = date_obect.getTime();
+     
+     /* formated time */
+     let date = `${date_obect.getMonth()+1}/${date_obect.getDate()}`;
+     date += `/${date_obect.getFullYear()}`;
+     let timeString = `${date} ${formatAMPM(date_obect)}`;
+     
+     return {string: timeString, stamp: timeStamp};
+    
+   },
+   createListEditOpen: (event)=> {
+       /* Here We Send JS Request To Create new Menu */
+       event.target.style.display = "none";
+       addNewListinput.style.display = "block";
+       addNewListsubmit.style.display = "inline";
+       canelAddNewList.style.display = "inline";
+       addNewListContainer.style.background = "lightgray";
+   },
+   createListEditClose: (event)=> {
+       addNewListinput.style.display = "none";
+       addNewListinput.value = "";
+       addNewListsubmit.style.display = "none";
+       canelAddNewList.style.display = "none";
+       addNewListBtn.style.display = "block";
+       addNewListContainer.style.background = "hsla(0,0%,100%,.24)";
+   },
+   addTodoMenu: (event)=> {
+       event.preventDefault();
+       // add only list if title not empty
+       let listTitle = addNewListinput.value.trim();
+       if (listTitle != ""){
+         // Create new listMenu Template;
+         let todoList = new TodoList(listTitle);
+         todoList.listTemplate();
+         todoSystem.createListEditClose();
+         //setCardsMetaData();
+       };
+   },   
+   
+};
+
+
+
 
   addNewListBtn.addEventListener("click", todoSystem.createListEditOpen);
 
   canelAddNewList.addEventListener("click", todoSystem.createListEditClose);
   
+  addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
   
+
     //let todoList = new TodoList("My New Task");
 
   /*
@@ -523,7 +553,7 @@ class TodoList {
       
        
        
-       // keep the Add New List last order added from UI
+       // keep the Add New List Button Have Last Order Always
        addNewListContainer.style.order = lIndex +1;
     
        let listCards = list.querySelectorAll("div.cards_container div.card_container");
