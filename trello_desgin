@@ -24,7 +24,7 @@ html, body{
   /* Center and scale the image nicely */
   background-position: left;
   background-size: cover;
-  width: auto;
+  width: fit-content;
   background-repeat: repeat;
   color: #172b4d;
   font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
@@ -32,22 +32,18 @@ html, body{
   line-height: 20px;
   font-weight: 400;
   overflow: auto;
+    min-width: 100%;
 }
 
 
 /* columns parts lists */
 
 div.main_container {
-   
-     /* The image used */
-  background-image: url("https://trello.com/images/backgrounds/purple-blur.png");
-  /* Full height */
-  height: 100%; 
-  /* Center and scale the image nicely */
-  background-position: center;
-  background-size: cover;
-  width: 100%;
-  margin-top: 10px;
+
+  background: rgba(9,30,66,.09);
+  width: auto;
+  min-width: 100%;
+  width: fit-content;
   
 }
 
@@ -62,6 +58,7 @@ div.listcontainer{
   align-items: flex-start;
   justify-content: flex-start;
   background: rgba(9,30,66,.05);
+
 }
 
 
@@ -74,6 +71,7 @@ div.drop-list{
   flex-flow: column no-wrap;
   justify-content: flex-start;
   min-width: 220px;
+  width: 220px;
   background: lightgray;
 }
 
@@ -142,7 +140,6 @@ div.card-title {
   flex-flow: column nowrap;
   justify-conntent: center;
   align-items: stretch;
-  width: 100%;
 }
 .card_container{
   padding: 1px;
@@ -150,18 +147,25 @@ div.card-title {
 }
 
 
-
-
 /* fixed helper */
 .float_right{
    float:right;
+}
+
+/* Media queries */
+@media only screen and (max-width: 800px) {
+  div.listcontainer{
+   width: fit-content;
+  }
+  
+  
 }
 
 
 </style>
 </head>
 <body> 
-<div class="bg"></div>
+
 <div class="container-fluid main_container">
 
 
@@ -175,7 +179,7 @@ div.card-title {
       <div class="card-body">
         <div class="card-title">
           <span>Client 19</span>
-          <span><i class="fa fa-ellipsis-h float_right menu_sign" ></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right" ></i></span>
         </div>
         <!-- Group Of Cards -->
         <div class="cards_container"></div>
@@ -184,6 +188,7 @@ div.card-title {
       </div>
     </div>
    
+      
     
 
     <!-- New List -->
@@ -191,7 +196,7 @@ div.card-title {
       <div class="card-body">
         <div class="card-title">
           <span>To Do</span>
-          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
         
         <!-- Group Of Cards -->
@@ -214,7 +219,7 @@ div.card-title {
       <div class="card-body">
         <div class="card-title">
           <span>Pending</span>
-          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
         <!-- Group Of Cards -->
         <div class="cards_container">
@@ -232,7 +237,7 @@ div.card-title {
       <div class="card-body">
         <div class="card-title">
           <span>Done</span>
-          <span><i class="fa fa-ellipsis-h float_right menu_sign"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
          <!-- Group Of Cards -->
         <div class="cards_container">
@@ -244,8 +249,7 @@ div.card-title {
       </div>
     </div>
     
-    
-   <!--- Create new List Part --> 
+   <!--- Create new List Part -->   
     
   <!-- created List -->
     <div class="drop-list card" data-list-title="new" id="static_add_list">
@@ -262,34 +266,165 @@ div.card-title {
 </div>
 <script>
 
-
+    /*
+    <!-- New List -->
+    <div class="drop-list drop-columns card">
+      <div class="card-body">
+        <div class="card-title">
+          <span>${Cardtitle}</span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right" ></i></span>
+        </div>
+        <!-- Group Of Cards -->
+        <div class="cards_container"></div>
+        
+         <button class="add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+      </div>
+    </div>
+    
+   */
 window.addEventListener('DOMContentLoaded', (event) => {
 
+
+
   /* Global Variables */
+  const addNewListContainer = document.getElementById("static_add_list");
   
-  class todoList {
-    constructor(name, year) {
-      this.title = name;
-      this.year = year;
-    }
-  } 
   
+ /* Helper Functions */
+ 
+ function formatAMPM(date) {
+    // function return hours pm/am formated
+    var hours = date.getHours();
+    var minutes = date.getMinutes();
+    var ampm = hours >= 12 ? 'pm' : 'am';
+    hours = hours % 12;
+    hours = hours ? hours : 12; // the hour '0' should be '12'
+    minutes = minutes < 10 ? '0'+minutes : minutes;
+    var strTime = hours + ':' + minutes + ' ' + ampm;
+    return strTime;
+  }
+
+
+  /* Classes */
+
+  /* New List Class */
+
+class todoSystem {
+  constructor(title) {
+    this.title = title;
+
+  }
+   getTimeString() {
+   
+   }
+   getTimeStamp() {
+   
+   }   
+}
+
+
+
+class TodoList {
+  constructor(title) {
+    this.title = title;
+
+  }
+  listTemplate() {
+    
+    // list create timestamp
+    let date_obect = new Date();
+    let date = `${date_obect.getMonth()+1}/${date_obect.getDate()}/${date_obect.getFullYear()}`;
+    let dateString = `${date} ${formatAMPM(date_obect)}`;
+    let createTimeStamp = date_obect.getTime();
+    
+    const getAllLists = document.querySelectorAll("drop-columns");
+    // create List Container
+
+    let listContainer = document.createElement("div");
+    listContainer.classList.add("drop-list", "drop-columns","card");
+    listContainer.setAttribute("data-list-title", this.title);
+    listContainer.setAttribute("data-list-createdate", dateString);
+    // Created timestamp to send to server
+    listContainer.setAttribute("data-list-timestamp", createTimeStamp);
+    
+    let listBody = document.createElement("div");
+    listBody.classList.add("card-body");
+    
+    let listTitle = document.createElement("div");
+    listTitle.classList.add("card-title");
+    
+    let listTitleText = document.createElement("span");
+    listTitleText.innerText = this.title;
+
+    let MenuIconContainer = document.createElement("span");
+    MenuIconContainer.classList.add("menu_sign");
+    
+    let MenuIcon = document.createElement("i");
+    MenuIcon.classList.add("fa", "fa-ellipsis-h", "float_right");
+    
+    let groupCardsContainer = document.createElement("div");
+    groupCardsContainer.classList.add("cards_container");
+    
+    let addNewCardBtn = document.createElement("button");
+    addNewCardBtn.classList.add("add_new_list_btn","btn", "stretched-link");
+    addNewCardBtn.innerHTML = '<i class="fa fa-plus plus_sign"></i> Add New Card';
+    
+    // append New Elements
+    MenuIconContainer.appendChild(MenuIcon);
+    
+    listTitle.appendChild(listTitleText);
+    listTitle.appendChild(MenuIconContainer);
+    
+    listBody.appendChild(listTitle);
+    listBody.appendChild(groupCardsContainer);   
+    listBody.appendChild(addNewCardBtn);
+    listContainer.appendChild(listBody);
+    
+    let parentDiv = document.getElementById("static_add_list").parentNode;
+    let static_addListElement = document.getElementById("static_add_list");
+    parentDiv.insertBefore(listContainer, static_addListElement);
+    return listContainer;
+    
+  }
+ };
+
+  
+  let todoList = new TodoList("My New Task");
+  alert(todoList.listTemplate().outerHTML);
+  
+  
+  /* endclass */
   /* Apply order to cards  */
   const setCardsMetaData = ()=> {
   
     // loop over columns [lists] and then get the cards to set the order of cards and status
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
+    // update Lists
     listsColumns.forEach( (list, lIndex)=> {
     
+       // set/update the order of the list data-list-order and flex stlye order
+       list.setAttribute("data-list-order", lIndex);
+       list.style.order = lIndex;
+       
+       // inital create time date and timestamp get from server set now manul 
+       list.setAttribute("data-list-createdate", lIndex);
+       list.setAttribute("data-list-timestamp", lIndex);
+       
+       // keep the Add New List last order added from UI
+       addNewListContainer.style.order = lIndex +1;
+    
        let listCards = list.querySelectorAll("div.cards_container div.card_container");
-       listCards.forEach( (card, cIndex)=> {    
+       
+       // updates cards
+       listCards.forEach( (card, cIndex)=> {
           // asgin the list Title to the card 
           card.setAttribute("data-list", list.getAttribute("data-list-name"));
-          /* set the order of the card which will be sent
-          to database to save order elements and query Db with it*/
+          
+          // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
           card.style.order = cIndex;
+          
        });
        
     });
