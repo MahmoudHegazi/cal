@@ -241,7 +241,7 @@ input#new_list_name {
         <!-- Group Of Cards -->
         <div class="cards_container"></div>
         
-         <button class=" add_new_card_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
    
@@ -267,7 +267,7 @@ input#new_list_name {
              <div class="card task_card">Hello World2</div>
           </div>
        </div>
-         <button class=" add_new_card_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
   
@@ -284,7 +284,7 @@ input#new_list_name {
             <div class="card task_card">Hello World3</div>
           </div>
         </div>  
-        <button class=" add_new_card_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+        <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
      
@@ -298,11 +298,12 @@ input#new_list_name {
         </div>
          <!-- Group Of Cards -->
         <div class="cards_container">
+          <!--Card-->
           <div class="card_container">
             <div class="card task_card">Hello World4</div>
           </div>
         </div>
-         <button class=" add_new_card_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
     
@@ -372,8 +373,55 @@ const canelAddNewList = document.getElementById("cancel_add_list");
     var strTime = hours + ':' + minutes + ' ' + ampm;
     return strTime;
   }
+  
+ function allowDrop(ev) {
+   ev.preventDefault();
+ };
 
+ function drag(ev) {
 
+   ev.dataTransfer.setData("text", ev.target.id);
+
+ };
+
+ function drop(ev) {
+   get_list_parent
+   ev.preventDefault();
+   ev.target.style.background = "blue";
+   var data = ev.dataTransfer.getData("text");
+   var get_list_parent = ev.target;
+   
+
+   let checkDropContainer = get_list_parent.classList.contains("drop-columns");
+   
+   let loopIndex = 0;
+   // search for parent
+   while(checkDropContainer != true){
+      get_list_parent = get_list_parent.parentElement;
+      checkDropContainer =  get_list_parent.classList.contains("drop-columns");
+      if (checkDropContainer) {
+        loopIndex += 1;
+        
+        // get the cards_container of that list
+        let target_cards_container = get_list_parent.querySelector("div.cards_container");
+        
+                console.log("found list container", get_list_parent.className, loopIndex);
+                
+         target_cards_container.appendChild(data);
+        break;
+      };
+      if (loopIndex > 5000) {
+        console.log("loop stoped Max timeout passed");
+        break;
+      }
+      loopIndex += 1;
+   }
+   
+
+   //ev.target.appendChild(document.getElementById(data));
+ };
+
+//dragstart
   /* Classes  */
 
   /* New List Class */
@@ -382,6 +430,7 @@ class TodoList {
     this.title = title;
 
   }
+    
   listTemplate() {
     
     // list create timestamp
@@ -398,10 +447,13 @@ class TodoList {
     }
     // create List Container
 
+   
+
     let listContainer = document.createElement("div");
     listContainer.classList.add("drop-list", "drop-columns","card");
     listContainer.setAttribute("data-list-title", this.title);
     listContainer.setAttribute("data-list-createdate", dateString);
+    
     // Created timestamp to send to server
     listContainer.setAttribute("data-list-timestamp", createTimeStamp);
     
@@ -424,7 +476,7 @@ class TodoList {
     groupCardsContainer.classList.add("cards_container");
     
     let addNewCardBtn = document.createElement("button");
-    addNewCardBtn.classList.add("add_new_card_btn","btn", "stretched-link");
+    addNewCardBtn.classList.add("add_new_card_btn","btn");
     addNewCardBtn.innerHTML = '<i class="fa fa-plus plus_sign"></i> Add New Card';
     
     // append New Elements
@@ -443,7 +495,13 @@ class TodoList {
     listContainer.style.order = listOrder;
     // update the add new button order
     addNewListContainer.style.order = listOrder +1;
-       
+    
+    
+     // draggable="true" ondragstart="drag(event)"
+    // add the eventListeners for drop
+    //listContainer.addEventListener("drop", drop);
+    
+    
     // append the new list before the add new list btn
     let parentDiv = document.getElementById("static_add_list").parentNode;
     let static_addListElement = document.getElementById("static_add_list");
@@ -498,7 +556,7 @@ let todoSystem = {
          let todoList = new TodoList(listTitle);
          todoList.listTemplate();
          todoSystem.createListEditClose();
-         //setCardsMetaData();
+         setCardsMetaData();
        };
    },   
    
@@ -542,6 +600,10 @@ let todoSystem = {
        list.style.order = lIndex;
        
        
+         
+       list.addEventListener("dragover", allowDrop);
+       list.addEventListener("drop",  drop);
+       
        /* if this default list created with board add the border time stamp*/
        if (list.classList.contains("border-default-list")){
        
@@ -561,7 +623,12 @@ let todoSystem = {
        // updates cards
        listCards.forEach( (card, cIndex)=> {
           // asgin the list Title to the card 
-          card.setAttribute("data-list", list.getAttribute("data-list-name"));
+          card.setAttribute("data-list", list.getAttribute("data-list-title"));
+          card.setAttribute("id", `card-${cIndex}`);
+          
+          
+          card.setAttribute("draggable", true);
+          card.addEventListener("drag",  drag );
           
           // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
