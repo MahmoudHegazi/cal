@@ -277,7 +277,7 @@ div.active_drop_list {
     </div>
   
      <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="Pending" ondragstart="">
+    <div class="border-default-list drop-list drop-columns card" data-list-title="Pending">
       <div class="card-body">
         <div class="card-title">
           <span>Pending</span>
@@ -295,7 +295,7 @@ div.active_drop_list {
      
 
      <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="Done" ondragstart="">
+    <div class="border-default-list drop-list drop-columns card" data-list-title="Done">
       <div class="card-body">
         <div class="card-title">
           <span>Done</span>
@@ -456,6 +456,27 @@ function formatAMPM(date) {
 
 
  };
+
+/* the third event reset effects to avoid filure drops */
+function dragLeave(event) {
+  if ( event.target.classList.contains("drop-columns") ) {
+  
+     if (lastTargetContainer){
+     lastTargetContainer.style.height = "auto";
+     console.log('yes');
+     };
+     
+     /* remove active class dropend */
+     let old_active = document.querySelectorAll("div.active_drop_list");
+     if (old_active.length > 0){
+     
+         old_active.forEach( (oldactive)=> {
+            oldactive.classList.remove("active_drop_list");
+         });  
+     };
+  }
+};
+
 
  function drop(ev) {
    ev.preventDefault();
@@ -694,6 +715,8 @@ let todoSystem = {
          
        list.addEventListener("dragover", allowDrop);
        list.addEventListener("drop",  drop);
+       list.addEventListener("dragleave",  dragLeave);
+       
        
        /* if this default list created with board add the border time stamp*/
        if (list.classList.contains("border-default-list")){       
