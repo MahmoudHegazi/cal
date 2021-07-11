@@ -443,21 +443,35 @@ function formatAMPM(date) {
         
         // get the cards_container of that list
         let target_cards_container = get_list_parent.querySelector("div.cards_container");
-        
-                console.log("found list container", get_list_parent.className, loopIndex);
+        console.log("found list container", get_list_parent.className, loopIndex);
 
 
-/* remove active class dropend */
-              let old_active = document.querySelectorAll("div.active_drop_list");
+     /* remove active class dropend */
+     let old_active = document.querySelectorAll("div.active_drop_list");
      if (old_active.length > 0){
      
          old_active.forEach( (oldactive)=> {
             oldactive.classList.remove("active_drop_list");
          });  
      };
-         /* get heighestorder remove this for remove yellow */
-         target_cards_container.style.background = "yellow";
-         target_cards_container.appendChild(dragentElement);
+     
+      /* get heighestorder remove this for remove yellow */
+      let current_list = document.getElementById(target_cards_container.getAttribute("data-list-id"));
+      
+
+       
+      if (
+      document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container")
+      ) { 
+      dragentElement.setAttribute("data-card-order", document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length)
+     dragentElement.style.order = document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length
+      
+      } else {
+      
+        return false
+      }
+       
+       target_cards_container.appendChild(dragentElement);
         break;
       };
       if (loopIndex > 5000) {
