@@ -12,6 +12,11 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   
+
+</head>
+<body> 
+
+
 <style>
 
 html, body{
@@ -219,10 +224,10 @@ input#new_list_name {
 }
 
 
+div.active_drop_list {
+  background: lightblue;
+}
 </style>
-</head>
-<body> 
-
 <div class="container-fluid main_container">
 
 
@@ -267,7 +272,7 @@ input#new_list_name {
              <div class="card task_card">Hello World2</div>
           </div>
        </div>
-         <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
   
@@ -284,7 +289,7 @@ input#new_list_name {
             <div class="card task_card">Hello World3</div>
           </div>
         </div>  
-        <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+        <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
      
@@ -303,7 +308,7 @@ input#new_list_name {
             <div class="card task_card">Hello World4</div>
           </div>
         </div>
-         <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
     </div>
     
@@ -329,28 +334,15 @@ input#new_list_name {
 </div>
 <script>
 
-    /*
-    <!-- New List -->
-    <div class="drop-list drop-columns card">
-      <div class="card-body">
-        <div class="card-title">
-          <span>${Cardtitle}</span>
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right" ></i></span>
-        </div>
-        <!-- Group Of Cards -->
-        <div class="cards_container"></div>
-        
-         <button class="add_new_list_btn btn stretched-link"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
-      </div>
-    </div>
-    
-   */
 window.addEventListener('DOMContentLoaded', (event) => {
 
 
+// the object store drop and drag data
+let data;
 
-  /* Global Variables */
-  const addNewListContainer = document.getElementById("static_add_list");
+
+/* Global Variables */
+const addNewListContainer = document.getElementById("static_add_list");
 
 const addNewListBtn = document.getElementById("add_list_btn");
 const addNewListinput = document.getElementById("new_list_name");
@@ -360,9 +352,9 @@ const canelAddNewList = document.getElementById("cancel_add_list");
 
 
   
- /* Helper Functions */
+/* Helper Functions */
  
- function formatAMPM(date) {
+function formatAMPM(date) {
     // function return hours pm/am formated
     var hours = date.getHours();
     var minutes = date.getMinutes();
@@ -376,20 +368,67 @@ const canelAddNewList = document.getElementById("cancel_add_list");
   
  function allowDrop(ev) {
    ev.preventDefault();
+   let mainColor = "lightgray";
+   let secondColor = "lightblue";
+   let activeTarget = ev.target;
+   
+   /* Controll Before Drop */
+   // here we check for the list id if it diffrent than the dragged list id add the animation
+   
+
+   let target_list_id = ev.target.getAttribute("data-list-id");
+   let dragedElm = document.getElementById(data);
+   let dragedElm_list_id = dragedElm.getAttribute("data-list-id");
+   
+   // if not found target_list_id target is not valid
+   if (!ev.target.getAttribute("data-list-id") || !dragedElm.getAttribute("data-list-id")){
+      return false;
+   }
+   
+   
+   
+   if (target_list_id != dragedElm_list_id) {
+   
+     // in this step we add active to new list we need to remove old active
+        
+     let targetList = document.getElementById(target_list_id);
+     let old_active = document.querySelectorAll("div.active_drop_list");
+     if (old_active.length > 0){
+     
+         old_active.forEach( (oldactive)=> {
+            oldactive.classList.remove("active_drop_list");
+         });  
+     };
+     
+        targetList.classList.add("active_drop_list");
+
+
+
+     
+     //targetList.style.background = secondColor;
+
+     
+     console.log("You are going to move the element to a new menu, " + target_list_id);
+     setCardsMetaData();
+     return true;
+   }
+   
  };
 
  function drag(ev) {
 
-   ev.dataTransfer.setData("text", ev.target.id);
+       data = ev.target.id;
+
 
  };
 
  function drop(ev) {
-   get_list_parent
    ev.preventDefault();
-   ev.target.style.background = "blue";
-   var data = ev.dataTransfer.getData("text");
+    
+
    var get_list_parent = ev.target;
+   
+   let dragentElement = document.getElementById(data);
    
 
    let checkDropContainer = get_list_parent.classList.contains("drop-columns");
@@ -406,8 +445,19 @@ const canelAddNewList = document.getElementById("cancel_add_list");
         let target_cards_container = get_list_parent.querySelector("div.cards_container");
         
                 console.log("found list container", get_list_parent.className, loopIndex);
-                
-         target_cards_container.appendChild(data);
+
+
+/* remove active class dropend */
+              let old_active = document.querySelectorAll("div.active_drop_list");
+     if (old_active.length > 0){
+     
+         old_active.forEach( (oldactive)=> {
+            oldactive.classList.remove("active_drop_list");
+         });  
+     };
+         /* get heighestorder remove this for remove yellow */
+         target_cards_container.style.background = "yellow";
+         target_cards_container.appendChild(dragentElement);
         break;
       };
       if (loopIndex > 5000) {
@@ -416,7 +466,8 @@ const canelAddNewList = document.getElementById("cancel_add_list");
       }
       loopIndex += 1;
    }
-   
+  
+   data = null;
 
    //ev.target.appendChild(document.getElementById(data));
  };
@@ -558,9 +609,17 @@ let todoSystem = {
          todoSystem.createListEditClose();
          setCardsMetaData();
        };
-   },   
+   }
    
 };
+
+
+
+
+
+
+
+
 
 
 
@@ -571,49 +630,64 @@ let todoSystem = {
   
   addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
   
-
-    //let todoList = new TodoList("My New Task");
-
-  /*
-  addNewListBtn addNewListinput
-  addNewListBtn.addEventListener("click", createTodoList);
-  // function to add New Card
-  const createTodoList = (event)=> {
-    event.preventDefault();
-    addNewListinput.style.display = "block";
-    //let todoList = new TodoList("My New Task");
-  }
-  */
+ 
+  /*  this responsble for restart the system important to use after any updates */
+  /* Apply order to cards   loop over columns [lists] and then get the cards to set the order of cards and status */
   
-  /* endclass */
-  /* Apply order to cards  */
   function setCardsMetaData() {
-  
-    // loop over columns [lists] and then get the cards to set the order of cards and status
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
+    
+    let cards_id = 1;
+    let list_id = 1;
     // update Lists
     listsColumns.forEach( (list, lIndex)=> {
-    
+       let currentListId = `list-${list_id}`;
+       list.setAttribute("id", currentListId);
+       list.setAttribute("data-list-id", currentListId);
+       
        // set/update the order of the list data-list-order and flex stlye order
        list.setAttribute("data-list-order", lIndex);
-       list.style.order = lIndex;
-       
+       list.style.order = lIndex;      
        
          
        list.addEventListener("dragover", allowDrop);
        list.addEventListener("drop",  drop);
        
        /* if this default list created with board add the border time stamp*/
-       if (list.classList.contains("border-default-list")){
-       
+       if (list.classList.contains("border-default-list")){       
           list.setAttribute("data-list-createdate", todoSystem.borderTimeString);
           list.setAttribute("data-list-timestamp", todoSystem.borderTimeStamp);
        };
        
-       /* others will get time stamp and date from database while created in first timeload */
-      
        
+       // asgin the list-title to the container elements
+       let listTitle = list.querySelector("div.card-title");
+       let listBody = list.querySelector("div.card-body");
+       let listCardBtn = list.querySelector("div.add_new_card_btn");
+       let listCardsContainer = list.querySelector("div.cards_container");     
+
+       
+       let listTitleBackend = list.getAttribute("data-list-title");
+       if (listTitle){
+          listTitle.setAttribute("data-list-title", listTitleBackend);
+          listTitle.setAttribute("data-list-id", currentListId);
+       };
+       if (listBody){
+          
+          listBody.setAttribute("data-list-title", listTitleBackend);
+          listBody.setAttribute("data-list-id", currentListId);
+       };
+       if (listCardsContainer){
+          
+          listCardsContainer.setAttribute("data-list-title", listTitleBackend);  
+          listCardsContainer.setAttribute("data-list-id", currentListId);
+       };
+       if (listCardBtn){
+          
+          listCardBtn.setAttribute("data-list-title", listTitleBackend);  
+          listCardBtn.setAttribute("data-list-id", currentListId);
+       };
        
        // keep the Add New List Button Have Last Order Always
        addNewListContainer.style.order = lIndex +1;
@@ -622,27 +696,37 @@ let todoSystem = {
        
        // updates cards
        listCards.forEach( (card, cIndex)=> {
-          // asgin the list Title to the card 
-          card.setAttribute("data-list", list.getAttribute("data-list-title"));
-          card.setAttribute("id", `card-${cIndex}`);
+          // asgin the list Title to the card
+          card.setAttribute("data-list-id", currentListId);
+          card.setAttribute("data-list-title", list.getAttribute("data-list-title"));
+          card.setAttribute("id", `card-${cards_id}`);
           
-          
-          card.setAttribute("draggable", true);
-          card.addEventListener("drag",  drag );
-          
+                    
           // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
           card.style.order = cIndex;
           
+          
+          
+          if (card.querySelector("div.task_card")){
+            card.querySelector("div.task_card").setAttribute("data-list-title", list.getAttribute("data-list-title"));
+            card.querySelector("div.task_card").setAttribute("data-list-id", currentListId);
+          };
+          
+          
+          card.setAttribute("draggable", true);
+          card.addEventListener("drag",  drag );
+
+          
+          cards_id += 1;
        });
-       
+       list_id += 1;
     });
     
   };
   setCardsMetaData();
 
 });
-
 
 </script>
 
