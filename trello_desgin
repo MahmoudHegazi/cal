@@ -237,7 +237,7 @@ div.active_drop_list {
  
 
     <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="Client 19">
+    <div class="border-default-list drop-list drop-columns card" data-list-title="Client 19" draggable="true" ondragstart="">
       <div class="card-body">
         <div class="card-title">
           <span>Client 19</span>
@@ -254,7 +254,7 @@ div.active_drop_list {
     
 
     <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="To Do">
+    <div class="border-default-list drop-list drop-columns card" data-list-title="To Do" draggable="true" ondragstart="">
       <div class="card-body">
         <div class="card-title">
           <span>To Do</span>
@@ -277,7 +277,7 @@ div.active_drop_list {
     </div>
   
      <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="Pending">
+    <div class="border-default-list drop-list drop-columns card" data-list-title="Pending" ondragstart="">
       <div class="card-body">
         <div class="card-title">
           <span>Pending</span>
@@ -295,7 +295,7 @@ div.active_drop_list {
      
 
      <!-- New List -->
-    <div class="border-default-list drop-list drop-columns card" data-list-title="Done" >
+    <div class="border-default-list drop-list drop-columns card" data-list-title="Done" ondragstart="">
       <div class="card-body">
         <div class="card-title">
           <span>Done</span>
@@ -464,7 +464,7 @@ function formatAMPM(date) {
       document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container")
       ) { 
       dragentElement.setAttribute("data-card-order", document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length)
-     dragentElement.style.order = document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length
+     dragentElement.style.order = document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length;
       
       } else {
       
@@ -482,11 +482,10 @@ function formatAMPM(date) {
    }
   
    data = null;
-
-   //ev.target.appendChild(document.getElementById(data));
+   return true;
  };
 
-//dragstart
+
   /* Classes  */
 
   /* New List Class */
@@ -603,6 +602,7 @@ let todoSystem = {
        addNewListsubmit.style.display = "inline";
        canelAddNewList.style.display = "inline";
        addNewListContainer.style.background = "lightgray";
+       return true;
    },
    createListEditClose: (event)=> {
        addNewListinput.style.display = "none";
@@ -611,6 +611,7 @@ let todoSystem = {
        canelAddNewList.style.display = "none";
        addNewListBtn.style.display = "block";
        addNewListContainer.style.background = "hsla(0,0%,100%,.24)";
+       return true;
    },
    addTodoMenu: (event)=> {
        event.preventDefault();
@@ -622,7 +623,9 @@ let todoSystem = {
          todoList.listTemplate();
          todoSystem.createListEditClose();
          setCardsMetaData();
+         return true;
        };
+       return false;
    }
    
 };
@@ -737,9 +740,29 @@ let todoSystem = {
        list_id += 1;
     });
     
+    return true;
+    
   };
   setCardsMetaData();
 
+
+
+  // list Drag and drop
+  
+ function allowDropList(ev) {
+    ev.preventDefault();
+    
+  }
+  
+ function dragList(ev) {
+   ev.dataTransfer.setData("text", ev.target.id);
+  }
+  
+ function dropList(ev) {
+   ev.preventDefault();
+   var data = ev.dataTransfer.getData("text");
+   ev.target.appendChild(document.getElementById(data));
+  }
 });
 
 </script>
