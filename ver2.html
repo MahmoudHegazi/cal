@@ -1,3 +1,4 @@
+  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -288,7 +289,6 @@ div.labels_container{
   justify-content: center;
   align-items:center;
 }
-
 div.labels_container{
   display: flex;
   flex-flow: row wrap;
@@ -302,7 +302,6 @@ div.label_icon{
    cursor: pointer;
    
 }
-
 */
 
 
@@ -515,9 +514,9 @@ border: 2px solid #344563;
           
           <button type="button" id="card_add_menu"><i style="font-size:24px" class="fa">&#xf141;</i></button>
 
-          <div class="labels_container">
+          <div  id="label_container_div" class="labels_container" style="display:none;">
           
-           <div class="label_container">
+
 
            <textarea class="new_card_textare" class="form-control" placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
             <div class="label_container"><div class="label_icon green selectable">Copy Request</div></div>
@@ -539,7 +538,7 @@ border: 2px solid #344563;
           </div>
  
          
-          </div>
+         
          <!-- label container end -->
          <div></div>
 
@@ -569,9 +568,34 @@ const canelAddNewCard = document.getElementById("cancel_add_card");
 const newCardDefaultHolder = document.getElementById("form_template_holder"); 
 const newCardForm = document.getElementById("new-card-form"); 
 const newCardMenu = document.getElementById("card_add_menu"); 
+const labelsContainer = document.getElementById("label_container_div"); 
+
+let labelOpen = false;
 
 
+function hidelabelsContainer(){
   
+   if (labelOpen === false) {
+      labelsContainer.style.display = "block";
+      labelOpen = true;
+   } else {
+      labelsContainer.style.display = "none";
+      labelOpen = false;
+   }
+
+}
+
+
+function hideLabels(){
+  
+   if (labelOpen === true) {
+      labelsContainer.style.display = "none";
+      labelOpen = false;
+   }
+
+}
+
+newCardMenu.addEventListener("click", hidelabelsContainer);
   
   
 /* Helper Functions */
@@ -943,15 +967,19 @@ let todoSystem = {
          newCardForm.querySelector("#new_card_submit").style.display = "none";
          newCardForm.querySelector("#cancel_add_card").style.display = "none";
          newCardMenu.style.display = "none";
+         // hide the labels
+         //hidelabelsContainer();
+         hideLabels();
+         //console.log(todoSystem.newCardBtn.nodeName);
          // show back the add new card for the selected list
-         
-         console.log(todoSystem.newCardBtn.nodeName);
          todoSystem.newCardBtn.style.display = "inline";
          isCreateCardOpen = false;
          return true;
       
    },
    createCardOpen: (title, cid)=> {
+   
+
       
         isCreateCardOpen = true;
         
@@ -972,7 +1000,6 @@ let todoSystem = {
          newCardForm.querySelector("#card_title").style.display = "block";
          // show form buttons
          newCardForm.querySelector("#new_card_submit").style.display = "inline";
-         newCardForm.querySelector("#cancel_add_card").style.display = "inline";
          newCardForm.querySelector("#cancel_add_card").style.display = "inline";
          newCardMenu.style.display = "inline";
          todoSystem.creatingCard = true;
@@ -1000,15 +1027,26 @@ let todoSystem = {
 
    /* Create New Card */
    addNewCard: (event, card)=> {
+
+   
        let usedBtn = event.target;
        if (event.target.nodeName == "I"){
           console.log(event.target.parentElement);
           usedBtn = event.target.parentElement;
        };
        
+       
+       
        if (isCreateCardOpen) {
          todoSystem.createCardClose();
+      
+         
        }
+       
+           if (labelOpen === true) {
+             labelsContainer.style.display = "none";
+             labelOpen = false;
+          }
        
        isCreateCardOpen = true;
        
