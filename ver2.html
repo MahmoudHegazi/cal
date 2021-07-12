@@ -278,6 +278,106 @@ button#card_add_menu {
   background: lightgray;
   color: gray;
 }
+
+/* select color Labels */
+ 
+/*
+div.labels_container{
+  display:flex;
+  flex-flow:column nowrap;
+  justify-content: center;
+  align-items:center;
+}
+
+div.labels_container{
+  display: flex;
+  flex-flow: row wrap;
+}
+div.label_icon{
+   width: 60%;
+   height:30px;
+   background:gray;
+   margin-top:5px;
+   border-radius: 4px;
+   cursor: pointer;
+   
+}
+
+*/
+
+
+div.labels_container{
+  display:flex;
+  flex-flow:column nowrap;
+  width: 85%;
+  justify-content: center;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+div.labels_container .label_icon{
+   display: block;
+   margin-left: 10px;
+   margin-right: 10px;
+   width: 95%;
+   height:30px;
+   margin-top:5px;
+   border-radius: 4px;
+   cursor: pointer;
+   color: white;
+   padding: 5px;
+   font-weight: bold;
+}
+
+.label_icon.green {
+  background: #61bd4f;
+  box-shadow: -8px 0 #61bd4f;
+}
+.label_icon.yellow {
+  background: #f2d600;
+  box-shadow: -8px 0 #f2d600;
+}
+
+.label_icon.mainorange{
+  background: #ff9f1a;
+  box-shadow: -8px 0 #ff9f1a;
+}
+
+.label_icon.red {
+  background: #eb5a46;
+  box-shadow: -8px 0 #eb5a46;
+}
+
+.label_icon.purple {
+  background: #89609e;
+  box-shadow: -8px 0 #89609e;
+}
+
+.label_icon.blue {
+  background: #055a8c;
+  box-shadow: -8px 0 #055a8c;
+}
+
+.label_icon.lightblue {
+  background: #00c2e0;
+  box-shadow: -8px 0 #00c2e0;
+}
+
+.label_icon.lightgreen {
+  background: #4bbf6b;
+  box-shadow: -8px 0 #4bbf6b;
+}
+
+.label_icon.darkblue {
+  background: #344563;
+  box-shadow: -8px 0 #344563
+}
+
+.label_icon.nocolor {
+  background: #b3bac5;
+  box-shadow: -8px 0 #b3bac5;
+}
+
+
 </style>
 <div class="container-fluid main_container">
 
@@ -399,17 +499,36 @@ button#card_add_menu {
           <button type="button" id="cancel_add_card" style="display: none;"><i class="fa fa-close" style="font-size: 26"></i></button>
           
           <button type="button" id="card_add_menu"><i style="font-size:24px" class="fa">&#xf141;</i></button>
-          </div>
-         </form>
-</div>
 
+          <div class="labels_container">
+          
+           <div class="label_container">
+
+           <input class="form-control" placeholder="Search Labels.." type="text" id="label_search_text"></div>
+            <div class="label_container"><div class="label_icon green">Copy Request</div></div>
+            <div class="label_container"><div class="label_icon red">One more step</div></div>
+            <div class="label_container"><div class="label_icon blue">Proiority </div>
+            <div class="label_container"><div class="label_icon mainorange">Desgin Team</div></div>
+            <div class="label_container"><div class="label_icon purple">Proudct Marketing</div></div>
+            <div class="label_container"><div class="label_icon lightblue">Help</div></div>
+            <div class="label_container"><div class="label_icon lightgreen">Meeting</div></div>
+            <div class="label_container"><div class="label_icon darkblue">Important</div></div>
+            
+            <div class="label_container"><div class="label_icon darkblue">Add New Color</div></div>
+          </div>
+          
+          </div>
+
+</div>
+     </form>
+</div>
 </div>
 <script>
 
 window.addEventListener('DOMContentLoaded', (event) => {
 
 
-// the object store drop and drag data
+// the object store drop and drag data     position: absolute;
 let data;
 
 
@@ -731,12 +850,14 @@ class TodoList {
 
 /* Objects */
 
+// vairable contains the last clicked Add Btn
+let isCreateCardOpen = false;
 let todoSystem = {
    boardHeader : "Client 19",
    /* DB/Server Must provide the CreatedTime for Board */
    borderTimeStamp: "1625900349123",
    borderTimeString: "7/10/2021 8:59 am",
-   creatCardBtn: null,
+   newCardBtn: null,
    createTimeList: () => {
      /* timestamp */
      let date_obect = new Date();
@@ -785,7 +906,12 @@ let todoSystem = {
    },  
    createCardClose: ()=> {
          
-         if (todoSystem.creatingCard = true) {
+         if (!todoSystem.newCardBtn){
+           return false;
+         };
+         
+         
+         
          // show title input
          newCardForm.querySelector("#card_title").style.display = "none";
          newCardForm.querySelector("#card_title").value = "";
@@ -793,26 +919,22 @@ let todoSystem = {
          newCardForm.querySelector("#new_card_submit").style.display = "none";
          newCardForm.querySelector("#cancel_add_card").style.display = "none";
          newCardMenu.style.display = "none";
-         // show back the add new card for the selected list dynamic
-         let targetList = document.getElementById(newCardForm.getAttribute("data-list-id"));
-         //targetList.querySelector("button.add_new_card_btn").style.display = "block";
-         todoSystem.creatingCard = false;         
-         todoSystem.creatCardBtn.style.display = "block";
-         return true;
+         // show back the add new card for the selected list
          
-         } else {
-           return false;
-         }
+         console.log(todoSystem.newCardBtn.nodeName);
+         todoSystem.newCardBtn.style.display = "inline";
+         isCreateCardOpen = false;
+         return true;
+      
    },
    createCardOpen: (title, cid)=> {
-   
-
+      
+        isCreateCardOpen = true;
         
-       //todoSystem.creatingCard = true
-        
-       /* Here We Send JS Request To Create new Menu */
+        //todoSystem.newCardBtn = targetList.querySelector("button.add_new_card_btn");
+         /* Here We Send JS Request To Create new Menu */
                  // new task title
-                 
+         todoSystem.creatCardBtn == true;
          newCardForm.querySelector("#card_title").setAttribute("data-list-title", title);
          newCardForm.querySelector("#card_title").setAttribute("data-list-id", cid);
          newCardForm.querySelector("#new_card_submit").setAttribute("data-list-title", title);
@@ -854,29 +976,36 @@ let todoSystem = {
 
    /* Create New Card */
    addNewCard: (event, card)=> {
-   
-       let card_parentContainertitle = event.target.getAttribute("data-list-title");
-       let card_parentContainerId = event.target.getAttribute("data-list-id");
-        let card_parentContainer = document.getElementById(card_parentContainerId);
-        let cardsContainer = document.querySelector(`#${card_parentContainerId} .cards_container`);
+       let usedBtn = event.target;
+       if (event.target.nodeName == "I"){
+          console.log(event.target.parentElement);
+          usedBtn = event.target.parentElement;
+       };
+       
+       if (isCreateCardOpen) {
+         todoSystem.createCardClose();
+       }
+       
+       isCreateCardOpen = true;
+       
+       let card_parentContainertitle = usedBtn.getAttribute("data-list-title");
+       let card_parentContainerId = usedBtn.getAttribute("data-list-id");
+       let card_parentContainer = document.getElementById(card_parentContainerId);
+       let cardsContainer = document.querySelector(`#${card_parentContainerId} .cards_container`);
         
         // Add new Card form
-         todoSystem.creatCardBtn = event.target;
-         event.target.style.display = "none";
+        todoSystem.newCardBtn = usedBtn;
+        usedBtn.style.display = "none";
          
          
          //let listBody = card_parentContainer.querySelector(".card_body");
 
          newCardForm.style.display = "block";
          
-
-         
-         
-         
          card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
          
          // show the form to get the data 
-         let UpdatedForm = todoSystem.createCardOpen(card_parentContainertitle, card_parentContainerId, event.target);
+         let UpdatedForm = todoSystem.createCardOpen(card_parentContainertitle, card_parentContainerId, usedBtn);
          
         
         if (cardsContainer){
@@ -885,7 +1014,9 @@ let todoSystem = {
           if (allTasks) {
             last_order = allTasks.length;
           }
-          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order));
+          
+          /* // asgin the card template with all meta and append it to the body
+          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order)); */
           setCardsMetaData();
           return true;
         }
@@ -1079,6 +1210,14 @@ let todoSystem = {
 });
 
 
+/* Add New Card Labels Function */
+
+let search_input = document.getElementById("label_search_text");
+let allLabels = document.querySelectorAll("div.label_container div.label_icon");
+function search_labels(event){
+    alert(event.target.value + allLabels.length);
+}
+search_input.addEventListener("keyup", search_labels);
 
 </script>
 
