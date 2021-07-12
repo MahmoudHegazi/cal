@@ -137,6 +137,7 @@ div#static_add_list:hover{
 
 .card-body {
   padding: 5px;
+  height: 100%;
 }
 
 /* Hide title for new Created row
@@ -178,6 +179,7 @@ div.card-title {
   padding: 5px;
   cursor: pointer;
   font-size: 0.882em;
+  
 }
 
 .cards_container{
@@ -206,6 +208,17 @@ button#cancel_add_list{
  
 }
 
+div.cards_container{
+  height: auto;
+  min-height: 10px;
+
+}
+
+div.card_container{
+
+  margin-top: 3px;
+}
+
 input#new_list_name {
   margin-bottom: 5px;
 }
@@ -227,6 +240,33 @@ input#new_list_name {
 div.active_drop_list {
   background: lightblue;
 }
+
+/* new cards form */
+
+#new-card-form {
+  height: auto;
+}
+#card_form_inputs{
+
+  height: auto;
+}
+#card_title{
+  min-height: 70px;
+  height: auto;
+  margin-bottom: 5px;
+  
+}
+
+#cancel_add_card{
+  border: none;
+  background: lightgray;
+  font-size:1.5em;
+  line-height: 1.8;
+  height: auto;
+  color: #172b4d;
+
+}
+
 </style>
 <div class="container-fluid main_container">
 
@@ -309,6 +349,8 @@ div.active_drop_list {
           </div>
         </div>
          <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+         
+
       </div>
     </div>
     
@@ -332,6 +374,19 @@ div.active_drop_list {
  <!-- columns end List -->   
 </div>
 </div>
+
+
+<div id="new-card-form" class="newCardForm_class" style="display:none;">
+          <!-- Card Form -->
+         <form id="add-newCard-form">
+         
+          <div id="card_form_inputs">
+          <textarea class="form-control" placeholder="enter title for this card..." id="card_title"  style="display:none;"></textarea>
+          <input class="btn btn-primary" id="new_card_submit" type="button" style="display:none;" value="Add Card">
+          <button type="button" id="cancel_add_card" style="display: none;"><i class="fa fa-close" style="font-size: 26"></i></button>
+          </div>
+         </form>
+</div>
 <script>
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -350,7 +405,7 @@ const addNewListsubmit = document.getElementById("new_list_submit");
 
 const canelAddNewList = document.getElementById("cancel_add_list");
 
-
+const newCardForm = document.getElementById("new-card-form"); 
   
 /* Helper Functions */
  
@@ -423,26 +478,22 @@ function formatAMPM(date) {
      targetList.classList.add("active_drop_list");
      
      
+     
      // this part for height of dropped effect
      if (lastTarget != targetList){
      
        if (lastTargetContainer){
          lastTargetContainer.style.height = "auto";
        }
+
        lastTargetContainer = targetListCardsContainer;
        lastTarget = targetList;
-       targetListCardsContainer.style.height = targetListCardsContainer.offsetHeight  + dragedElm.offsetHeight + "px";
+       let containerHeight = targetListCardsContainer.offsetHeight;
+       targetListCardsContainer.style.height = containerHeight  + dragedElm.offsetHeight + "px";
      };
-
-     //targetList.style.height = targetList.offsetHeight  + targetList.offsetHeight + "px";
- 
-        
-
-
      
-     //targetList.style.background = secondColor;
+     /* this check if the height effect not set for any reason it will set it*/
 
-     
      console.log("You are going to move the element to a new menu, " + target_list_id);
      setCardsMetaData();
      return true;
@@ -475,6 +526,7 @@ function dragLeave(event) {
          });  
      };
   }
+
 };
 
 
@@ -537,6 +589,7 @@ function dragLeave(event) {
       }
        
        target_cards_container.appendChild(dragentElement);
+       setCardsMetaData();
         break;
       };
       if (loopIndex > 5000) {
@@ -549,11 +602,29 @@ function dragLeave(event) {
    data = null;
    return true;
  };
-
+ 
+   function clearDropEffect() {
+     lastTargetContainer = null;
+     if (lastTargetContainer){
+     lastTargetContainer.style.height = "auto";
+     console.log('yes');
+     };
+     
+     /* remove active class dropend */
+     let old_active = document.querySelectorAll("div.active_drop_list");
+     if (old_active.length > 0){
+     
+         old_active.forEach( (oldactive)=> {
+            oldactive.classList.remove("active_drop_list");
+         });  
+     };
+     return true;
+  
+  }
 
   /* Classes  */
 
-  /* New List Class */
+/* New List Class */
 class TodoList {
   constructor(title) {
     this.title = title;
@@ -631,6 +702,8 @@ class TodoList {
     
   }
  };
+ 
+ 
 
 /* Objects */
 
@@ -677,28 +750,130 @@ let todoSystem = {
        if (listTitle != ""){
          // Create new listMenu Template;
          let todoList = new TodoList(listTitle);
+         // create new Todo List
          todoList.listTemplate();
          todoSystem.createListEditClose();
          setCardsMetaData();
          return true;
        };
        return false;
-   }
+   },  
+   createCardOpen: (newCardForm, title, cid)=> {
+       /* Here We Send JS Request To Create new Menu */
+                 // new task title
+         newCardForm.querySelector("#card_title").setAttribute("data-list-title", title);
+         newCardForm.querySelector("#card_title").setAttribute("data-list-id", cid);
+         newCardForm.querySelector("#new_card_submit").setAttribute("data-list-title", title);
+         newCardForm.querySelector("#new_card_submit").setAttribute("data-list-id", cid);
+         newCardForm.querySelector("form").setAttribute("data-list-title", title);
+         newCardForm.querySelector("form").setAttribute("data-list-id", cid);
+         newCardForm.setAttribute("data-list-title", title);
+         newCardForm.setAttribute("data-list-id", cid);
+         
+         // show title input
+         newCardForm.querySelector("#card_title").style.display = "block";
+         // show form buttons
+         newCardForm.querySelector("#new_card_submit").style.display = "inline";
+         newCardForm.querySelector("#cancel_add_card").style.display = "inline";
+         
+         
+         return newCardForm;
+         
+
+   },
+   createCardClose: (event)=> {
+
+   },
+   /* Create New Card Template all task cards data */
+   taskCardTemplate(last_order) {
+      // task stores like this in db
+      let newCardContainer = document.createElement("div");
+      newCardContainer.classList.add("card_container");
+      let newCard = document.createElement("div");
+      newCard.classList.add("card","task_card");
+      
+      // set the card order this also will be saved in db
+      newCardContainer.setAttribute("data-card-order", last_order);
+      newCardContainer.style.order = last_order;
+      newCard.innerText = "My Order: " + last_order;
+      newCardContainer.appendChild(newCard);
+      
+      return newCardContainer;
+      
+   },
+
+   /* Create New Card */
+   addNewCard: (event, card)=> {
    
-};
+       let card_parentContainertitle = event.target.getAttribute("data-list-title");
+       let card_parentContainerId = event.target.getAttribute("data-list-id");
+        let card_parentContainer = document.getElementById(card_parentContainerId);
+        let cardsContainer = document.querySelector(`#${card_parentContainerId} .cards_container`);
+        
+        // Add new Card form
+        
+         event.target.style.display = "none";
+         //let listBody = card_parentContainer.querySelector(".card_body");
 
+         newCardForm.style.display = "block";
+         
 
+         
+         
+         
+         // show the form to get the data 
+         let UpdatedForm = todoSystem.createCardOpen(newCardForm, card_parentContainertitle, card_parentContainerId);
+         card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
+        
+        if (cardsContainer){
+          let allTasks = document.querySelectorAll(`#${card_parentContainerId} .cards_container .card_container`);
+          let last_order = 0;
+          if (allTasks) {
+            last_order = allTasks.length;
+          }
+          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order));
+          setCardsMetaData();
+          return true;
+        }
+        
+        return false;
+   
+}
+}
+
+  
+ 
 
   addNewListBtn.addEventListener("click", todoSystem.createListEditOpen);
   canelAddNewList.addEventListener("click", todoSystem.createListEditClose);  
-  addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu); 
+  addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
+  
+  addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
  
   /*  this responsble for restart the system important to use after any updates */
   /* Apply order to cards   loop over columns [lists] and then get the cards to set the order of cards and status */
   
+  // clear drop effects 
+  function clearDropEffect(){
+      if (lastTargetContainer){
+       lastTargetContainer.style.height = "auto";
+       console.log('yes');
+     };
+     
+     /* remove active class dropend */
+     let old_active = document.querySelectorAll("div.active_drop_list");
+     if (old_active.length > 0){
+     
+         old_active.forEach( (oldactive)=> {
+            oldactive.classList.remove("active_drop_list");
+         });
+     };
+     
+  }
   function setCardsMetaData() {
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
+        
     
     let cards_id = 1;
     let list_id = 1;
@@ -713,9 +888,13 @@ let todoSystem = {
        list.style.order = lIndex;      
        
          
+       // add Listeners for tasks
        list.addEventListener("dragover", allowDrop);
        list.addEventListener("drop",  drop);
        list.addEventListener("dragleave",  dragLeave);
+       list.addEventListener("dragend",  clearDropEffect);
+       
+       
        
        
        /* if this default list created with board add the border time stamp*/
@@ -728,8 +907,13 @@ let todoSystem = {
        // asgin the list-title to the container elements
        let listTitle = list.querySelector("div.card-title");
        let listBody = list.querySelector("div.card-body");
-       let listCardBtn = list.querySelector("div.add_new_card_btn");
-       let listCardsContainer = list.querySelector("div.cards_container");     
+       let listCardBtn = list.querySelector("button.add_new_card_btn");
+       let listCardsContainer = list.querySelector("div.cards_container");
+       let listForm = list.querySelector("div.new-card-form");
+       
+       // add event on create new task button
+       listCardBtn.addEventListener("click", todoSystem.addNewCard);
+       
 
        
        let listTitleBackend = list.getAttribute("data-list-title");
@@ -753,6 +937,27 @@ let todoSystem = {
           listCardBtn.setAttribute("data-list-id", currentListId);
        };
        
+       
+       // update form
+       
+       if (listForm) {
+          
+          // new task title
+         listForm.querySelector("#card_title").setAttribute("data-list-title", listTitleBackend);
+          listForm.querySelector("#card_title").setAttribute("data-list-id", currentListId);
+          
+          
+          listForm.querySelector("#new_card_submit").setAttribute("data-list-title", listTitleBackend);
+         listForm.querySelector("#new_card_submit").setAttribute("data-list-id", currentListId);
+         
+         listForm.querySelector("form").setAttribute("data-list-title", listTitleBackend);
+         
+         listForm.querySelector("form").setAttribute("data-list-id", currentListId);
+         listForm.setAttribute("data-list-title", listTitleBackend)
+         listForm.setAttribute("data-list-id", currentListId) 
+         }
+         
+       
        // keep the Add New List Button Have Last Order Always
        addNewListContainer.style.order = lIndex +1;
     
@@ -763,12 +968,16 @@ let todoSystem = {
           // asgin the list Title to the card
           card.setAttribute("data-list-id", currentListId);
           card.setAttribute("data-list-title", list.getAttribute("data-list-title"));
-          card.setAttribute("id", `card-${cards_id}`);
+          card.setAttribute("id", `card-container-${cards_id}`);
           
                     
           // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
           card.style.order = cIndex;
+          
+          /* add id to card */
+          card.querySelector(".task_card").setAttribute("id", `card-id-${cards_id}`)
+          
           
           
           
@@ -791,6 +1000,8 @@ let todoSystem = {
     
   };
   setCardsMetaData();
+  
+  
 
 
 
