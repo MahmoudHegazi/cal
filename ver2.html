@@ -575,8 +575,9 @@ border: 2px solid #344563;
             <!-- Create New Label -->
             
             <div id="add_new_label_container" style="display:none;">
+               <div id="label_notes" class="alert alert-success" style="display: none;">x</div>
             
-               <input class="form-control" placeholder="enter label title...">  
+               <input id="label_title" class="form-control" placeholder="enter label title...">  
               <div class="colors label_icon green" data-color="green">
                <input name="label_color" value="green" type="radio" style="width:100%;">
               </div>
@@ -605,8 +606,12 @@ border: 2px solid #344563;
            </div>
             
             
+         
             
-            <div class="label_btn" id="add_newlabel">Add Label</div>
+            
+            <div class="label_btn" id="add_newlabel">Add New Label</div>
+            
+            <div class="label_btn" id="add_newlabel_step2" style="display:none;">Submit Label</div>
            
           </div>
             
@@ -643,8 +648,17 @@ const newCardDefaultHolder = document.getElementById("form_template_holder");
 const newCardForm = document.getElementById("new-card-form"); 
 const newCardMenu = document.getElementById("card_add_menu"); 
 const labelsContainer = document.getElementById("label_container_div"); 
-
 const labelContainers = document.querySelectorAll("div.label_container");
+const customLabelContainer = document.querySelector("div#add_new_label_container");
+
+const labelAlert = document.getElementById("label_notes"); 
+const addNewLabelName = document.getElementById("label_title"); 
+const addNewLabelBtn = document.getElementById("add_newlabel"); 
+let submitCreateLabel = document.getElementById("add_newlabel_step2");
+
+
+
+
 
 
 let labelsGroup = document.getElementById("label_group1"); 
@@ -663,9 +677,30 @@ const allLabelsColors = document.querySelectorAll(".colors");
 
 
 
-const addNewLabelBtn = document.getElementById("add_newlabel"); 
 
 
+function newLabelSubmit(data){
+
+   /* Add New Label Submit */
+   let color_class = data.color;
+   let label_title = data.title;
+   let container = document.createElement("div");
+   let label = document.createElement("div");
+   container.classList.add("label_container");
+   label.classList.add("label_icon", color_class, "selectable");
+   
+   label.setAttribute("data-list-id", data.list_id);
+   label.setAttribute("data-list-title", data.list_title);
+   label.innerText = label_title;
+   container.appendChild(label);
+   labelsGroup.appendChild(container);
+   labelMenuLevel1();
+   
+};
+
+function showLabelStep2(){
+
+}
 function addNewLabel(){
 
    /*
@@ -684,6 +719,16 @@ function addNewLabel(){
    // step1 hide the card label select list
    labelsGroup.style.display = "none";
    addNewLabelContainer.style.display = "block";
+   // hide first step btn 
+   addNewLabelBtn.style.display = "none";
+   // show second submit btn
+   submitCreateLabel.style.display =  "block";
+   // get the values
+
+   
+   
+
+   
    // step2 show labels create form
    
    /*
@@ -713,6 +758,20 @@ function hidelabelsContainer(){
 
 }
 
+
+function labelMenuLevel1(){
+  
+   if (labelOpen === true) {
+   
+      customLabelContainer.style.display = "none";
+      labelsContainer.style.display = "block";      
+      addNewLabelBtn.style.display = "block";
+      submitCreateLabel.style.display = "none";
+      labelOpen = true;
+   }
+  return false;
+
+}
 
 function hideLabels(){
   
@@ -1150,6 +1209,8 @@ let todoSystem = {
       newCard.innerText = "My Order: " + last_order;
       newCardContainer.appendChild(newCard);
       
+     
+      
       return newCardContainer;
       
    },
@@ -1213,8 +1274,49 @@ let todoSystem = {
         }
         
         return false;
+   },
+   /*  create new label*/
+   addNewLabel: ()=> {
    
-}
+     let allLabeleRadios = document.querySelectorAll("#add_new_label_container .colors input[name='label_color']");
+     
+      
+     if (!addNewLabelName.value){
+       labelAlert.style.display = "block";
+       labelAlert.classList.add("alert-danger");
+       labelAlert.innerText = "Please Enter title For the label";
+       return false;
+     }
+     let colorSelected = false;
+     let color_class = "";
+     allLabeleRadios.forEach( (radioelm)=> {
+        if (radioelm.checked){
+          colorSelected = true;
+          color_class = radioelm.value;
+        } 
+     });
+     
+     // if user not selected color
+     if (colorSelected == false){
+       labelAlert.style.display = "block";
+       labelAlert.classList.add("alert-danger");
+       labelAlert.innerText = "Please Select Color"; 
+       return false;
+     }
+     // if added new label write message and back to labels
+     labelAlert.innerText = "";
+     labelAlert.style.display = "none"
+      /* Here You Can Send Label Data to database */
+     let dataListId = addNewLabelName.getAttribute("data-list-id");
+     let dataListTitle = addNewLabelName.getAttribute("data-list-title");
+     
+     let data = {title: addNewLabelName.value, color:color_class, list_id:dataListId, list_title:dataListTitle};
+     /* add the label and set the data to html */
+     newLabelSubmit(data);
+     /* update system and set meta this can send fresh request of app state to server */
+     setCardsMetaData();
+     
+   }
 }
 
   
@@ -1234,7 +1336,6 @@ let todoSystem = {
   function clearDropEffect(){
       if (lastTargetContainer){
        lastTargetContainer.style.height = "auto";
-       console.log('yes');
      };
      
      /* remove active class dropend */
@@ -1281,7 +1382,7 @@ let todoSystem = {
        };
        
        
-       // asgin the list-title to the container elements
+       // asgin the list-title to the container elements (Asgin to NewLabels)
        let listTitle = list.querySelector("div.card-title");
        let listBody = list.querySelector("div.card-body");
        let listCardBtn = list.querySelector("button.add_new_card_btn");
@@ -1292,19 +1393,30 @@ let todoSystem = {
        
        /* Asgin the list id to the card form labels */
        let checkForm = list.querySelector("#add-newCard-form");
-       let checkFormLabels = list.querySelectorAll("#add_new_label_container .colors");
+       
+       // New Label title input
+       let formNameInput = document.querySelector("#label_title");
+       
+       if (formNameInput){
+         formNameInput.setAttribute("data-list-id", currentListId);
+         formNameInput.setAttribute("data-list-title", getListTitle);       
+       }
+
+       let checkFormLabels = list.querySelectorAll("#add_new_label_container .colors input[type='radio']");
        if (checkFormLabels){
          checkFormLabels.forEach(
            (card_select)=> {
                
                card_select.setAttribute("data-list-id", currentListId);
                card_select.setAttribute("data-list-title", getListTitle);
-               
-               
-               
                }
-         )
-       }
+         );
+         
+         submitCreateLabel.addEventListener("click", todoSystem.addNewLabel)
+       };
+       
+       // submitCreateLabel.add
+
        
        // add for input too
         
