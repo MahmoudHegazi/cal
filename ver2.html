@@ -1,5 +1,4 @@
   
-  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -424,6 +423,10 @@ border: 2px solid #344563;
 h4#selectTitle {
  margin-top:5px;margin-bottom:5px;
 }
+
+#add_new_label_container{
+ margin-top: 10px;
+}
 </style>
 <div class="container-fluid main_container">
 
@@ -584,6 +587,7 @@ h4#selectTitle {
             <div id="add_new_label_container" style="display:none;">
                <div id="label_notes" class="alert alert-success" style="display: none;">x</div>
             
+               
                <input id="label_title" class="form-control" placeholder="enter label title...">  
                
                <h4 id="selectTitle">Select Label: </h4>
@@ -657,6 +661,9 @@ const canelAddNewCard = document.getElementById("cancel_add_card");
 const newCardDefaultHolder = document.getElementById("form_template_holder"); 
 const newCardForm = document.getElementById("new-card-form"); 
 const newCardMenu = document.getElementById("card_add_menu"); 
+const newCardSubmit = document.getElementById("new_card_submit");
+const cardTitle_input = document.getElementById("card_title");
+
 const labelsContainer = document.getElementById("label_container_div"); 
 const labelContainers = document.querySelectorAll("div.label_container");
 const customLabelContainer = document.querySelector("div#add_new_label_container");
@@ -770,7 +777,55 @@ function newLabelSubmit(data){
    
 };
 
+/* Add New Card submit */
+function submitNewCard(event){
 
+          
+          // get the data and append the card
+          let card_parentContainerId = event.target.getAttribute("data-list-id");
+          let card_parentContainer = document.getElementById(card_parentContainerId);
+          let cardsContainer = document.querySelector(`#${card_parentContainerId} .cards_container`);
+          
+          
+          // New Card Submit Data 
+          let cardTitle = cardTitle_input.value;
+          
+          let card_label_color = "";
+          let card_label_title = "";   
+          if (cardTitle.trim() == ""){
+            return false;
+          }
+          
+          
+          let cardCheckboxs = document.querySelectorAll("#label_group1 .label_icon input[name='selected_color']");
+          
+          for (var i=0; i<cardCheckboxs.length; i++) {
+             if (cardCheckboxs[i].checked){
+                card_label_color = cardCheckboxs[i].value;
+                card_label_title = cardCheckboxs[i].getAttribute("data-label-title");
+                break;
+             }
+          }
+
+          let allCards = cardsContainer.querySelectorAll("div.card_container");
+          let last_order = 0;
+          if (allCards){
+             last_order = allCards.length;
+          }
+          
+          
+          alert(card_label_color + card_label_title + last_order + cardTitle + "listid " + card_parentContainerId);
+          
+          // All New Card Data
+          let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId};
+          
+          //alert(card_parentContainer);
+          //card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
+          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order, newCardData));
+}
+
+
+newCardSubmit.addEventListener("click", submitNewCard);
 function addNewLabel(){
  
    // step1 hide the card label select list
@@ -1268,7 +1323,12 @@ let todoSystem = {
 
    },
    /* Create New Card Template all task cards data */
-   taskCardTemplate(last_order) {
+   taskCardTemplate(last_order, newCardData) {
+   
+   /*
+   let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId};
+   */
+   
       // task stores like this in db
       let newCardContainer = document.createElement("div");
       newCardContainer.classList.add("card_container");
@@ -1277,9 +1337,16 @@ let todoSystem = {
       
       // set the card order this also will be saved in db
       newCardContainer.setAttribute("data-card-order", last_order);
+      
+      // set the label title and color to card
+      newCardContainer.setAttribute("data-label-title", newCardData.label_title);
+      newCardContainer.setAttribute("data-label-color", newCardData.label_color);
       newCardContainer.style.order = last_order;
-      newCard.innerText = "My Order: " + last_order;
+      newCard.innerText = newCardData.title;
       newCardContainer.appendChild(newCard);
+      
+      newCard.setAttribute("data-label-title", newCardData.label_title);
+      newCard.setAttribute("data-label-color", newCardData.label_color);
       
      
       
@@ -1288,7 +1355,7 @@ let todoSystem = {
    },
 
    /* Create New Card */
-   addNewCard: (event, card)=> {
+   addNewCard: (event)=> {
 
    
        let usedBtn = event.target;
@@ -1305,10 +1372,10 @@ let todoSystem = {
          
        }
        
-           if (labelOpen === true) {
+       if (labelOpen === true) {
              labelsContainer.style.display = "none";
              labelOpen = false;
-          }
+       }
        
        isCreateCardOpen = true;
        
@@ -1339,8 +1406,15 @@ let todoSystem = {
             last_order = allTasks.length;
           }
           
-          /* // asgin the card template with all meta and append it to the body
-          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order)); */
+          /*
+          let card_parentContainerId = usedBtn.getAttribute("data-list-id");
+          let card_parentContainer = document.getElementById(card_parentContainerId);
+          card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
+          cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order));
+          */
+          
+          /* // asgin the card template with all meta and append it to the body */
+          //cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order));
           setCardsMetaData();
           return true;
         }
@@ -1398,6 +1472,8 @@ let todoSystem = {
   canelAddNewList.addEventListener("click", todoSystem.createListEditClose);  
   addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
   canelAddNewCard.addEventListener("click", todoSystem.createCardClose);
+  
+
     
   
  
