@@ -1,4 +1,5 @@
   
+  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -420,7 +421,9 @@ margin-top: 10px;
 border: 2px solid #344563;
 }
 
-
+h4#selectTitle {
+ margin-top:5px;margin-bottom:5px;
+}
 </style>
 <div class="container-fluid main_container">
 
@@ -553,6 +556,7 @@ border: 2px solid #344563;
            <!-- this for select Card label -->
            <div id="label_group1" class="label_group">
            <textarea class="new_card_textare" class="form-control" placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
+            <h4 id="selectTitle">Select Label: </h4>
             <div class="label_container"><div class="label_icon green selectable">
             <input name="selected_color" value="green" type="radio"> <span>Copy Request</span></div></div>
             <div class="label_container"><div class="label_icon red selectable">
@@ -581,6 +585,8 @@ border: 2px solid #344563;
                <div id="label_notes" class="alert alert-success" style="display: none;">x</div>
             
                <input id="label_title" class="form-control" placeholder="enter label title...">  
+               
+               <h4 id="selectTitle">Select Label: </h4>
               <div class="colors label_icon green" data-color="green">
                <input name="label_color" value="green" type="radio" style="width:100%;">
               </div>
@@ -606,6 +612,7 @@ border: 2px solid #344563;
               <div class="colors label_icon darkblue" data-color="darkblue">
                 <input name="label_color" value="darkblue" type="radio" style="width:100%;">
               </div>
+              
            </div>
             
             
@@ -615,7 +622,7 @@ border: 2px solid #344563;
             <div class="label_btn" id="add_newlabel">Add New Label</div>
             
             <div class="label_btn" id="add_newlabel_step2" style="display:none;">Submit Label</div>
-           
+           <div class="label_btn" id="show_labels_btn" style="display:none;">Cancel</div>
           </div>
             
 
@@ -664,6 +671,9 @@ let stepOneContiner = document.getElementById("label_group1");
 let stepTwoContiner = document.getElementById("add_new_label_container");
 
 
+let showLabelsBtn = document.getElementById("show_labels_btn");
+
+
 //labelsContainer.style.display = "block";
 
 
@@ -687,6 +697,43 @@ const allLabelsColors = document.querySelectorAll(".colors");
 
 function newLabelSubmit(data){
 
+   /* This step Check IF New Label Title and color Selected exist or not*/
+   let existingLabelsTitls = document.querySelectorAll(".label_icon.selectable");   
+   let equalFound = false;   
+   if (existingLabelsTitls){
+     existingLabelsTitls.forEach((labelText)=>{
+     
+        if (labelText.querySelector("input").value == data.color) {
+        
+          /* If There A new Label with same title and color this new label will not created */
+          if (labelText.innerText.trim() == data.title.trim()){
+             equalFound = true;
+              console.log("found Label With same Color and title" + equalFound);
+          } else {
+             equalFound = false;
+          }
+           
+        }
+
+     });
+     
+     }
+  
+  
+   
+   /* if Titiel with same color exist show alert message an don't submit */
+   
+   if (equalFound){
+      labelAlert.style.display = "block";
+      labelAlert.innerText = "Submit Falid: A Label With Same Title And Color Found";
+      return false;
+   } else {
+      labelAlert.style.display = "none";
+      labelAlert.innerText = "";   
+   }
+   
+   
+  // alert(labelText.querySelector("input").value);
    /* Add New Label Submit */
    let color_class = data.color;
    let label_title = data.title;
@@ -716,6 +763,8 @@ function newLabelSubmit(data){
    //labelContainers.style.display ="block";
    setCardsMetaData();
    // set hide labels to true to show level 1 menu
+   labelAlert.style.display = "none";
+   showLabelsBtn.style.display = "none";
    hidelabelsContainer(true);
    
    
@@ -725,18 +774,25 @@ function newLabelSubmit(data){
 function addNewLabel(){
  
    // step1 hide the card label select list
+
    labelsGroup.style.display = "none";
    addNewLabelContainer.style.display = "block";
    // hide first step btn 
    addNewLabelBtn.style.display = "none";
    // show second submit btn
    submitCreateLabel.style.display =  "block";
-   
 
+   showLabelsBtn.style.display = "block";
+   showLabelsBtn.addEventListener("click", ()=> {
+       showLabelsBtn.style.display = "none";
+       hidelabelsContainer(true);
+       return true;
+   });
    labelsContainer.style.display = "block";
    customLabelContainer.style.display = "block";
    // get the values
    current_step = "two";
+   return true;
    
 }
 
@@ -763,7 +819,8 @@ function hidelabelsContainer(set=false){
    } else {
       
       labelsContainer.style.display = "none";
-      
+      labelAlert.style.display = "none";
+      showLabelsBtn.style.display = "none";
       
       labelOpen = false;
    }
@@ -1174,6 +1231,9 @@ let todoSystem = {
          // show back the add new card for the selected list
          todoSystem.newCardBtn.style.display = "inline";
          isCreateCardOpen = false;
+         
+         labelAlert.style.display = "none";
+         showLabelsBtn.style.display = "none";
          return true;
       
    },
@@ -1318,7 +1378,7 @@ let todoSystem = {
      }
      // if added new label write message and back to labels
      labelAlert.innerText = "";
-     labelAlert.style.display = "none"
+     labelAlert.style.display = "none";
       /* Here You Can Send Label Data to database */     
      let data = {title: addNewLabelName.value, color:color_class};
      /* add the label and set the data to html */
@@ -1411,6 +1471,12 @@ let todoSystem = {
          alllabel_container.forEach( (labelIcon)=> {
             labelIcon.setAttribute("data-list-id", currentListId);
             labelIcon.setAttribute("data-list-title", getListTitle);
+            if (labelIcon.querySelector("input")){
+               labelIcon.setAttribute("data-color", labelIcon.querySelector("input").value)
+               labelIcon.querySelector("input").setAttribute("data-list-id", currentListId); 
+               labelIcon.querySelector("input").setAttribute("data-list-title", getListTitle);
+               labelIcon.querySelector("input").setAttribute("data-label-title", labelIcon.innerText.trim());
+            };
          });
        }
        
