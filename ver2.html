@@ -1,4 +1,4 @@
-  
+    
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -818,12 +818,18 @@ function submitNewCard(event){
           }
           
           
+
+               
+               
+               
           let cardCheckboxs = document.querySelectorAll("#label_group1 .label_icon input[name='selected_color']");
           
           for (var i=0; i<cardCheckboxs.length; i++) {
              if (cardCheckboxs[i].checked){
                 card_label_color = cardCheckboxs[i].value;
                 card_label_title = cardCheckboxs[i].getAttribute("data-label-title");
+                cardCheckboxs[i].checked = false;
+
                 break;
              }
           }
@@ -893,7 +899,19 @@ function hidelabelsContainer(set=false){
     
     if (set == true){
       addNewLabelName.value = "";
-    }
+            /* Remove selected checked*/
+           let cardCheckboxs = document.querySelectorAll("#add_new_label_container .label_icon input[name='label_color']");
+      
+         for (var i=0; i<cardCheckboxs.length; i++) {
+            if (cardCheckboxs[i].checked){
+                   cardCheckboxs[i].checked = false;
+                   break;
+            }
+         };
+         
+      };
+
+
    if (labelOpen === false || set == true) {
       currentStep = "one";
       labelsContainer.style.display = "block";
@@ -1322,7 +1340,35 @@ let todoSystem = {
          
          labelAlert.style.display = "none";
          showLabelsBtn.style.display = "none";
-         return true;
+         
+         /* Remove selected checked New Label*/
+      let cardCheckboxs = document.querySelectorAll("#add_new_label_container .label_icon input[name='label_color']");
+      
+      
+      for (var i=0; i<cardCheckboxs.length; i++) {
+         if (cardCheckboxs[i].checked){
+                cardCheckboxs[i].checked = false;
+                
+                break;
+         }
+      };
+      
+      /* remove selected Color labels */
+
+let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[name='selected_color']");
+      
+         for (var n=0; n<cardCheckboxs1.length; n++) {
+         
+            if (cardCheckboxs1[n].checked){
+                   cardCheckboxs1[n].checked = false;
+                   break;
+                   
+            }
+         };
+         
+         
+      
+      return true;
       
    },
    createCardOpen: (title, cid)=> {
