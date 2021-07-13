@@ -1,5 +1,4 @@
   
-  
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -554,20 +553,24 @@ border: 2px solid #344563;
            <!-- this for select Card label -->
            <div id="label_group1" class="label_group">
            <textarea class="new_card_textare" class="form-control" placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
-            <div class="label_container"><div class="label_icon green selectable">Copy Request</div></div>
-            <div class="label_container"><div class="label_icon red selectable">One more step</div></div>
+            <div class="label_container"><div class="label_icon green selectable">
+            <input name="selected_color" value="green" type="radio"> <span>Copy Request</span></div></div>
+            <div class="label_container"><div class="label_icon red selectable">
+            <input name="selected_color" value="red" type="radio"> 
+            <span>One more step</span></div></div>
   
   
-  <div class="label_container"><div class="label_icon blue selectable">Proiority </div></div>
+  <div class="label_container"><div class="label_icon blue selectable"><input name="selected_color" value="blue" type="radio"> <span>Proiority</span> </div></div>
  
-            <div class="label_container"><div class="label_icon orange selectable">Desgin Team</div></div>
+            <div class="label_container"><div class="label_icon orange selectable"><input name="selected_color" value="orange" type="radio">  <span>Desgin Team</span></div></div>
             
             
             
-            <div class="label_container"><div class="label_icon purple selectable">Proudct Marketing</div></div>
-            <div class="label_container"><div class="label_icon lightblue selectable">Help</div></div>
-            <div class="label_container"><div class="label_icon lightgreen selectable">Meeting</div></div>
-            <div class="label_container selectable"><div class="label_icon darkblue selectable">Important</div></div>
+            <div class="label_container"><div class="label_icon purple selectable"> <input name="selected_color" value="purple" type="radio"> <span>Proudct Marketing</span></div></div>
+            <div class="label_container"><div class="label_icon lightblue selectable">
+             <input name="selected_color" value="lightblue" type="radio"> <span>Help</span></div></div>
+            <div class="label_container"><div class="label_icon lightgreen selectable"><input name="selected_color" value="lightgreen" type="radio"> <span>Meeting</span></div></div>
+            <div class="label_container selectable"><div class="label_icon darkblue selectable"> <input name="selected_color" value="darkblue" type="radio"> <span>Important</span></div></div>
           </div>
           
           <!--  card label end ----->
@@ -657,8 +660,11 @@ const addNewLabelBtn = document.getElementById("add_newlabel");
 let submitCreateLabel = document.getElementById("add_newlabel_step2");
 
 
+let stepOneContiner = document.getElementById("label_group1");
+let stepTwoContiner = document.getElementById("add_new_label_container");
 
 
+//labelsContainer.style.display = "block";
 
 
 let labelsGroup = document.getElementById("label_group1"); 
@@ -686,36 +692,38 @@ function newLabelSubmit(data){
    let label_title = data.title;
    let container = document.createElement("div");
    let label = document.createElement("div");
+   // create input for select color label
+   
+   let newspan = document.createElement("span");
+   let labelCheck = document.createElement("input");
+   labelCheck.setAttribute("name", "selected_color");
+   labelCheck.setAttribute("type", "radio");
+   labelCheck.setAttribute("value", color_class);
+   
    container.classList.add("label_container");
    label.classList.add("label_icon", color_class, "selectable");
    
-   label.setAttribute("data-list-id", data.list_id);
-   label.setAttribute("data-list-title", data.list_title);
-   label.innerText = label_title;
+   label.setAttribute("data-color", color_class);
+
+   newspan.appendChild(labelCheck);
+   newspan.innerHTML = label_title;
+   label.appendChild(labelCheck);
+   label.appendChild(newspan);
+   
    container.appendChild(label);
    labelsGroup.appendChild(container);
    labelMenuLevel1();
+   //labelContainers.style.display ="block";
+   setCardsMetaData();
+   // set hide labels to true to show level 1 menu
+   hidelabelsContainer(true);
+   
    
 };
 
-function showLabelStep2(){
 
-}
 function addNewLabel(){
-
-   /*
-
-   let color_class = avail_colorsClass[2];
-   let label_title = "Nice"
-   let container = document.createElement("div");
-   let label = document.createElement("div");
-   container.classList.add("label_container");
-   label.classList.add("label_icon", color_class, "selectable");
-   label.innerText = label_title;
-   container.appendChild(label);
-   labelsGroup.appendChild(container);
-   */
-   
+ 
    // step1 hide the card label select list
    labelsGroup.style.display = "none";
    addNewLabelContainer.style.display = "block";
@@ -723,17 +731,12 @@ function addNewLabel(){
    addNewLabelBtn.style.display = "none";
    // show second submit btn
    submitCreateLabel.style.display =  "block";
+   
+
+   labelsContainer.style.display = "block";
+   customLabelContainer.style.display = "block";
    // get the values
-
-   
-   
-
-   
-   // step2 show labels create form
-   
-   /*
-   labelsGroup.innerHTML += `<div class="label_container"><div class="label_icon green selectable">Meeting</div>`;
-   */
+   current_step = "two";
    
 }
 
@@ -744,15 +747,24 @@ addNewLabelBtn.addEventListener("click", addNewLabel);
 
 
 let labelOpen = false;
+let currentStep = false;
 
-
-function hidelabelsContainer(){
-  
-   if (labelOpen === false) {
+function hidelabelsContainer(set=false){
+    
+   if (labelOpen === false || set == true) {
+      currentStep = "one";
       labelsContainer.style.display = "block";
+      stepOneContiner.style.display = "block";
+      customLabelContainer.style.display = "none";
+      addNewLabelBtn.style.display = "block";
+      submitCreateLabel.style.display =  "none";
+      
       labelOpen = true;
    } else {
+      
       labelsContainer.style.display = "none";
+      
+      
       labelOpen = false;
    }
 
@@ -763,8 +775,8 @@ function labelMenuLevel1(){
   
    if (labelOpen === true) {
    
-      customLabelContainer.style.display = "none";
-      labelsContainer.style.display = "block";      
+      
+      labelsGroup.style.display ="block";
       addNewLabelBtn.style.display = "block";
       submitCreateLabel.style.display = "none";
       labelOpen = true;
@@ -1296,6 +1308,7 @@ let todoSystem = {
         } 
      });
      
+     
      // if user not selected color
      if (colorSelected == false){
        labelAlert.style.display = "block";
@@ -1306,15 +1319,14 @@ let todoSystem = {
      // if added new label write message and back to labels
      labelAlert.innerText = "";
      labelAlert.style.display = "none"
-      /* Here You Can Send Label Data to database */
-     let dataListId = addNewLabelName.getAttribute("data-list-id");
-     let dataListTitle = addNewLabelName.getAttribute("data-list-title");
-     
-     let data = {title: addNewLabelName.value, color:color_class, list_id:dataListId, list_title:dataListTitle};
+      /* Here You Can Send Label Data to database */     
+     let data = {title: addNewLabelName.value, color:color_class};
      /* add the label and set the data to html */
      newLabelSubmit(data);
+
      /* update system and set meta this can send fresh request of app state to server */
      setCardsMetaData();
+     
      
    }
 }
@@ -1374,6 +1386,7 @@ let todoSystem = {
        
        
        
+      
        
        /* if this default list created with board add the border time stamp*/
        if (list.classList.contains("border-default-list")){       
@@ -1388,14 +1401,26 @@ let todoSystem = {
        let listCardBtn = list.querySelector("button.add_new_card_btn");
        let listCardsContainer = list.querySelector("div.cards_container");
        let listForm = list.querySelector("div.new-card-form");
-       
        let getListTitle = list.getAttribute("data-list-title");
+       
+       
+        
+        
+       let alllabel_container = list.querySelectorAll("#label_group1 .label_container .label_icon");
+       if (alllabel_container.length){
+         alllabel_container.forEach( (labelIcon)=> {
+            labelIcon.setAttribute("data-list-id", currentListId);
+            labelIcon.setAttribute("data-list-title", getListTitle);
+         });
+       }
+       
        
        /* Asgin the list id to the card form labels */
        let checkForm = list.querySelector("#add-newCard-form");
        
        // New Label title input
        let formNameInput = document.querySelector("#label_title");
+       
        
        if (formNameInput){
          formNameInput.setAttribute("data-list-id", currentListId);
