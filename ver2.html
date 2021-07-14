@@ -498,9 +498,6 @@ h4#selectTitle {
 
 }
 
-.model_label {
- 
-}
 
 /* model css */
 
@@ -556,7 +553,7 @@ h4#selectTitle {
   justify-content: center;
   align-items: flex-start;
   min-height: 600px;
-  opacity: .8;
+ /* opacity: ;*/
 }
 #model_main {
   width: 75%;
@@ -573,7 +570,10 @@ button.close{
   opacity: 1;
   
 }
-
+button.background_hidden {
+  background: transparent;
+  border: 2px solid black;
+}
 button.close:hover {
   opacity: .8;
   color: white;
@@ -592,18 +592,46 @@ button.close:hover {
 }
 
 .aside-flex-item {
-  margin-bottom: 10px;
+  margin-bottom: 15px;
   width: 100%;
 }
 .aside-flex-item .aside_button{
-  background: rgb(230 230 230);
+  background: gainsboro;
   padding: 5px;
   margin-top: 5px;
   cursor: pointer;
   border-radius: 6px;
+  color: black;
 }
 
-.aside-flex-item
+.aside-flex-item .aside_button:hover {
+  background: black;
+  color: white;
+}
+
+.label-containers .model_label {
+  display: flex;
+  justify-conent: center;
+  text-align: center;
+  align-items: center;
+ 
+  width: fit-content;
+  min-width: 70px;
+   max-width: 70%;
+  color: white;
+  font-weight: bolder;
+  overflow: hidden;
+  border-radius: 10px;
+  font-wieght: bolder;
+  font-size: 16px;
+}
+
+.label-containers .label_title_text {
+  color: white;
+
+}
+
+
 </style>
 <div class="container-fluid main_container">
 
@@ -854,7 +882,7 @@ button.close:hover {
          <div class="container">
            <h5>Labels: </h5>
            <div class="container label-containers">
-             <div class="model_label green"></div>
+             <div class="model_label green"><span id="label_title_text">Hello</span></div>
            </div>
          <div class="description_container">
            <h4><i class="title_fa fa fa-pencil"></i>Description: </h4>
