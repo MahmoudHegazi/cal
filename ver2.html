@@ -868,7 +868,7 @@ button.close:hover {
         <div class="modal-header">
           <h4 class="modal-title">
           <i class="title_fa fa fa-window-maximize	
-"></i>Card Title</h4>
+"></i><span id="model_card_title"></span></h4>
            <button type="button" class="close" data-dismiss="modal"> &times;</button>
         </div>
         
@@ -884,12 +884,14 @@ button.close:hover {
          <div class="container">
            <h5>Labels: </h5>
            <div class="container label-containers">
-             <div class="model_label green"><span id="label_title_text">Hello</span></div>
+             <div class="model_label"><span id="label_title_text"></span></div>
            </div>
          <div class="description_container">
            <h4><i class="title_fa fa fa-pencil"></i>Description: </h4>
+           <p id="ticket_description"></p>
            <textarea id="card_description_input" placeholder="add a more detailed description" class="form-control"
            style="height:100px;"></textarea>
+           <button class="btn btn-default" id="description_save" type="button">Save</button>
         </div>
         
         <div class="activve_container">          
@@ -981,7 +983,12 @@ const addNewLabelName = document.getElementById("label_title");
 const addNewLabelBtn = document.getElementById("add_newlabel"); 
 let submitCreateLabel = document.getElementById("add_newlabel_step2");
 
-
+let modelCardTitle = document.getElementById("model_card_title");
+let model_description = document.getElementById("ticket_description");
+let modelLabel = document.getElementById("label_title_text");
+let modelList = document.getElementById("list-title");
+let description_input = document.getElementById("card_description_input");
+let description_saveBtn = document.getElementById("description_save");
 
 
 let modelCommentInput = document.getElementById("model_comment");
@@ -1008,6 +1015,7 @@ const addNewLabelContainer = document.getElementById("add_new_label_container");
 
 
 const allLabelsColors = document.querySelectorAll(".colors");
+
 
 
 
@@ -1108,6 +1116,7 @@ function submitNewCard(event){
 
           
           // get the data and append the card
+          let card_parentTitle = event.target.getAttribute("data-list-title");
           let card_parentContainerId = event.target.getAttribute("data-list-id");
           let card_parentContainer = document.getElementById(card_parentContainerId);
           let cardsContainer = document.querySelector(`#${card_parentContainerId} .cards_container`);
@@ -1149,7 +1158,7 @@ function submitNewCard(event){
 
           
           // All New Card Data
-          let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId};
+          let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId, listTitle: card_parentTitle};
           
           //alert(card_parentContainer);
           //card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
@@ -1712,23 +1721,58 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let popupTemplate = document.getElementById("myModal1");
       let listId = event.target.getAttribute("data-list-id");
       let parentList = document.getElementById(listId);
-
-      
       let listTitle = parentList.getAttribute("data-list-title");
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
       
+      let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
+      
+      
+      
+      if (currentCard){
+      
+      let currentCardText = currentCard.getAttribute("data-text");
+       modelCardTitle.innerText = currentCardText;
+      } else {
+      
+        modelCardTitle.innerText = "";
+      }
+      
       
       popupTemplate.setAttribute("data-list-title", listTitle);
       popupTemplate.setAttribute("data-list-id", listId);
+      
+      
+      let modelLabelDiv = document.querySelector("#model_main .model_label");
+      if (modelLabelDiv && labelClass){
+         //modelLabelDiv.classList.add("model_label");
+         modelLabelDiv.classList.add(labelClass);
+         document.getElementById("label_title_text").innerText =listTitle;
+
+      } else {
+      
+         modelLabelDiv.className = "";
+         modelLabelDiv.classList.add("model_label");
+         document.getElementById("label_title_text").innerText = "";
+      }
 
       
-      //let labelColor = ;
-      //let cardDate = ;
       
-       
-      let selectedCard = "";
+      modelList.innerText = listTitle;
+      description_saveBtn.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
+      description_saveBtn.setAttribute("data-openbtn-id", openBtn.getAttribute("id"));
+      
+      if (openBtn.getAttribute("data-card-description")){
+          model_description.innerText = openBtn.getAttribute("data-card-description");
+      } else {
+          model_description.innerText = "";
+      }
+      
+      
 
+
+      
+      
       let btnId =  event.target.getAttribute("id");
       openBtn.setAttribute('data-target',"#myModal1");
       popupTemplate.setAttribute("data-eventtarget-id", btnId);
@@ -1750,10 +1794,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       
       let newCard = document.createElement("div");
       newCard.classList.add("card","task_card");
-
-  
       
-      // set the card order this also will be saved in db
+      
+
+// set the card order this also will be saved in db
       newCardContainer.setAttribute("data-card-order", last_order);
       
       // set the label title and color to card
@@ -1801,9 +1845,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       
       iconsContainer.classList.add("card_metadata_container");
       
-      
       /* add the label title */
       cardtext.innerText = newCardData.title;
+      modelLabel.innerText = newCardData.label_title;
+      newCard.setAttribute("data-text", newCardData.title);
+      
 
 
       
@@ -1942,21 +1988,41 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      setCardsMetaData();
      
      
+   },
+   saveDescription: (event)=> {
+     let descriptionValue = description_input.value;
+     let cardid = event.target.getAttribute("data-card-id");
+     let card = document.getElementById(cardid);
+     
+     let cardSavedDescriptionBtn = event.target.getAttribute("data-openbtn-id");
+     let saver = document.getElementById(cardSavedDescriptionBtn);
+     if (saver && card && description_input.value.trim() != "") {
+       saver.setAttribute("data-card-description", description_input.value);
+       card.setAttribute("data-card-description", description_input.value);
+       description_input.value = "";
+       return true;
+     } else {
+       return false;
+     }
    }
 }
 
-  
+    
  
-
+  /* open the function for show edit mode for list */
   addNewListBtn.addEventListener("click", todoSystem.createListEditOpen);
-  canelAddNewList.addEventListener("click", todoSystem.createListEditClose);  
+  /* close the function for show edit mode for list */
+  canelAddNewList.addEventListener("click", todoSystem.createListEditClose);
+  /*Add new list function */
   addNewListsubmit.addEventListener("click", todoSystem.addTodoMenu);
+  /* close add new card */
   canelAddNewCard.addEventListener("click", todoSystem.createCardClose);
-  
+  /* save description */
+  description_saveBtn.addEventListener("click", todoSystem.saveDescription);
 
     
   
- 
+
   /*  this responsble for restart the system important to use after any updates */
   /* Apply order to cards   loop over columns [lists] and then get the cards to set the order of cards and status */
   
@@ -2132,6 +2198,14 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           if (cardOpenBtn){
           cardOpenBtn.setAttribute("card-id", `card-id-${cards_id}`);
             };
+            
+          let modelopenBtns = card.querySelectorAll(".model_open");
+          if (modelopenBtns){
+            modelopenBtns.forEach( (elm)=> {
+               elm.setAttribute("data-card-id", `card-id-${cards_id}`);
+            });
+          }
+            
           // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
           card.style.order = cIndex;
