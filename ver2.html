@@ -609,9 +609,57 @@ button.close:hover {
   color: white;
 
 }
+.aside_button_close{
+ margin-left: auto;
+ float: right;
+ height: auto;
+ min-height: 30px;
+ max-height: 35px;
+ 
+}
+div.popupmenu_action_hide {
+  background: white;
+  width: 250px;
+  height: 500px;
+  padding: 10px;
+  position: fixed;
+  right: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display: none;
+}
+div.popupmenu_action {
+  background: white;
+  width: 250px;
+  height: 500px;
+  padding: 10px;
+  position: fixed;
+  right: 40%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  display: fixed;
+  top: 20%;
+}
+
+.margin-right-mid {
+  margin: 5px;
+}
+.margin-top-mid{
+  margin-top: 10px;
+}
 
 
+ 
 
+.aside_button_close {
+  margin-right: auto;
+}
+
+h5.popupmenu_action_header{
+  background: lightgray;
+  color: black;
+  font-weight: bolder;
+  padding: 10px;
+  margin-bottom: 15px;
+}
 </style>
 <div class="container-fluid main_container">
 
@@ -1095,13 +1143,108 @@ button.close:hover {
     
       <div class="aside-flex-item">
         <h5 class="aside_title">ADD TO CARD</h5>
-        <div class="aside_button">Members</div>
-        <div class="aside_button">Labels</div>
-        <div class="aside_button">CheckList</div>
+        
+      <!-- Aside Model Action Memeber -->
+        
+      
+      <!-- search member action -->
+      <!-- button -->
+      <div class="aside_button" data-menu="member_menu">Members</div>
+        <div id="member_menu" class="popupmenu_action_hide">
+          <!-- close POPUP menu -->
+          <span class="btn btn-danger aside_button_close">Close</span>
+          <!-- Search Member Form -->
+          <h5 class="popupmenu_action_header">Search Member</h5>
+          <form id="search_member_form">
+            <div class="form-group">
+            <input id="member" name="member" class="form-control" type="email" placeholder="Search Member">
+            <button type="submit" class="btn btn-primary margin-top-mid"><i class="fa fa-search margin-right-mid"></i>Search Member</button>
+            </div>
+          </form>
+
+        </div>
+        <!-- Search Member action End -->
+        
+      <!-- Labels action -->
+      <!-- button -->
+      <div class="aside_button" data-menu="labels_menu">Labels</div>
+      
+        <div id="labels_menu" class="popupmenu_action_hide">
+          <!-- close POPUP menu -->
+          <span class="btn btn-danger aside_button_close">Close</span>
+          <!-- Search Member Form -->
+          <h5 class="popupmenu_action_header">Labels</h5>
+          <form id="labels_form">
+            <div class="form-group">
+            </div>
+          </form>
+        </div>
+        <!-- Labels action End -->
+        
+
+
+      <!-- CheckList action -->
+      <!-- button -->
+      <div class="aside_button" data-menu="checklist_menu" >CheckList</div>
+        <div id="checklist_menu" class="popupmenu_action_hide">
+        
+          <!-- Search CheckList Form -->
+          <!-- close POPUP menu -->
+          <span class="btn btn-danger aside_button_close">Close</span>
+          <h5 class="popupmenu_action_header">CheckList</h5>
+          <form id="labels_form">
+            <div class="form-group">
+              <input type="text" id="checklist_input"
+              class="form-control" placeholder="CheckList">
+              
+              <label>Copy Item From...</label>
+              <select id="copy_source" class="form-control">
+                <option value="none">(none)</option>
+              </select>
+              
+            </div>
+          </form>
+        </div>
+        <!-- CheckList action End -->
+        
+        <!-- Single Button without menu -->
         <div class="aside_button">Dates</div>
-        <div class="aside_button">Attachment</div>
-        <div class="aside_button">Cover</div>
+        
+        
+      <!-- Attachment action -->
+      <!-- button -->
+      <div class="aside_button" data-menu="attachment_menu">
+      Attachment</div>
+        <div id="attachment_menu" class="popupmenu_action_hide">
+          <!-- Search Member Form -->
+          <!-- close POPUP menu -->
+          <span class="btn btn-danger aside_button_close">Close</span>
+          <h5 class="popupmenu_action_header">
+             Attachment
+           </h5>
+          <form id="labels_form">
+            <div class="form-group">
+              <select name="attachment_source"
+                 class="form-control" id="attachment_source">
+                <option value="computer">Computer</option>
+                <option value="google_drive">Google Drive</option>
+                <option value="dropbox">DropBox</option>
+              </select>
+              <hr />
+              <label>Attach a link</label>
+              <input name="attachment_link" type="link" id="attachment_link"
+                placeholder="Paste any link here" class="form-control">
+              <button id="attach_link_btn" type="submit" 
+                class="btn btn-light margin-top-mid">Attach</button>
+            </div>
+          </form>
+        </div>
+        <!-- Attachment action End -->
+        
+       
     </div>
+     <!-- end of first action section model -->
+     
     <div class="aside-flex-item">
       <h5 class="aside_title">Automation</h5>
       <div class="container">
@@ -1111,12 +1254,12 @@ button.close:hover {
     </div>
     <div class="aside-flex-item">
         <h5 class="aside_title">Actions</h5>
-        <div class="aside_button">Move</div>
-        <div class="aside_button">Copy</div>
-        <div class="aside_button">Make template</div>
-        <div class="aside_button">Watch</div>
-        <div class="aside_button">Archive</div>
-        <div class="aside_button">Share</div>
+        <div class="aside_button btn-light">Move</div>
+        <div class="aside_button btn-light">Copy</div>
+        <div class="aside_button btn-light">Make template</div>
+        <div class="aside_button btn-light">Watch</div>
+        <div class="aside_button btn-light">Archive</div>
+        <div class="aside_button btn-light">Share</div>
     </div>
     
   </div>
@@ -1162,6 +1305,9 @@ const addNewLabelName = document.getElementById("label_title");
 const addNewLabelBtn = document.getElementById("add_newlabel"); 
 let submitCreateLabel = document.getElementById("add_newlabel_step2");
 
+
+let modelMainContainer = document.querySelector("#model_main");
+let modelCardHeader = document.querySelector(".modal-header");
 let modelCardTitle = document.getElementById("model_card_title");
 let model_description = document.getElementById("ticket_description");
 let modelLabel = document.getElementById("label_title_text");
@@ -1175,6 +1321,82 @@ let allExitModelOpen = document.querySelectorAll(".model_open");
 
 
 
+
+
+
+/* Function Used to Hide The POP up Menu For Card Model Aside Actions */
+function hidePopAction(event){
+  let allShownPOP = document.querySelectorAll(".popupmenu_action");
+
+  if (allShownPOP) {
+       allShownPOP.forEach( (popup)=> {
+       
+         if (popup.classList.contains("popupmenu_action")){
+           popup.classList.remove("popupmenu_action");
+         }
+         
+         popup.classList.add("popupmenu_action_hide");
+         popup.style.display = "none";
+    });
+    shownPoPs = false;
+    return true;
+  }
+    shownPoPs = false;
+    return false;
+  
+}
+
+
+
+/* Close Hide POPups part */
+
+let allClose = document.querySelectorAll(".close");
+let allAsideMenuActionsBtn1 = document.querySelectorAll(".aside_button");
+let allAsideMenuActionsBtnClose = document.querySelectorAll(".aside_button_close");
+
+if (allAsideMenuActionsBtnClose){
+   allAsideMenuActionsBtnClose.forEach( (asideBtn)=> {
+     asideBtn.addEventListener("click", hidePopAction);
+  });
+}
+
+if (allClose){
+   allClose.forEach( (CloseBtn)=> {
+     CloseBtn.addEventListener("click", hidePopAction);
+  });
+}
+
+if (modelMainContainer){
+  modelMainContainer.addEventListener("click", hidePopAction);
+}
+
+
+if (modelCardHeader){
+  modelCardHeader.addEventListener("click", hidePopAction);
+}
+
+let shownPoPs = false;
+/* Function Used to show The POP up Menu For Card Model Aside Actions */
+function showPopAction(event){
+  hidePopAction();
+  let popupMenuId = event.target.getAttribute("data-menu");
+  let popupMenuElm = document.getElementById(popupMenuId);
+  if (popupMenuElm) {
+    popupMenuElm.classList.add("popupmenu_action");
+    popupMenuElm.style.display = "block";
+    if (popupMenuElm.classList.contains("popupmenu_action_hide")){
+      popup.classList.remove("popupmenu_action_hide");     
+    };
+    shownPoPs = true;
+    return true;
+  };
+  return false;
+
+};
+
+allAsideMenuActionsBtn1.forEach( (asideBtn)=> {
+  asideBtn.addEventListener("click", showPopAction);
+});
 
 
 let modelCommentInput = document.getElementById("model_comment");
@@ -1874,6 +2096,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    },
 
    openCardModel: (event)=> {
+      hidePopAction();
       let openBtn = event.target;
       let popupTemplate = document.getElementById("myModal1");
       let listId = event.target.getAttribute("data-list-id");
@@ -2197,6 +2420,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      
   }
   function setCardsMetaData() {
+  
+    /* Hide all POPuP*/
+    hidePopAction();
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
 
