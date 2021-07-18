@@ -279,29 +279,6 @@ button#card_add_menu {
   color: gray;
 }
 
-/* select color Labels */
- 
-/*
-div.labels_container{
-  display:flex;
-  flex-flow:column nowrap;
-  justify-content: center;
-  align-items:center;
-}
-div.labels_container{
-  display: flex;
-  flex-flow: row wrap;
-}
-div.label_icon{
-   width: 60%;
-   height:30px;
-   background:gray;
-   margin-top:5px;
-   border-radius: 4px;
-   cursor: pointer;
-   
-}
-*/
 
 
 div.labels_container{
@@ -634,6 +611,7 @@ button.close:hover {
 }
 
 
+
 </style>
 <div class="container-fluid main_container">
 
@@ -643,15 +621,18 @@ button.close:hover {
  <div class="container-fluid listcontainer ">
  
 
-    <!-- New List -->
+    <!-- Default List 1 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Client 19">
       <div class="card-body">
         <div class="card-title">
           <span>Client 19</span>
+
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right" ></i></span>
+          
         </div>
         <!-- Group Of Cards -->
         <div class="cards_container"></div>
+               <!-- Cards Container Ends -->
         
          <button class=" add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
@@ -660,11 +641,16 @@ button.close:hover {
       
     
 
-    <!-- New List -->
+    <!-- default List2 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="To Do">
       <div class="card-body">
         <div class="card-title">
+        
+          <!-- List Title -->
           <span>To Do</span>
+          
+          
+          <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
         
@@ -672,69 +658,177 @@ button.close:hover {
         <div class="cards_container">
           <!-- new Card -->
           
-          
-        
-          
-          
-          
-          
-          
-          
+
        </div>
+              <!-- Cards Container Ends -->
+       
          <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
       </div>
-    </div>
-  
-     <!-- New List -->
+    </div>  
+
+
+    <!-- Default List3 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Pending">
       <div class="card-body">
         <div class="card-title">
+        
+          <!-- List Title -->
           <span>Pending</span>
+          
+          <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
+        
         <!-- Group Of Cards -->
         <div class="cards_container">
-        
-        
-        <!-- Card Example ------------>
-        <!--
-          <div class="card_container">
-           <div class="card task_card">
-            <div class="card_metadata">
-              <div class="card_label"></div>
-              <p class="card_text">Hello World3</p>
-            </div>
-           </div>
-          </div>
-        -->
-        <!-- cardexample -->
+          <!-- new Card -->
           
-        </div>  
-        <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
-      </div>
-    </div>
-     
+          <!-- -4 Card With Custom Label And with Description Example -->
 
-     <!-- New List -->
+
+         <div class="card_container" data-card-order="2"
+              data-label-title="New Custom Label" data-label-color="green"
+              data-list-id="list-4" data-list-title="Done" id="card-container-5"
+              draggable="true" style="order: 2;">
+              
+        <!-- Card container contains all meta data about the card 
+        updated by setCardMetaData() after each action-->
+              
+        <div class="card task_card" data-label-title="New Custom Label"
+        data-label-color="green" data-text="New Card With Custom Label and description example "
+        id="card-id-5" data-list-title="Done" data-list-id="list-4"
+        data-card-description="this is card description some text">
+        
+        
+        <div class="card_metadata" data-label-title="New Custom Label"
+        data-label-color="green" data-list-title="Done" data-list-id="list-4">
+        <div class="card_metadata_container">
+        
+        
+        <!-- card label -->
+        <div class="label_class card_label green" data-label-title="New Custom Label"
+        data-label-color="green" data-list-title="Done" data-list-id="list-4">New Custom Label</div>
+        
+        <!-- card Menu Button That contains data used in the menu form to locate the card -->
+        <span class="btn btn-primary model_open card_actions" data-toggle="modal"
+        data-target="#myModal1" data-label-title="New Custom Label"
+        data-label-color="green" data-list-id="list-4"
+        id="model-card-5" card-id="card-id-5" data-card-id="card-id-5"
+        data-card-description="this is card description some text">✐</span>
+        </div>
+        
+        <!-- card text content -->
+        <p class="card_text" data-label-title="New Custom Label" data-label-color="green"
+        data-list-title="Done" data-list-id="list-4">New Card With Custom Label and description example</p>
+        </div></div></div>
+        <!-- card example 4 end -->
+          
+
+       </div>
+         <!-- Cards Container Ends -->
+         <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
+      </div>
+    </div> 
+    
+    
+    <!-- Default List 4 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Done">
       <div class="card-body">
         <div class="card-title">
+        
+          <!-- List Title -->
           <span>Done</span>
+          
+          <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
         </div>
-         <!-- Group Of Cards -->
+        
+        <!-- Group Of Cards -->
         <div class="cards_container">
-          <!--Card-->
+        
+        <!-- -1 Card With Label And Without Description Example -->
+        
+        <div class="card_container" data-card-order="0"
+        data-label-title="Proiority" data-label-color="blue"
+        data-list-id="list-4" data-list-title="Done"
+        id="card-container-1" draggable="true" style="order: 0;">
+        
+        
+        <!-- Card Content Container this contains the text -->
+        <div class="card task_card" data-label-title="Proiority"
+        data-label-color="blue" data-text="Ticket With Only Label But without description"
+        id="card-id-1" data-list-title="new list" data-list-id="list-4">
+        
+        
+        <div class="card_metadata" data-label-title="Proiority"
+        data-label-color="blue" data-list-title="Done" data-list-id="list-4">
+        
+        <div class="card_metadata_container">
+        
+        <!-- Card Label -->
+        <div class="label_class card_label blue" data-label-title="Proiority"
+        data-label-color="blue" data-list-title="Done" data-list-id="list-5">Proiority</div>
+        
+        <!-- Card Menu Btn -->
+        
+        <span class="btn btn-primary model_open card_actions"
+        data-toggle="modal" data-target=""  data-label-title="Proiority"
+        data-label-color="blue" data-list-id="list-4" id="model-card-1"
+        card-id="card-id-1" data-card-id="card-id-1">✐</span>
         </div>
+        
+        <!-- Card Text -->
+        <p class="card_text" data-label-title="Proiority" data-label-color="blue"
+        data-list-title="new list" data-list-id="list-5">Ticket With Only Label But without description</p>
+        </div></div></div>
+        <!-- card example 1 end -->
+
+
+
+     <!-- -
+          2 Card with only text main container contains all meta data about the card 
+          updated by setCardMetaData() after each action
+     -->
+     <div class="card_container" data-card-order="1" data-label-title=""
+     data-label-color="" data-list-id="list-4" data-list-title="Done"
+     id="card-container-2" draggable="true" style="order: 1;">
+     
+     <div class="card task_card" data-label-title="" data-label-color=""
+     data-text="new" id="card-id-2" data-list-title="Done"
+     data-list-id="list-4"><div class="card_metadata" data-label-title=""
+     data-label-color="" data-list-title="Done" data-list-id="list-4">
+     
+     
+     <div class="card_metadata_container">
+     
+      <!-- Card Label -->
+     <div class="card_label nocolor" data-label-title=""
+     data-label-color="" data-list-title="Done" data-list-id="list-4">
+     </div>
+     
+      <!-- Card Menu Btn -->
+     <span class="btn btn-primary model_open card_actions"
+     data-toggle="modal" data-target="#myModal1" data-label-title="Done"
+     data-label-color="" data-list-id="list-4" id="model-card-2"
+     card-id="card-id-2" data-card-id="card-id-2">✐</span>
+     </div>
+
+     <!-- Card Text -->
+     <p class="card_text" data-label-title="" data-label-color=""
+     data-list-title="Done" data-list-id="list-4">new</p>
+     </div></div></div>
+     <!-- card example 3 end -->
+      
+       </div>
+          <!-- end of cards Container-->
          <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
-         
-
       </div>
-    </div>
+    </div> 
     
     
 
-  <!--- Create new List Part -->   
+
+  <!--- !!!! Create new List Form  !!! -->   
   
   
   <!-- created New List -->
@@ -757,58 +851,118 @@ button.close:hover {
 <div id="form_template_holder">
 
 <div id="new-card-form" class="newCardForm_class" style="display:none;">
-          <!-- Card Form -->
+
+            <!--- !!!! Create new Card Form  !!! -->   
+          <!-- New Card Form -->
          <form id="add-newCard-form">
          
           <div id="card_form_inputs">
-          <textarea class="form-control" placeholder="enter title for this card..." id="card_title"  style="display:none;" rows="1"></textarea>
-          <input class="btn btn-primary" id="new_card_submit" type="button" style="display:none;" value="Add Card">
-          <button type="button" id="cancel_add_card" style="display: none;"><i class="fa fa-close" style="font-size: 26"></i></button>
+          <textarea class="form-control" placeholder="enter title for this card..."
+          id="card_title"  style="display:none;" rows="1"></textarea>
           
-          <button type="button" id="card_add_menu"><i style="font-size:24px" class="fa">&#xf141;</i></button>
+          
+          <input class="btn btn-primary" id="new_card_submit"
+          type="button" style="display:none;" value="Add Card">
+          
+          <button type="button" id="cancel_add_card"
+          style="display: none;"><i class="fa fa-close"
+          style="font-size: 26"></i></button>
+          
+          <button type="button" id="card_add_menu">
+          <i style="font-size:24px" class="fa">&#xf141;</i>
+          </button>
 
           <div  id="label_container_div" class="labels_container" style="display:none;">
-          
-
-
-           
-           
-           
+ 
            <!-- this for select Card label -->
            <div id="label_group1" class="label_group">
-           <textarea class="new_card_textare" class="form-control" placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
-            <h4 id="selectTitle">Select Label: </h4>
-            <div class="label_container"><div class="label_icon green selectable">
-            <input name="selected_color" value="green" type="radio"> <span>Copy Request</span></div></div>
-            <div class="label_container"><div class="label_icon red selectable">
-            <input name="selected_color" value="red" type="radio"> 
-            <span>One more step</span></div></div>
+              
+              <!-- Card Text -->
+             <textarea class="new_card_textare" class="form-control" 
+               placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
+             <h4 id="selectTitle">Select Label: </h4>
+             
+             <!--  Card Default Labels Select -->
+             <div class="label_container">
+                <div class="label_icon green selectable">
+                 <input name="selected_color" value="green" type="radio">
+                 <span>Copy Request</span>
+                </div>
+             </div>
+             
+            <div class="label_container">
+              <div class="label_icon red selectable">
+                <input name="selected_color" value="red" type="radio"> 
+                <span>One more step</span>
+                </div>
+            </div>
   
   
-  <div class="label_container"><div class="label_icon blue selectable"><input name="selected_color" value="blue" type="radio"> <span>Proiority</span> </div></div>
- 
-            <div class="label_container"><div class="label_icon orange selectable"><input name="selected_color" value="orange" type="radio">  <span>Desgin Team</span></div></div>
+            <div class="label_container">
+              <div class="label_icon blue selectable">
+                <input name="selected_color" value="blue" type="radio">
+                <span>Proiority</span>
+              </div>
+            </div>
+            
+            <div class="label_container">
+              <div class="label_icon orange selectable">
+                <input name="selected_color" value="orange" type="radio">
+                <span>Desgin Team</span>
+              </div>
+           </div>
             
             
             
-            <div class="label_container"><div class="label_icon purple selectable"> <input name="selected_color" value="purple" type="radio"> <span>Proudct Marketing</span></div></div>
-            <div class="label_container"><div class="label_icon lightblue selectable">
-             <input name="selected_color" value="lightblue" type="radio"> <span>Help</span></div></div>
-            <div class="label_container"><div class="label_icon lightgreen selectable"><input name="selected_color" value="lightgreen" type="radio"> <span>Meeting</span></div></div>
-            <div class="label_container selectable"><div class="label_icon darkblue selectable"> <input name="selected_color" value="darkblue" type="radio"> <span>Important</span></div></div>
+            <div class="label_container">
+              <div class="label_icon purple selectable">
+                <input name="selected_color" value="purple" type="radio">
+                <span>Proudct Marketing</span>
+              </div>
+           </div>
+           
+           
+           
+            <div class="label_container">
+               <div class="label_icon lightblue selectable">
+                 <input name="selected_color" value="lightblue" type="radio">
+                 <span>Help</span>
+               </div>
+           </div>
+           
+           
+            <div class="label_container">
+              <div class="label_icon lightgreen selectable">
+                 <input name="selected_color" value="lightgreen" type="radio">
+                 <span>Meeting</span>
+              </div>
+           </div>
+           
+           
+            <div class="label_container selectable">
+               <div class="label_icon darkblue selectable">
+                 <input name="selected_color" value="darkblue" type="radio">
+                 <span>Important</span>
+               </div>
+            </div>
           </div>
           
           <!--  card label end ----->
           
-            <!-- Create New Label -->
+          
+            <!-- Create New Label  Inputs -->
             
             <div id="add_new_label_container" style="display:none;">
+            
                <div id="label_notes" class="alert alert-success" style="display: none;">x</div>
             
+                <!-- new created Label title -->   
+                <input id="label_title" class="form-control" placeholder="enter label title...">  
                
-               <input id="label_title" class="form-control" placeholder="enter label title...">  
-               
+               <!-- new created Label color Class Select Single choice radio -->   
                <h4 id="selectTitle">Select Label: </h4>
+               
+               <!-- Create New Label color class radio example -->
               <div class="colors label_icon green" data-color="green">
                <input name="label_color" value="green" type="radio" style="width:100%;">
               </div>
@@ -816,30 +970,32 @@ button.close:hover {
               <div class="colors label_icon red" data-color="red" >
                 <input name="label_color" value="red" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon orange" data-color="orange" >
                 <input name="label_color" value="orange" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon blue" data-color="blue" >
                 <input name="label_color" value="blue" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon purple " data-color="purple">
                 <input name="label_color" value="purple" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon lightblue" data-color="lightblue">
                 <input name="label_color" value="lightblue" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon lightgreen" data-color="lightgreen">
                 <input name="label_color" value="lightgreen" type="radio" style="width:100%;">
               </div>
+              
               <div class="colors label_icon darkblue" data-color="darkblue">
                 <input name="label_color" value="darkblue" type="radio" style="width:100%;">
               </div>
               
            </div>
-            
-            
-         
-            
             
             <div class="label_btn" id="add_newlabel">Add New Label</div>
             
@@ -858,8 +1014,11 @@ button.close:hover {
 </div>
 </div>
 
+ 
 
-  <!-- Open Card Model -->
+
+
+  <!--  Card Menu Model -->
   <div class="modal fade" id="myModal1" >
     <div class="modal-dialog modal-lg" style="height:auto;">
       <div class="modal-content">
@@ -878,33 +1037,48 @@ button.close:hover {
       <div id="model_body_flex">  
         <div id="model_main">  
          <div class="container list_title_container">
-           <span>in list: </span><a id="list-title"></a>
+           <!-- card List It got from card by system and data-list-title  -->
+           <span>in list: </span><a id="list-title"><!-- Card title text --></a>
          </div>
          
          <div class="container">
            <h5>Labels: </h5>
            <div class="container label-containers">
-             <div class="model_label"><span id="label_title_text"></span></div>
+             <!-- it will get the current card label class by setCardMetaData and data-label-color attribute -->
+             <div class="model_label">
+               <span id="label_title_text">
+                 <!--label text updated by setCardMetaData and data-label-title attribute -->
+               
+               </span>
+             </div>
            </div>
+           
+           
          <div class="description_container">
            <h4><i class="title_fa fa fa-pencil"></i>Description: </h4>
-           <p id="ticket_description"></p>
-           <textarea id="card_description_input" placeholder="add a more detailed description" class="form-control"
+            <!-- text description depend on open button card menu and data-card-id attribute -->
+            <p id="ticket_description"></p>
+            
+            <!-- New Description textarea input -->
+           <textarea id="card_description_input" 
+             placeholder="add a more detailed description" class="form-control"
            style="height:100px;"></textarea>
-           <button class="btn btn-default" id="description_save" type="button">Save</button>
+           
+           <!-- submit description add button -->
+           <button class="btn btn-success" id="description_save" type="button">Save</button>
         </div>
         
-        <div class="activve_container">          
-           <h4><i class="title_fa fa fa-reorder	
-"></i>Activity</h4>
+        <!-- Activity and comments section -->
+        <div class="activve_container">
+          <h4><i class="title_fa fa fa-reorder"></i>Activity</h4>
+
            <div><input id="model_comment" class="form-control"></div>
            
            <div class="save_container"  style="display:none;">
              <button id="save_btn" type="button" class="btn btn-info">Save</button>
-             
              <span class="comment_icons">
-             <span><i class="fa fa-camera"></i></span>
-             <span><i class="fa fa-paperclip"></i></span>
+              <span><i class="fa fa-camera"></i></span>
+              <span><i class="fa fa-paperclip"></i></span>
               <span><i class="fa fa-file"></i></span>
               <span><i class="fa fa-plus"></i></span>
              </span>
@@ -913,7 +1087,10 @@ button.close:hover {
          </div>
        </div>
     </div>
-      <!-- main end -->
+    
+    <!-- main end -->
+    
+    <!-- aside menu in card menu model contains actions buttons -->
     <div id="model_aside">
     
       <div class="aside-flex-item">
@@ -948,6 +1125,8 @@ button.close:hover {
     </div>
   </div>
 <!-- Card Model end -->
+
+</div></div>
 
 <script>
 
@@ -989,16 +1168,18 @@ let modelLabel = document.getElementById("label_title_text");
 let modelList = document.getElementById("list-title");
 let description_input = document.getElementById("card_description_input");
 let description_saveBtn = document.getElementById("description_save");
+let allExitModelOpen = document.querySelectorAll(".model_open");
+
+
+
+
+
+
 
 
 let modelCommentInput = document.getElementById("model_comment");
-
-
-
 let stepOneContiner = document.getElementById("label_group1");
 let stepTwoContiner = document.getElementById("add_new_label_container");
-
-
 let showLabelsBtn = document.getElementById("show_labels_btn");
 
 
@@ -1046,7 +1227,7 @@ function newLabelSubmit(data){
           /* If There A new Label with same title and color this new label will not created */
           if (labelText.innerText.trim() == data.title.trim()){
              equalFound = true;
-              console.log("found Label With same Color and title" + equalFound);
+              /* console.log("found Label With same Color and title" + equalFound); */
           } else {
              equalFound = false;
           }
@@ -1130,12 +1311,6 @@ function submitNewCard(event){
           if (cardTitle.trim() == ""){
             return false;
           }
-          
-          
-
-               
-               
-               
           let cardCheckboxs = document.querySelectorAll("#label_group1 .label_icon input[name='selected_color']");
           
           for (var i=0; i<cardCheckboxs.length; i++) {
@@ -1147,15 +1322,11 @@ function submitNewCard(event){
                 break;
              }
           }
-
           let allCards = cardsContainer.querySelectorAll("div.card_container");
           let last_order = 0;
           if (allCards){
              last_order = allCards.length;
           }
-          
-          
-
           
           // All New Card Data
           let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId, listTitle: card_parentTitle};
@@ -1204,13 +1375,10 @@ function addNewLabel(){
 
 addNewLabelBtn.addEventListener("click", addNewLabel);
 
-
-
 let labelOpen = false;
 let currentStep = false;
 
 function hidelabelsContainer(set=false){
-    
     if (set == true){
       addNewLabelName.value = "";
             /* Remove selected checked*/
@@ -1222,9 +1390,7 @@ function hidelabelsContainer(set=false){
                    break;
             }
          };
-         
       };
-
 
    if (labelOpen === false || set == true) {
       currentStep = "one";
@@ -1361,7 +1527,7 @@ function formatAMPM(date) {
      
      /* this check if the height effect not set for any reason it will set it*/
 
-     console.log("You are going to move the element to a new menu, " + target_list_id);
+     /* console.log("You are going to move the element to a new menu, " + target_list_id); */
      setCardsMetaData();
      return true;
    }
@@ -1371,8 +1537,6 @@ function formatAMPM(date) {
  function drag(ev) {
 
        data = ev.target.id;
-
-
  };
 
 /* the third event reset effects to avoid filure drops */
@@ -1399,13 +1563,8 @@ function dragLeave(event) {
 
  function drop(ev) {
    ev.preventDefault();
-    
-
-   var get_list_parent = ev.target;
-   
+   var get_list_parent = ev.target;   
    let dragentElement = document.getElementById(data);
-   
-    
    let checkDropContainer = get_list_parent.classList.contains("drop-columns");
    
    let loopIndex = 0;
@@ -1415,23 +1574,19 @@ function dragLeave(event) {
       checkDropContainer =  get_list_parent.classList.contains("drop-columns");
       if (checkDropContainer) {
         loopIndex += 1;
-        
         // get the cards_container of that list
         let target_cards_container = get_list_parent.querySelector("div.cards_container");
         console.log("found list container", get_list_parent.className, loopIndex);
-
-
-
      
       /* get heighestorder remove this for remove yellow */
       let current_list = document.getElementById(target_cards_container.getAttribute("data-list-id"));
-      
-
        
       if (
       document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container")
-      ) { 
+      ) {
+      
       dragentElement.setAttribute("data-card-order", document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length)
+      
      dragentElement.style.order = document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container").length;
      
      /* return back the cards_container height to auto drop effects */
@@ -1514,12 +1669,15 @@ class TodoList {
     }
     // create List Container
 
-   
-
+  
     let listContainer = document.createElement("div");
     listContainer.classList.add("drop-list", "drop-columns","card");
     listContainer.setAttribute("data-list-title", this.title);
     listContainer.setAttribute("data-list-createdate", dateString);
+    
+    
+
+    
     
     // Created timestamp to send to server
     listContainer.setAttribute("data-list-timestamp", createTimeStamp);    
@@ -1538,6 +1696,12 @@ class TodoList {
     let addNewCardBtn = document.createElement("button");
     addNewCardBtn.classList.add("add_new_card_btn","btn");
     addNewCardBtn.innerHTML = '<i class="fa fa-plus plus_sign"></i> Add New Card';
+    
+    
+    
+
+
+    
     
     // append New Elements
     MenuIconContainer.appendChild(MenuIcon);
@@ -1644,11 +1808,7 @@ let todoSystem = {
          newCardForm.querySelector("#new_card_submit").style.display = "none";
          newCardForm.querySelector("#cancel_add_card").style.display = "none";
          newCardMenu.style.display = "none";
-         // hide the labels
-         //hidelabelsContainer();
          hideLabels();
-         //console.log(todoSystem.newCardBtn.nodeName);
-         // show back the add new card for the selected list
          todoSystem.newCardBtn.style.display = "inline";
          isCreateCardOpen = false;
          
@@ -1676,11 +1836,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             if (cardCheckboxs1[n].checked){
                    cardCheckboxs1[n].checked = false;
                    break;
-                   
             }
          };
-         
-         
       
       return true;
       
@@ -1780,13 +1937,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    },
    /* Create New Card Template all task cards data */
    taskCardTemplate(last_order, newCardData) {
-   
-            /* example html for meta data 
-            <div class="card_metadata">
-              <div class="card_label"></div>
-              <p class="card_text">Hello World3</p>
-            </div>
-            */
             
       // task stores like this in db
       let newCardContainer = document.createElement("div");
@@ -1797,7 +1947,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       
       
 
-// set the card order this also will be saved in db
+      // set the card order this also will be saved in db
       newCardContainer.setAttribute("data-card-order", last_order);
       
       // set the label title and color to card
@@ -1822,7 +1972,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       modelBtn.setAttribute("data-toggle", "modal");
       modelBtn.setAttribute('data-target',"");
       modelBtn.innerHTML = '&#10000';    
-      
       
       
       let labelcolorClass = newCardData.label_color;
@@ -1892,7 +2041,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    
        let usedBtn = event.target;
        if (event.target.nodeName == "I"){
-          console.log(event.target.parentElement);
+          //console.log(event.target.parentElement);
           usedBtn = event.target.parentElement;
        };
        
@@ -1990,6 +2139,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      
    },
    saveDescription: (event)=> {
+     setCardsMetaData();
      let descriptionValue = description_input.value;
      let cardid = event.target.getAttribute("data-card-id");
      let card = document.getElementById(cardid);
@@ -2019,8 +2169,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   canelAddNewCard.addEventListener("click", todoSystem.createCardClose);
   /* save description */
   description_saveBtn.addEventListener("click", todoSystem.saveDescription);
-
-    
+  
+  /* This for correct handle cards added from backend it will add event listener on card     inserted by PHP and let you open the card model */
+  allExitModelOpen.forEach( (openbtn)=> {
+  openbtn.addEventListener("click",todoSystem.openCardModel);
+  });
   
 
   /*  this responsble for restart the system important to use after any updates */
@@ -2045,8 +2198,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   function setCardsMetaData() {
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
-       
-    
+
     let cards_id = 1;
     let list_id = 1;
     // update Lists
@@ -2187,6 +2339,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
     
        let listCards = list.querySelectorAll("div.cards_container div.card_container");
        
+       
+      
+     
+   
        // updates cards
        listCards.forEach( (card, cIndex)=> {
           // asgin the list Title to the card
@@ -2203,6 +2359,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           if (modelopenBtns){
             modelopenBtns.forEach( (elm)=> {
                elm.setAttribute("data-card-id", `card-id-${cards_id}`);
+               elm.setAttribute("id", `model-card-${cards_id}`);
             });
           }
             
@@ -2258,6 +2415,13 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   setCardsMetaData();
   
   
+  
+
+
+/* Move List Arrows Section end */
+
+
+
 
 
 
