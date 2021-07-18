@@ -714,7 +714,7 @@ button.close:hover {
         data-target="#myModal1" data-label-title="New Custom Label"
         data-label-color="green" data-list-id="list-4"
         id="model-card-5" card-id="card-id-5" data-card-id="card-id-5"
-        data-card-description="this is card description some text">✐</span>
+        data-card-description="this is card description some text"><i class="fa fa-edit"></i></span>
         </div>
         
         <!-- card text content -->
@@ -774,7 +774,7 @@ button.close:hover {
         <span class="btn btn-primary model_open card_actions"
         data-toggle="modal" data-target=""  data-label-title="Proiority"
         data-label-color="blue" data-list-id="list-4" id="model-card-1"
-        card-id="card-id-1" data-card-id="card-id-1">✐</span>
+        card-id="card-id-1" data-card-id="card-id-1"><i class="fa fa-edit"></i></span>
         </div>
         
         <!-- Card Text -->
@@ -810,7 +810,7 @@ button.close:hover {
      <span class="btn btn-primary model_open card_actions"
      data-toggle="modal" data-target="#myModal1" data-label-title="Done"
      data-label-color="" data-list-id="list-4" id="model-card-2"
-     card-id="card-id-2" data-card-id="card-id-2">✐</span>
+     card-id="card-id-2" data-card-id="card-id-2"><i class="fa fa-edit"></i></span>
      </div>
 
      <!-- Card Text -->
@@ -1904,7 +1904,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (modelLabelDiv && labelClass){
          //modelLabelDiv.classList.add("model_label");
          modelLabelDiv.classList.add(labelClass);
-         document.getElementById("label_title_text").innerText =listTitle;
+         /* Label text */
+         document.getElementById("label_title_text").innerText =labelText;
 
       } else {
       
@@ -1971,7 +1972,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       modelBtn.classList.add("btn", "btn-primary", "model_open");
       modelBtn.setAttribute("data-toggle", "modal");
       modelBtn.setAttribute('data-target',"");
-      modelBtn.innerHTML = '&#10000';    
+      modelBtn.innerHTML = '<i class="fa fa-edit"></i>';    
       
       
       let labelcolorClass = newCardData.label_color;
@@ -2350,9 +2351,13 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           card.setAttribute("data-list-title", list.getAttribute("data-list-title"));
           card.setAttribute("id", `card-container-${cards_id}`);
           
+          
+         
           let cardOpenBtn = card.querySelector(".card_actions");
           if (cardOpenBtn){
-          cardOpenBtn.setAttribute("card-id", `card-id-${cards_id}`);
+                cardOpenBtn.setAttribute("card-id", `card-id-${cards_id}`);
+                cardOpenBtn.setAttribute("data-list-id", currentListId);
+                cardOpenBtn.setAttribute("data-list-title", list.getAttribute("data-list-title"));
             };
             
           let modelopenBtns = card.querySelectorAll(".model_open");
@@ -2360,6 +2365,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             modelopenBtns.forEach( (elm)=> {
                elm.setAttribute("data-card-id", `card-id-${cards_id}`);
                elm.setAttribute("id", `model-card-${cards_id}`);
+               if (elm.querySelector("i")){
+                 elm.querySelector("i").setAttribute("data-card-id", `card-id-${cards_id}`);
+                 elm.querySelector("i").setAttribute("id", `model-card-${cards_id}`);
+               }
             });
           }
             
