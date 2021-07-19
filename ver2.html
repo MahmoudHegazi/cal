@@ -758,11 +758,11 @@ h5.popupmenu_action_header{
         data-label-color="green" data-list-title="Done" data-list-id="list-4">New Custom Label</div>
         
         <!-- card Menu Button That contains data used in the menu form to locate the card -->
-        <span class="btn btn-primary model_open card_actions" data-toggle="modal"
+        <span class="btn model_open card_actions" data-toggle="modal"
         data-target="#myModal1" data-label-title="New Custom Label"
         data-label-color="green" data-list-id="list-4"
         id="model-card-5" card-id="card-id-5" data-card-id="card-id-5"
-        data-card-description="this is card description some text"><i class="fa fa-edit"></i></span>
+        data-card-description="this is card description some text">&#127915;</i></span>
         </div>
         
         <!-- card text content -->
@@ -819,10 +819,10 @@ h5.popupmenu_action_header{
         
         <!-- Card Menu Btn -->
         
-        <span class="btn btn-primary model_open card_actions"
+        <span class="btn model_open card_actions"
         data-toggle="modal" data-target=""  data-label-title="Proiority"
         data-label-color="blue" data-list-id="list-4" id="model-card-1"
-        card-id="card-id-1" data-card-id="card-id-1"><i class="fa fa-edit"></i></span>
+        card-id="card-id-1" data-card-id="card-id-1">&#127915;</span>
         </div>
         
         <!-- Card Text -->
@@ -855,10 +855,10 @@ h5.popupmenu_action_header{
      </div>
      
       <!-- Card Menu Btn -->
-     <span class="btn btn-primary model_open card_actions"
+     <span class="btn model_open card_actions"
      data-toggle="modal" data-target="#myModal1" data-label-title="Done"
      data-label-color="" data-list-id="list-4" id="model-card-2"
-     card-id="card-id-2" data-card-id="card-id-2"><i class="fa fa-edit"></i></span>
+     card-id="card-id-2" data-card-id="card-id-2">&#127915;</span>
      </div>
 
      <!-- Card Text -->
@@ -2106,6 +2106,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
       
+      
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
       
       
@@ -2125,8 +2126,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       
       
       let modelLabelDiv = document.querySelector("#model_main .model_label");
+      modelLabelDiv.className = "";
+      modelLabelDiv.classList.add('model_label');
       if (modelLabelDiv && labelClass){
          //modelLabelDiv.classList.add("model_label");
+         
          modelLabelDiv.classList.add(labelClass);
          /* Label text */
          document.getElementById("label_title_text").innerText =labelText;
@@ -2193,10 +2197,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       
       /* send the card id  and data to the model to be listed*/ 
       modelBtn.addEventListener("click", todoSystem.openCardModel);
-      modelBtn.classList.add("btn", "btn-primary", "model_open");
+      modelBtn.classList.add("model_open");
       modelBtn.setAttribute("data-toggle", "modal");
       modelBtn.setAttribute('data-target',"");
-      modelBtn.innerHTML = '<i class="fa fa-edit"></i>';    
+      modelBtn.innerHTML = '&#127915;';    
       
       
       let labelcolorClass = newCardData.label_color;
@@ -2589,10 +2593,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             modelopenBtns.forEach( (elm)=> {
                elm.setAttribute("data-card-id", `card-id-${cards_id}`);
                elm.setAttribute("id", `model-card-${cards_id}`);
-               if (elm.querySelector("i")){
-                 elm.querySelector("i").setAttribute("data-card-id", `card-id-${cards_id}`);
-                 elm.querySelector("i").setAttribute("id", `modeli-card-${cards_id}`);
-               }
             });
           }
             
