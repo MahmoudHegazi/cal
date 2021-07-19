@@ -1679,6 +1679,7 @@ function formatAMPM(date) {
  let heightBreak = false;
  let lastTarget;
   let lastTargetContainer;
+  
  function allowDrop(ev) {
    ev.preventDefault();
    let mainColor = "lightgray";
@@ -1735,7 +1736,7 @@ function formatAMPM(date) {
      
      
      // this part for height of dropped effect
-     if (lastTarget != targetList){
+   /*  if (lastTarget != targetList){*/
      
        if (lastTargetContainer){
          lastTargetContainer.style.height = "auto";
@@ -1745,7 +1746,7 @@ function formatAMPM(date) {
        lastTarget = targetList;
        let containerHeight = targetListCardsContainer.offsetHeight;
        targetListCardsContainer.style.height = containerHeight  + dragedElm.offsetHeight + "px";
-     };
+     /*};*/
      
      /* this check if the height effect not set for any reason it will set it*/
 
@@ -2516,9 +2517,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        
        // add event on create new task button
        listCardBtn.addEventListener("click", todoSystem.addNewCard);
-       
-
-       
        let listTitleBackend = list.getAttribute("data-list-title");
        if (listTitle){
           listTitle.setAttribute("data-list-title", listTitleBackend);
@@ -2593,7 +2591,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                elm.setAttribute("id", `model-card-${cards_id}`);
                if (elm.querySelector("i")){
                  elm.querySelector("i").setAttribute("data-card-id", `card-id-${cards_id}`);
-                 elm.querySelector("i").setAttribute("id", `model-card-${cards_id}`);
+                 elm.querySelector("i").setAttribute("id", `modeli-card-${cards_id}`);
                }
             });
           }
