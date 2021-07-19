@@ -2208,7 +2208,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       modelBtn.classList.add("btn", "btn-primary", "model_open");
       modelBtn.setAttribute("data-toggle", "modal");
       modelBtn.setAttribute('data-target',"");
-      modelBtn.innerHTML = '<i class="fa fa-edit"></i>';
+      modelBtn.innerHTML = '&#127915;';
 
 
       let labelcolorClass = newCardData.label_color;
@@ -2612,7 +2612,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           card.querySelector(".task_card").setAttribute("id", `card-id-${cards_id}`)
 
 
-          console.log("not found");
+          //console.log("not found");
 
           if (card.querySelector("div.task_card")){
             card.querySelector("div.task_card").setAttribute("data-list-title", list.getAttribute("data-list-title"));
@@ -2624,7 +2624,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           if (card.querySelector("div.task_card .card_metadata")){
             card.querySelector("div.task_card .card_metadata").setAttribute("data-list-title", list.getAttribute("data-list-title"));
             card.querySelector("div.task_card .card_metadata").setAttribute("data-list-id", currentListId);
-            console.log("found");
+            //console.log("found");
           }
 
           if (card.querySelector("div.task_card .card_metadata .card_label")){
