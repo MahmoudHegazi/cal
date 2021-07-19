@@ -717,7 +717,7 @@ function showCards($conn, $list_id){
                  '" data-list-id="' . $row1['list_id'] . '">'. $row1['label_title'] . '
                  </div>
 
-                 <span class="btn btn-primary model_open card_actions" data-toggle="modal"
+                 <span class="btn model_open card_actions" data-toggle="modal"
                  data-target="#myModal1" data-label-title="' . $row1['label_title'] .  '" data-label-color="' . $row1['label_color'] . '"
                  data-list-id="'. $row1['list_id']  .'" id="model-' . $row1['card_id'] . '" card-id="' . $row1['card_id'] .
                  '" data-list-title="'. $row1['list_title'] .'"
@@ -2205,7 +2205,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
       /* send the card id  and data to the model to be listed*/
       modelBtn.addEventListener("click", todoSystem.openCardModel);
-      modelBtn.classList.add("btn", "btn-primary", "model_open");
+      modelBtn.classList.add("btn","model_open");
       modelBtn.setAttribute("data-toggle", "modal");
       modelBtn.setAttribute('data-target',"");
       modelBtn.innerHTML = '&#127915;';
