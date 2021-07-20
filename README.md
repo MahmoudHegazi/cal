@@ -1,1 +1,1 @@
-[!screen_shot](trello_UI.JPG)
+![screen_shot](trello_UI.JPG)
