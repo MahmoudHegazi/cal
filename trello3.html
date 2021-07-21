@@ -739,7 +739,7 @@ h5.popupmenu_action_header{
 
 /* New edits */
 #model_labels_container{
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
   flex-flow: column nowrap;
@@ -1552,9 +1552,10 @@ let firstactioveLabel = document.querySelector("#model_labels_container .model_l
 for equal text and color label and not allow */
 
 function newLabelAllowed(labeltext, labelcolor) {
-
+  
+  let alllLabelsContainer = document.querySelectorAll(".model_label_container");
   let foundedElm = false;
-  modelLabelsContainerChilds.forEach( (labelContainer)=> {
+  alllLabelsContainer.forEach( (labelContainer)=> {
      if (labelContainer.classList.contains(labelcolor) && labelContainer.querySelector("span").innerText.trim() == labeltext.trim()){
        
        foundedElm = true;
@@ -1714,7 +1715,7 @@ function addNewModelLabel(){
         <input data-label-type="custom" class="model_custom_title" placeholder="Label  Title">
         `
 
-   
+
    modelLabelsContainer.appendChild(newDiv);
    hide_custom_label();
 }
