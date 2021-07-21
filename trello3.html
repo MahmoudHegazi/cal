@@ -18,6 +18,9 @@
 
 
 <style>
+html {
+  scroll-behavior: smooth;
+}
 
 html, body{
   min-height: 100%;
@@ -415,6 +418,42 @@ div.labels_container .label_btn:hover {
   box-shadow: -8px 0 #091e42;
 }
 
+/* active colors  */
+.green.active_label {
+  box-shadow: -8px 0 #519839;
+}
+.yellow.active_label {
+  box-shadow: -8px 0 #97a0af;
+}
+
+.orange.active_label{
+  box-shadow: -8px 0 #b59817;
+}
+
+.red.active_label {
+  box-shadow: -8px 0 #b04632;
+}
+
+.purple.active_label {
+  box-shadow: -8px 0 #89609e;
+}
+
+.blue.active_label {
+  box-shadow: -8px 0 #055a8c;
+}
+
+.lightblue.active_label {
+  box-shadow: -8px 0 #0098b7;
+}
+
+.lightgreen.active_label {
+  box-shadow: -8px 0 #4bbf6b;
+}
+
+.darkblue.active_label {
+  box-shadow: -8px 0 #091e42;
+}
+
 
 
 div.labels_container.hidelabel {
@@ -654,7 +693,7 @@ button.close:hover {
 div.popupmenu_action_hide {
   background: white;
   width: 250px;
-  height: 500px;
+  height: 700;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -664,7 +703,7 @@ div.popupmenu_action_hide {
 div.popupmenu_action {
   background: white;
   width: 250px;
-  height: 500px;
+  height: 700;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -672,6 +711,9 @@ div.popupmenu_action {
   display: fixed;
   top: 20%;
 }
+
+
+
 
 .margin-right-mid {
   margin: 5px;
@@ -702,6 +744,8 @@ h5.popupmenu_action_header{
   justify-content: center;
   flex-flow: column nowrap;
   width: 100%;
+  height: 350px;
+  overflow: auto;
 }
 
 
@@ -737,7 +781,56 @@ h5.popupmenu_action_header{
    padding: 10px;
    background: lavender;
    }
+   
+
+   .model_custom_title {width:80%;display:none}        
           
+ .label_color_flex_container {
+   display: none;
+   flex-flow: row wrap;
+   width: 95%;
+   gap: 1px;
+   margin-top: 3px;
+   margin-bottom: 3px;
+ }
+ .flex-color {
+   height: 25px;
+   width: 24%;
+   cursor: pointer;
+ }
+ 
+        
+
+          
+          
+ 
+ /* width */
+::-webkit-scrollbar {
+  width: 20px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 5px grey; 
+  border-radius: 10px;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #c377e0; 
+  border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background: #c377e0; 
+}
+ 
+ .errorinput{
+   border: 2px solid red;
+   color: red;
+ }
+
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -1232,7 +1325,6 @@ h5.popupmenu_action_header{
  
            <!-- this for select Card label -->
              <!--  Card Default Labels Select -->
-             <h4 id="model_pop_header">Select Label: </h4>
            <div id="model_labels_container" class="model_labels">
              
        
@@ -1276,10 +1368,12 @@ h5.popupmenu_action_header{
             <div class="model_label_container lightgreen">
                  <input name="model_color" value="lightgreen" type="radio">
                  <span class="label_txt">Meeting</span>
+                 <!-- hidden input for custom label -->
            </div>
            
            
-            <div class="model_label_container darkblue">
+            
+             <div class="model_label_container darkblue">
                  <input name="model_color" value="darkblue" type="radio">
                  <span class="label_txt">Important</span>
             </div>
@@ -1289,7 +1383,28 @@ h5.popupmenu_action_header{
          <!--  card label end ----->
 
           <div class="container label_submit_container">
+          
+            <div id="model_label_edit_submitcontainer">
           <button type="button" id="edit_label_btn" class="btn btn-primary label_edit">Change Label</button>
+          <button  type="button" id="add_custom_label_edit" class="btn btn-light label_edit">Add Custom Label</button>
+          </div>
+          
+          <div id="flexcontainer_colors" class="label_color_flex_container" style="display:none;">            
+            <div class="flex-color green active_label" data-color="green"></div>
+            <div class="flex-color red" data-color="red"></div>
+            <div class="flex-color blue" data-color="blue"></div>
+            <div class="flex-color orange" data-color="orange"></div>
+            <div class="flex-color purple" data-color="purple"></div>
+            <div class="flex-color lightblue" data-color="lightblue"></div>
+            <div class="flex-color lightgreen" data-color="lightgreen"></div>
+            <div class="flex-color darkblue" data-color="darkblue"></div>
+          </div>
+
+          <div id="customlabeledt" style="display:none;">
+          <input id="edit_custom_label_title" placeholder="Enter Label Title" class="form-control">
+          <button type="button" id="add_labelbtn_edit_model" class="btn btn-info">Submit Label</button>
+          <button type="button" id="cancel_custom_edit" class="btn btn-danger">Canel</button>
+          </div>
           </div>
           </form>
         </div>
@@ -1416,12 +1531,194 @@ let description_input = document.getElementById("card_description_input");
 let description_saveBtn = document.getElementById("description_save");
 let allExitModelOpen = document.querySelectorAll(".model_open");
 
+let modelLabelsContainerChilds = document.querySelectorAll(".model_label_container");
+
+/* Model Label Custom Color and Edit Color */
+let customlabelContainer = document.getElementById("customlabeledt");
+
+let modelLabelsContainer = document.getElementById("model_labels_container");
+let submitcontainer_label = document.getElementById("model_label_edit_submitcontainer"); 
+let submitLabelCustomModelBtn = document.getElementById("add_labelbtn_edit_model");
+let addcustomLabelBtnMenu = document.getElementById("add_custom_label_edit");
+let flex_colors_container = document.getElementById("flexcontainer_colors");
+let model_custom_label_title = document.getElementById("edit_custom_label_title");
+let addcustomLabelCancel = document.getElementById("cancel_custom_edit");
+let flexColorsEditLabel = document.querySelectorAll(".flex-color");
+
+
+
+/* Function to check when add new label 
+for equal text and color label and not allow */
+
+function newLabelAllowed(labeltext, labelcolor) {
+
+  let foundedElm = false;
+  modelLabelsContainerChilds.forEach( (labelContainer)=> {
+     if (labelContainer.classList.contains(labelcolor) && labelContainer.querySelector("span").innerText.trim() == labeltext.trim()){
+       
+       foundedElm = true;
+       
+     } 
+  }) 
+  return foundedElm;    
+}
+
+
+/* add active function when click on color flex  */
+flexColorsEditLabel.forEach( (colorDiv)=> {
+  colorDiv.addEventListener("click", active_color_div);
+});
+
+
+
+/* add active label class when click colordiv */
+function active_color_div(event) {
+  active_color_div_remove();
+  event.target.classList.add("active_label");
+}
+
+/* hide active label class from all active */
+function active_color_div_remove() {
+  let activeColorLabels = document.querySelectorAll(".flex-color.active_label");
+  activeColorLabels.forEach( (active_label, index, array)=> {
+    array[index].classList.remove("active_label");
+  });
+}
+
+function hide_custom_label() {
+ 
+      
+   if (submitcontainer_label){
+     submitcontainer_label.style.display = "block";
+   }   
+   if (addcustomLabelBtnMenu){
+     addcustomLabelBtnMenu.style.display = "block";
+   } 
+      
+   if (flex_colors_container){
+     flex_colors_container.style.display = "none";
+   } 
+   if (model_custom_label_title){
+     model_custom_label_title.value = "";
+     model_custom_label_title.style.display = "none";
+   } 
+   
+      
+   if (submitLabelCustomModelBtn){
+     submitLabelCustomModelBtn.style.display = "none";
+   }   
+   if (addcustomLabelCancel){
+     addcustomLabelCancel.style.display = "none";
+   } 
+   
+   
+   if (model_custom_label_title) {
+
+   /* remove error class*/
+   if (model_custom_label_title.classList.contains("errorinput")) {
+        model_custom_label_title.classList.remove("errorinput");
+   };
+   
+   }
+   return true;  
+}
+
+function show_custom_label() {
+    
+    
+   
+   if (addcustomLabelBtnMenu){
+     addcustomLabelBtnMenu.style.display = "none";
+   }   
+   if (submitcontainer_label){
+     submitcontainer_label.style.display = "none";
+   }   
+    if (customlabelContainer){
+     customlabelContainer.style.display = "block";
+   }   
+   if (flex_colors_container){
+     flex_colors_container.style.display = "flex";
+   }   
+   if (model_custom_label_title){
+     model_custom_label_title.style.display = "block";
+   }   
+   if (model_custom_label_title){
+     model_custom_label_title.value = "";
+   }  
+   
+    if (model_custom_label_title){
+     model_custom_label_title.style.display = "inline";
+   }  
+
+   if (model_custom_label_title){
+     model_custom_label_title.style.display = "inline";
+   }
+   
+   if (addcustomLabelCancel){
+     addcustomLabelCancel.style.display = "inline";
+   }
+   
+   if (submitLabelCustomModelBtn){
+     submitLabelCustomModelBtn.style.display = "inline";
+   }
+   
+   let custom_label_container = document.querySelector("#add_custom_label_edit");
+   if (custom_label_container){
+     custom_label_container.style.display = "block";
+   }
+   
+   return true;  
+}
+
+function addNewModelLabel(){
+   if (!model_custom_label_title.value){
+     return false;
+   }
+   let colorClass = document.querySelector(".flex-color.active_label");
+   
+   
+   if (colorClass){
+      colorClass = colorClass.getAttribute("data-color");
+   } else {
+      colorClass = "nocolor";
+   } 
+   
+   /* Not allow repeqated label Copy Request green */
+   let isRepeatedLabel = newLabelAllowed(model_custom_label_title.value, colorClass);
+   if (isRepeatedLabel == true){
+     
+     model_custom_label_title.classList.add("errorinput");
+     return false;
+   } else {
+    if (model_custom_label_title.classList.contains("errorinput")) {
+        model_custom_label_title.classList.remove("errorinput");
+     };
+   }
+   let newDiv = document.createElement("div");
+   newDiv.classList.add("model_label_container", colorClass);
+   newDiv.innerHTML =
+        `
+        <input name="model_color" data-label-type="custom"  value="${colorClass}" type="radio">
+        <span class="label_txt" data-label-type="custom" >${model_custom_label_title.value}</span>        
+        <input data-label-type="custom" class="model_custom_title" placeholder="Label  Title">
+        `
+
+   
+   modelLabelsContainer.appendChild(newDiv);
+   hide_custom_label();
+   alert('done');
+}
+
+submitLabelCustomModelBtn.addEventListener("click",addNewModelLabel);
+addcustomLabelCancel.addEventListener("click",hide_custom_label);
+addcustomLabelBtnMenu.addEventListener("click",show_custom_label);
+
 
 /* Edit Label */
 /* form inputs and buttom */
 const edit_label_btn = document.querySelector("#edit_label_btn");
 const edit_label_form = document.querySelector("#labels_form");
-const edit_label_colors = document.querySelectorAll(".model_label_container");
+var edit_label_colors = document.querySelectorAll(".model_label_container");
 
 const model_label_text = document.querySelector("#label_title_text");
 
@@ -1436,6 +1733,7 @@ const model_label_text = document.querySelector("#label_title_text");
 /* Function Used to Hide The POP up Menu For Card Model Aside Actions */
 function hidePopAction(event){
   let allShownPOP = document.querySelectorAll(".popupmenu_action");
+  hide_custom_label();
 
   if (allShownPOP) {
        allShownPOP.forEach( (popup)=> {
@@ -1488,6 +1786,7 @@ let shownPoPs = false;
 /* Function Used to show The POP up Menu For Card Model Aside Actions */
 function showPopAction(event){
   hidePopAction();
+  hide_custom_label();
   let popupMenuId = event.target.getAttribute("data-menu");
   let popupMenuElm = document.getElementById(popupMenuId);
   if (popupMenuElm) {
@@ -1496,6 +1795,7 @@ function showPopAction(event){
     if (popupMenuElm.classList.contains("popupmenu_action_hide")){
       popupMenuElm.classList.remove("popupmenu_action_hide");     
     };
+    
     shownPoPs = true;
     return true;
   };
@@ -1599,6 +1899,7 @@ function newLabelSubmit(data){
    labelCheck.setAttribute("name", "selected_color");
    labelCheck.setAttribute("type", "radio");
    labelCheck.setAttribute("value", color_class);
+   labelCheck.classList.add("customlabel");
    label.classList.add("label_container");
    label.classList.add("label_icon", color_class, "selectable");
    
@@ -1641,6 +1942,7 @@ function submitNewCard(event){
           
           // New Card Submit Data 
           let cardTitle = cardTitle_input.value;
+          let customlabel = false;
           
           let card_label_color = "";
           let card_label_title = "";   
@@ -1653,10 +1955,17 @@ function submitNewCard(event){
                 card_label_color = cardCheckboxs[i].value;
                 card_label_title = cardCheckboxs[i].getAttribute("data-label-title");
                 cardCheckboxs[i].checked = false;
+                
+                if (cardCheckboxs[i].classList.contains("customlabel")){
+                   customlabel = true;
+                }
 
                 break;
              }
           }
+          
+          
+          
           let allCards = cardsContainer.querySelectorAll("div.card_container");
           let last_order = 0;
           if (allCards){
@@ -1667,7 +1976,7 @@ function submitNewCard(event){
 
           
           // All New Card Data
-          let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId, listTitle: card_parentTitle};
+          let newCardData  = {title:cardTitle,order: last_order, label_title:card_label_title, label_color:card_label_color,list_id:card_parentContainerId, listTitle: card_parentTitle, customlabel: customlabel};
           
           //alert(card_parentContainer);
           //card_parentContainer.querySelector(".card-body").appendChild(newCardForm);
@@ -2177,6 +2486,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                    break;
             }
          };
+
       
       return true;
       
@@ -2311,6 +2621,12 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let icon_containers = document.createElement("div");
       let modelBtn = document.createElement("span");
       
+      
+      /* Add data-label-type to model-btn and label incase of custom label db mission */
+      if (newCardData.customlabel == true){
+        modelBtn.setAttribute("data-label-type", "custom");
+        cardlabel.setAttribute("data-label-type", "custom");
+      }
       /* send the card id  and data to the model to be listed*/ 
       modelBtn.addEventListener("click", todoSystem.openCardModel);
       modelBtn.classList.add("btn", "model_open");
@@ -2506,6 +2822,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          /* Get TargetCard */
    let letSelectedCardId = description_saveBtn.getAttribute("data-card-id");
    let letSelectedCard = document.getElementById(letSelectedCardId);
+   
+  
+   let isCustomLabel = false;
+   
    if (!letSelectedCard){
       console.log("Selected Card Not Found");
       return false;
@@ -2548,24 +2868,38 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    
    let modelLabelTextParent =  model_label_text.parentElement;
    if (!modelLabelTextParent){
-     console.log("zft not parent");
+     console.log("no parent for textlabel");
      return false;
    }
+
+
+   /* Here user need edit custom label */
+   /* I will let change only the color for now and text stay same no confilect */
+   if (cardLabelActions.getAttribute("data-label-type") == "custom") {
+      alert(cardLabelActions.getAttribute("data-label-type"));
+      isCustomLabel = true;
+   }
    
-   
+      
    /* Card Label Elements check End */
    
    let checkedColor = null;
    let labelText = null;
+   edit_label_colors  = document.querySelectorAll(".model_label_container");
    
    for (var i=0; i < edit_label_colors.length; i++){
-     if (edit_label_colors[i].querySelector("input").checked == true){
-       checkedColor = edit_label_colors[i].querySelector("input");
+   
+
+
+    
+     if (edit_label_colors[i].querySelector("input[name='model_color'").checked == true){
+       checkedColor = edit_label_colors[i].querySelector("input[name='model_color']");
        labelText = edit_label_colors[i].querySelector("span.label_txt");
-       
+           alert("checked");
        /* If not text elm stop */
        if (!labelText){
           console.log(edit_label_colors[i], "label color with no value");
+      
           return false;
        }
        
@@ -2575,7 +2909,18 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           return false;
        }
        
+       let labelCustom = checkedColor.getAttribute("data-label-type");
+       if (labelCustom == "custom"){
+         letSelectedCard.setAttribute("data-label-type", labelCustom);
+         cardMetaData.setAttribute("data-label-type", labelCustom);
+         cardText.setAttribute("data-label-type", labelCustom);
+         cardLabel.setAttribute("data-label-type", labelCustom); 
+       }
+          
+       
        /* Edit Label In All card Elm and System */
+       
+       /* updatelabel */
        letSelectedCard.setAttribute("data-label-title", labelText.innerText);
        letSelectedCard.setAttribute("data-label-color", checkedColor.value);
        
