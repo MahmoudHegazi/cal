@@ -1572,6 +1572,12 @@ flexColorsEditLabel.forEach( (colorDiv)=> {
 
 
 /* add active label class when click colordiv */
+function add_active_color_elm(elm) {
+  active_color_div_remove();
+  elm.classList.add("active_label");
+}
+
+
 function active_color_div(event) {
   active_color_div_remove();
   event.target.classList.add("active_label");
@@ -1694,11 +1700,16 @@ function addNewModelLabel(){
         model_custom_label_title.classList.remove("errorinput");
      };
    }
+   
+   let oldChecked = modelLabelsContainer.querySelector("input.model_color[name='checked'");
+   if (oldChecked){
+     oldChecked.checked = false;
+   }
    let newDiv = document.createElement("div");
    newDiv.classList.add("model_label_container", colorClass);
    newDiv.innerHTML =
         `
-        <input name="model_color" data-label-type="custom"  value="${colorClass}" type="radio">
+        <input name="model_color" data-label-type="custom"  value="${colorClass}" type="radio" checked>
         <span class="label_txt" data-label-type="custom" >${model_custom_label_title.value}</span>        
         <input data-label-type="custom" class="model_custom_title" placeholder="Label  Title">
         `
@@ -1706,7 +1717,8 @@ function addNewModelLabel(){
    
    modelLabelsContainer.appendChild(newDiv);
    hide_custom_label();
-   alert('done');
+   add_active_color_elm(newDiv);
+   newDiv.querySelector("input[name='model_color']").scrollIntoView({behavior:'smooth'});
 }
 
 submitLabelCustomModelBtn.addEventListener("click",addNewModelLabel);
@@ -2892,10 +2904,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
 
     
+     /* Here We found the new label checked can send to db */
      if (edit_label_colors[i].querySelector("input[name='model_color'").checked == true){
        checkedColor = edit_label_colors[i].querySelector("input[name='model_color']");
        labelText = edit_label_colors[i].querySelector("span.label_txt");
-           alert("checked");
+       
        /* If not text elm stop */
        if (!labelText){
           console.log(edit_label_colors[i], "label color with no value");
@@ -2909,6 +2922,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           return false;
        }
        
+       /* Here we can set the label to custom or just leave it in db tag and color */
        let labelCustom = checkedColor.getAttribute("data-label-type");
        if (labelCustom == "custom"){
          letSelectedCard.setAttribute("data-label-type", labelCustom);
@@ -2950,8 +2964,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        modelLabelTextParent.classList.add("model_label", checkedColor.value);
        
        model_label_text.innerText = labelText.innerText;
-            
-       alert(model_label_text.parentElement.innerText);
 
        break;
      }
