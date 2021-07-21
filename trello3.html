@@ -546,9 +546,13 @@ h4#selectTitle {
 .card_metadata .label_class {
   display: inline-block;
 
+
 }
 
-
+.card_metadata div.card_label{
+  height: 25px;
+  overflow:hidden;
+}
 /* model css */
 
 .label-containers {
@@ -830,6 +834,8 @@ h5.popupmenu_action_header{
    border: 2px solid red;
    color: red;
  }
+
+
 
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
@@ -1401,7 +1407,7 @@ h5.popupmenu_action_header{
           </div>
 
           <div id="customlabeledt" style="display:none;">
-          <input id="edit_custom_label_title" placeholder="Enter Label Title" class="form-control">
+          <input id="edit_custom_label_title" placeholder="Enter Label Title" class="form-control" maxlength="50" size="50">
           <button type="button" id="add_labelbtn_edit_model" class="btn btn-info">Submit Label</button>
           <button type="button" id="cancel_custom_edit" class="btn btn-danger">Canel</button>
           </div>
@@ -1697,7 +1703,22 @@ function addNewModelLabel(){
    let isRepeatedLabel = newLabelAllowed(model_custom_label_title.value, colorClass);
    if (isRepeatedLabel == true){
      
+     let labelTitleValue = model_custom_label_title.value;
+     model_custom_label_title.value = "";
      model_custom_label_title.classList.add("errorinput");
+     model_custom_label_title.setAttribute("placeholder",`${labelTitleValue} exist`);
+     /* Add On Focus eventListener to back the value when write remove it function call one time event */
+
+     function focusInput(event) {
+       /* back every thing when user focus again after error */
+       model_custom_label_title.classList.remove("errorinput");
+       model_custom_label_title.setAttribute("placeholder",'Enter Label Title');
+       model_custom_label_title.value = labelTitleValue;
+       model_custom_label_title.removeEventListener("focus", focusInput);
+       
+     };
+     model_custom_label_title.addEventListener("focus", focusInput);
+     
      return false;
    } else {
     if (model_custom_label_title.classList.contains("errorinput")) {
