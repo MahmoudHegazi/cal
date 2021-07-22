@@ -988,7 +988,7 @@ h5.popupmenu_action_header{
         <div class="card task_card" data-label-title="Proiority"
         data-label-color="blue" data-text="Ticket With Only Label But without description"
         id="card-id-1" data-list-title="new list" data-list-id="list-4"
-        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png">
+        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png, text.docx, file.pdf">
         
         
         <div class="card_metadata" data-label-title="Proiority"
@@ -1488,17 +1488,8 @@ data-card-attachment="image1.png, report.csv, file.txt, image2.png, file1.txt"
           </form>
            
            <!-- show card attachments -->
-           <div class="attachment_container">
-             <div class="attachment">
-                 <a class="attachment_url" href="">
-                 <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png" alt="icon" width="40" height="40">
-                File 1</a>
-             </div>
-             <div class="attachment">
-                 <a class="attachment_url" href="">
-                 <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png" alt="icon" width="40" height="40">
-                 File 1</a>
-             </div>             
+           <div id="attachment_container">
+            
            </div>          
            
         </div>
@@ -1581,8 +1572,8 @@ let flexColorsEditLabel = document.querySelectorAll(".flex-color");
 
 let firstactioveLabel = document.querySelector("#model_labels_container .model_label_container");
 
-
-let attachmentContainer = document.querySelector("attachment_container");
+/* Container which hold the attachments for all cards dynamic */
+let attachmentContainer = document.querySelector("#attachment_container");
 
 
 /* Function to check when add new label 
@@ -2445,7 +2436,7 @@ class TodoList {
   }
  };
  
- 
+
 
 /* Objects */
 
@@ -2456,6 +2447,13 @@ let todoSystem = {
    /* DB/Server Must provide the CreatedTime for Board */
    borderTimeStamp: "1625900349123",
    borderTimeString: "7/10/2021 8:59 am",
+   excelIcon: 'https://iconarchive.com/download/i98359/dakirby309/simply-styled/Microsoft-Excel-2013.ico',
+   wordIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-word-icon.png',
+   textIcon: 'https://icon-library.com/images/small-file-icon/small-file-icon-6.jpg',
+   imageIcon: 'https://freepngimg.com/thumb/graphic_design/55592-3-gallery-free-hq-image.png',
+   pdfIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/512/file-pdf-icon.png',
+   defaultIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png',
+   
    newCardBtn: null,
    createTimeList: () => {
      /* timestamp */
@@ -2584,9 +2582,92 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          
 
    },
+   generateAttachments: (attachString, attachContainerElm)=> {
+     /* convert attachments urls to files elemnts */
+     let attachFormatedString = attachString.trim();
+     let attachmentsArray = attachFormatedString.split(",");
+     let attachFragment = document.createDocumentFragment();
+     if (!attachmentsArray){
+       return false;
+     }
+     
+     attachmentsArray.forEach( (attach)=> {
+       let attachUrl = attach.trim();
+       let attachmentContainer = document.createElement("div");
+       let AttachUrl = document.createElement("a");
+       let AttachImage = document.createElement("img");
+       let AttachTitle = document.createElement("span");
+       
+       attachmentContainer.classList.add("attachment");
+       AttachUrl.classList.add("attachment_url");
+       AttachImage.classList.add("attach_icon");
+       AttachTitle.classList.add("attach_title");
+       AttachUrl.setAttribute("href", attach);
+       AttachImage.setAttribute("width", "40");
+       AttachImage.setAttribute("height", "40");
+       
 
+       AttachImage.setAttribute("src", "https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png");
+       
+       /* SHow file name only without dot */
+       let fileNameOnly = attach.split(".")[0];
+       
+       let fileExtension = attach.split(".")[1];
+       if (fileExtension){
+         let formatedExtension = fileExtension.trim().toLowerCase();
+         /* Add the file extension to the img, url */
+         attachmentContainer.setAttribute("data-type", formatedExtension);
+         AttachUrl.setAttribute("data-type", formatedExtension);
+         AttachImage.setAttribute("data-type", formatedExtension);
+         
+               
+       /* Set Image To attachments Element depend on kown extensions */
+         if (formatedExtension === "png" || formatedExtension === "jpg" || 
+             formatedExtension === "gif" || formatedExtension === "tiff" ||
+             formatedExtension === "tif" || formatedExtension === "eps" ||
+             formatedExtension === "raw") {
+             AttachImage.setAttribute("src", todoSystem.imageIcon);
+         } else if (formatedExtension === "pdf" || formatedExtension === "ps") {
+             AttachImage.setAttribute("src", todoSystem.pdfIcon);
+         } else if (formatedExtension === "txt" || formatedExtension === "odt") {
+             AttachImage.setAttribute("src", todoSystem.textIcon);
+         } else if (formatedExtension === "docx" || formatedExtension === "docm" ||                                 formatedExtension === "doc" || formatedExtension === "dot") {
+             AttachImage.setAttribute("src", todoSystem.wordIcon);
+         } else if (formatedExtension === "csv" || formatedExtension === "xlsx" ||                                   formatedExtension === "xlsb" || formatedExtension === "xlsm") {
+             AttachImage.setAttribute("src", todoSystem.excelIcon);
+           
+          }else {
+          /* textIcon  wordIcon imageIcon defaultIcon */
+             AttachImage.setAttribute("src", todoSystem.defaultIcon);
+         }
+ 
+       }
+       
+       if (fileNameOnly){
+         AttachTitle.innerText = fileNameOnly;
+       } else {
+         AttachTitle.innerText = attach;
+       }
+
+
+
+       
+       
+       AttachUrl.appendChild(AttachImage);
+       AttachUrl.appendChild(AttachTitle);
+       attachmentContainer.appendChild(AttachUrl);
+       attachFragment.appendChild(attachmentContainer);
+       
+     });
+     
+     if (attachContainerElm){
+       attachContainerElm.appendChild(attachFragment);
+     }
+     
+   },
    openCardModel: (event)=> {
       hidePopAction();
+      attachmentContainer.innerHTML = "";
       let openBtn = event.target;
       let popupTemplate = document.getElementById("myModal1");
       let listId = event.target.getAttribute("data-list-id");
@@ -2594,11 +2675,13 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let listTitle = parentList.getAttribute("data-list-title");
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
-      
-      //alert(openBtn.getAttribute("data-card-attachment"));
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
       
-      
+      /* Handle Selected Card Attachments render */
+      let CardAttachments =  openBtn.getAttribute("data-card-attachment");
+      if (CardAttachments && attachmentContainer){
+         todoSystem.generateAttachments(CardAttachments, attachmentContainer);
+      }
       
       if (currentCard){
       
