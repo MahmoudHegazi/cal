@@ -804,9 +804,6 @@ h5.popupmenu_action_header{
   height: 25px;
   overflow:hidden;
 }       
-
-#label_title_text      
-          
  
  /* width */
 ::-webkit-scrollbar {
@@ -836,7 +833,12 @@ h5.popupmenu_action_header{
  }
 
 
-
+.attachment {
+  margin-top: 5px;
+  text-align: left;
+  max-height: 50px;
+  overflow: hidden;
+}
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -985,7 +987,8 @@ h5.popupmenu_action_header{
         <!-- Card Content Container this contains the text -->
         <div class="card task_card" data-label-title="Proiority"
         data-label-color="blue" data-text="Ticket With Only Label But without description"
-        id="card-id-1" data-list-title="new list" data-list-id="list-4">
+        id="card-id-1" data-list-title="new list" data-list-id="list-4"
+        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png">
         
         
         <div class="card_metadata" data-label-title="Proiority"
@@ -1017,7 +1020,21 @@ h5.popupmenu_action_header{
           2 Card with only text main container contains all meta data about the card 
           updated by setCardMetaData() after each action
      -->
-<div class="card_container" data-card-order="0" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 0;"><div class="card task_card" data-label-title="" data-label-color="" data-text="Card Without Text Todo" id="card-id-1" data-list-title="To Do" data-list-id="list-2"><div class="card_metadata" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2"><div class="card_metadata_container"><div class="label_class card_label nocolor" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2"></div><span class="btn model_open card_actions" data-toggle="modal" data-target="" data-label-title="" data-label-color="" data-list-id="list-2" id="model-card-1" card-id="card-id-1" data-list-title="To Do" data-card-id="card-id-1">🎫</span></div><p class="card_text" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">Card Without Text Todo</p></div></div></div>
+<div class="card_container" data-card-order="0" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 0;">
+
+<div class="card task_card" data-label-title="" data-label-color="" data-text="Card Without Text Todo" id="card-id-1" data-list-title="To Do" data-list-id="list-2" 
+data-card-attachment="image1.png, report.csv, file.txt, image2.png, file1.txt"
+>
+
+<div class="card_metadata" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">
+
+<div class="card_metadata_container">
+
+<div class="label_class card_label nocolor" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">
+
+</div>
+
+<span class="btn model_open card_actions" data-toggle="modal" data-target="" data-label-title="" data-label-color="" data-list-id="list-2" id="model-card-1" card-id="card-id-1" data-list-title="To Do" data-card-id="card-id-1">🎫</span></div><p class="card_text" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">Card Without Text Todo</p></div></div></div>
      <!-- card example 3 end -->
       
        </div>
@@ -1469,6 +1486,21 @@ h5.popupmenu_action_header{
                 class="btn btn-light margin-top-mid">Attach</button>
             </div>
           </form>
+           
+           <!-- show card attachments -->
+           <div class="attachment_container">
+             <div class="attachment">
+                 <a class="attachment_url" href="">
+                 <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png" alt="icon" width="40" height="40">
+                File 1</a>
+             </div>
+             <div class="attachment">
+                 <a class="attachment_url" href="">
+                 <img src="https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png" alt="icon" width="40" height="40">
+                 File 1</a>
+             </div>             
+           </div>          
+           
         </div>
         <!-- Attachment action End -->
         
@@ -1548,6 +1580,9 @@ let addcustomLabelCancel = document.getElementById("cancel_custom_edit");
 let flexColorsEditLabel = document.querySelectorAll(".flex-color");
 
 let firstactioveLabel = document.querySelector("#model_labels_container .model_label_container");
+
+
+let attachmentContainer = document.querySelector("attachment_container");
 
 
 /* Function to check when add new label 
@@ -2560,7 +2595,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
       
-      
+      //alert(openBtn.getAttribute("data-card-attachment"));
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
       
       
@@ -3197,13 +3232,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             };
             
           let modelopenBtns = card.querySelectorAll(".model_open");
-          if (modelopenBtns){
-            modelopenBtns.forEach( (elm)=> {
-               elm.setAttribute("data-card-id", `card-id-${cards_id}`);
-               elm.setAttribute("id", `model-card-${cards_id}`);
-            });
-          }
-            
+          
+          let taskCard = card.querySelector(".card");
+          
+          
           // set/update the order of the card data-card-order and flex stlye order
           card.setAttribute("data-card-order", cIndex);
           card.style.order = cIndex;
@@ -3212,7 +3244,32 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           card.querySelector(".task_card").setAttribute("id", `card-id-${cards_id}`)
           
           
-          console.log("not found");
+          
+          let cardAttachments = null
+          if (taskCard) {
+            cardAttachments = taskCard.getAttribute("data-card-attachment");
+          }
+          
+           
+          if (modelopenBtns){
+            modelopenBtns.forEach( (elm)=> {
+               
+               elm.setAttribute("data-card-id", `card-id-${cards_id}`);
+               elm.setAttribute("id", `model-card-${cards_id}`);
+               
+               /* set the attachment in model link */ 
+               if (taskCard && cardAttachments){  
+                 elm.setAttribute("data-card-attachment", `${cardAttachments}`);
+               
+               }
+               
+               
+            });
+          }
+            
+
+          
+          //console.log("not found");
           
           if (card.querySelector("div.task_card")){
             card.querySelector("div.task_card").setAttribute("data-list-title", list.getAttribute("data-list-title"));
