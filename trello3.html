@@ -938,6 +938,13 @@ h5.popupmenu_action_header{
 .backupbtn:hover {
   color: lightblue;
 }
+
+.close_btn_archive{
+  font-size: 16px;
+  cursor:pointer;
+  padding: 4px;
+  color: white;
+}
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -1998,7 +2005,8 @@ function removeOpenPopList() {
 }
 
 window.addEventListener("click", (event)=> {
-   if (!event.target.classList.contains("list_imenu") && !event.target.classList.contains("pop_list_menu") && !event.target.classList.contains("show_archive_btn")){
+   if (!event.target.classList.contains("list_imenu") && !event.target.classList.contains("pop_list_menu") && !event.target.classList.contains("show_archive_btn") && !event.target.classList.contains("backuptext_span")
+   && !event.target.classList.contains("backupbtn") ){
      
      removeOpenPopList();
    }
@@ -3471,6 +3479,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      };
      
   }
+  let unqiueAttachIndex = 1;
   function setCardsMetaData() {
   
     /* Hide all POPuP*/
@@ -3544,7 +3553,17 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
               listTileShown = getListTitle.slice(0, 15) + "..";
             }
             
-            newShowArchives.innerText = `Show ${listTileShown} Archive`;
+            let archiveTitleSpan = document.createElement("span");
+            archiveTitleSpan.innerText = `Show ${listTileShown} Archive`;
+            newShowArchives.innerHTML = "";
+            newShowArchives.appendChild(archiveTitleSpan);
+            
+            let closeBtnArchive = document.createElement("i");
+            closeBtnArchive.classList.add("fa", "fa-close", "float-right");
+            closeBtnArchive.style.background= "red";
+            closeBtnArchive.classList.add("close_btn_archive");
+            newShowArchives.appendChild(closeBtnArchive);
+                 
          }
          
          newlistElm.classList.add("pop_list_menu", "popup_list_hide");
@@ -3564,8 +3583,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                  let archiveFileText = document.createElement("span");
                  let newbackupBtn = document.createElement("i");
                  
-                 newArchiveDiV.setAttribute("id", `arachive-${arIndex}-${currentListId}`);
-                 newbackupBtn.setAttribute("data-archive-id", `arachive-${arIndex}-${currentListId}`);
+                 archiveFileText.classList.add("backuptext_span");
+                 newArchiveDiV.setAttribute("id", `arachive-${unqiueAttachIndex}-${currentListId}`);
+                 newbackupBtn.setAttribute("data-archive-id", `arachive-${unqiueAttachIndex}-${currentListId}`);
+                 unqiueAttachIndex += 1;
                  
                  newbackupBtn.classList.add("fa", "fa-cloud-upload", "float-right", "backupbtn");
                  newbackupBtn.setAttribute("title", "Backup File");
@@ -3577,6 +3598,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                    
                    /* Backup Card Function */
                    newbackupBtn.addEventListener("click", (event)=> {
+
+                     
+                     
+
                      let archiveElmId = event.target.getAttribute("data-container-card-id");
                      let archiveElmItem = document.querySelector(`#${archiveElmId}`);
                      if (!archiveElmItem){
@@ -3585,19 +3610,27 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                      if ( !archiveElmItem.classList.contains("archive_card") ) {
                         return false;
                      }
+
+                     
+                       
+
+                     
                      let archiveId = event.target.getAttribute("data-archive-id");
                      let containerArchiveCardElm = document.querySelector(`#${archiveId}`);
-                     if (!containerArchiveCardElm) {
-                       return false;
+                     if (containerArchiveCardElm) {
+                        containerArchiveCardElm.remove();
+                       
                      }
                      
                      archiveElmItem.classList.remove("archive_card");                    
                      /* remove backup element from list */
-                     containerArchiveCardElm.remove();
+                    
+
                      /* updateSystem Call same function */
                      setCardsMetaData();
 
                    });
+                  
                  }
                  archiveFileText.innerText = cardTitle.innerText.slice(0, 20);
                  newArchiveDiV.appendChild(archiveFileText);
