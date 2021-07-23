@@ -694,7 +694,8 @@ button.close:hover {
 div.popupmenu_action_hide {
   background: white;
   width: 250px;
-  height: 700px;
+  height: auto;
+  max-height: 700px;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -704,7 +705,8 @@ div.popupmenu_action_hide {
 div.popupmenu_action {
   background: white;
   width: 250px;
-  height: 700px;
+  height: auto;
+  max-height: 700px;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -1141,21 +1143,7 @@ h5.popupmenu_action_header{
           2 Card with only text main container contains all meta data about the card 
           updated by setCardMetaData() after each action
      -->
-<div class="card_container" data-create-string="2018-12-3 12:00AM" data-create-timestamp="1543788000000" data-card-order="1" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 1;">
-
-<div class="card task_card" data-create-string="2018-12-3 12:00AM" data-create-timestamp="1543788000000" data-label-title="" data-label-color="" data-text="Card Without Text Todo" id="card-id-1" data-list-title="To Do" data-list-id="list-2" 
-data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, someword.docx"
->
-
-<div class="card_metadata" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">
-
-<div class="card_metadata_container">
-
-<div class="label_class card_label nocolor" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">
-
-</div>
-
-<span class="btn model_open card_actions" data-toggle="modal" data-target="" data-label-title="" data-label-color="" data-list-id="list-2" id="model-card-1" card-id="card-id-1" data-list-title="To Do" data-card-id="card-id-1">🎫</span></div><p class="card_text" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">Card Without Text Todo</p></div></div></div>
+<div class="card_container" data-card-order="4" data-label-title="" data-label-color="" data-create-string="2021-07-23 14:47PM" data-create-timestamp="1627044477892" data-list-id="list-4" data-list-title="Done" id="card-container-6" draggable="true" style="order: 4;"><div class="card task_card" data-label-title="" data-label-color="" data-create-string="2021-07-23 14:47PM" data-create-timestamp="1627044477892" data-text="New Card" id="card-id-6" data-list-title="Done" data-list-id="list-4"><div class="card_metadata" data-label-title="" data-label-color="" data-list-title="Done" data-list-id="list-4"><div class="card_metadata_container"><div class="label_class card_label nocolor" data-label-title="" data-label-color="" data-list-title="Done" data-list-id="list-4"></div><span class="btn model_open card_actions" data-toggle="modal" data-target="" data-label-title="" data-label-color="" data-list-id="list-4" id="model-card-6" card-id="card-id-6" data-list-title="Done" data-card-id="card-id-6" data-card-date="2021-07-23 14:47PM" data-card-timestamp="1627044477892" data-card-containerid="card-container-6" data-dute-date="">🎫</span></div><p class="card_text" data-label-title="" data-label-color="" data-list-title="Done" data-list-id="list-4">New Card</p></div></div></div>
      <!-- card example 2 end -->
       
       
@@ -1632,8 +1620,8 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
              Dates
            </h5>
            <div>
-             <p>Ticket Created At: </p>
-             <p><span class="badge badge-info" id="card_createdate_model"></span></p>
+             <p>Created At: <span class="badge badge-info" id="card_createdate_model"></span></p>
+             <p>Due Date: <span class="badge badge-primary" id="card_duedate_model"></span> </p>
            </div>
            
           <form id="dates_form">
@@ -1642,6 +1630,7 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
              <input type="date" class="form-control" name="startdate" value="" id="startdate">
               <label for="enddate">End Date</label>
               <input type="date" class="form-control" name="enddate" value="" id="enddate">
+              <button type="button" class="btn btn-primary" id="submit_ticket_date">Submit Due Date</button>
             </div>
           </form>
         </div>
@@ -1765,6 +1754,7 @@ let attachmentContainer = document.querySelector("#attachment_container");
 
 let cardDateModel = document.querySelector("#card_createdate_model");
 let cardStartDateInput = document.querySelector("#startdate");
+let submitDueDateBtn = document.querySelector("#submit_ticket_date");
 
 let cardArchiveList = [];
 
@@ -2911,12 +2901,42 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      }
      
    },
+   submitDueDate: (event)=> {
+     let endDate = document.querySelector("#enddate");
+     let SelectedCardId = event.target.getAttribute("data-card-id");
+     let modeldueDateString = document.querySelector("#card_duedate_model");
+     let selectedCard = document.querySelector(`#${SelectedCardId}`);
+     
+     if (!modeldueDateString){
+       return false;
+     }
+     if (!endDate.value) {
+       return false;
+     }
+     if (selectedCard && endDate.value){
+        selectedCard.setAttribute("data-dute-date", endDate.value);
+        modeldueDateString.innerText = endDate.value;
+        setCardsMetaData();
+     }
+
+   },
    openCardModel: (event)=> {
       hidePopAction();
+      let modeldueDateString = document.querySelector("#card_duedate_model");
+      let endDateCard = document.querySelector("#enddate");
       let card_title = document.getElementById("model_card_title");
       if (attachmentContainer.innerHTML != ""){attachmentContainer.innerHTML = "";}
       if (cardDateModel.innerText != ""){cardDateModel.innerText = "";}
-      if (cardStartDateInput){cardStartDateInput.setAttribute("value", "");}
+      if (cardStartDateInput){cardStartDateInput.value = ""}
+      if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-id", "");}
+      if (modeldueDateString){ modeldueDateString.innerText = "";};
+      if (endDateCard.value) {endDateCard.value = "";};
+      
+      if (endDateCard.value) {
+         endDateCard.value = "";
+      }
+      
+      
       if (modelCardTitle) {
          modelCardTitle.innerText = "";
          
@@ -2941,6 +2961,16 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let labelClass = openBtn.getAttribute("data-label-color");
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
       let archiveBtnModel = document.querySelector("#arachive_card_btn");
+      let cardDueDate = openBtn.getAttribute("data-dute-date");
+      
+      
+      if (cardDueDate && endDateCard){
+         endDateCard.value = cardDueDate;
+          
+         if (modeldueDateString) {          
+           modeldueDateString.innerText = cardDueDate;
+         }
+      }
       
       let cardContainer = document.querySelector(`#${openBtn.getAttribute("data-card-containerid")}`);
       if (cardContainer){
@@ -2956,17 +2986,24 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         
       };
        
-       
+      
+      if (submitDueDateBtn && currentCard.id){
+        submitDueDateBtn.setAttribute("data-card-id", currentCard.id);
+        submitDueDateBtn.addEventListener("click", todoSystem.submitDueDate);
+      }
       let cardDate = openBtn.getAttribute("data-card-date");
       
       if (cardDateModel){
         cardDateModel.innerText = cardDate;
        
       }
+      
+      
        if (cardDate && cardStartDateInput) {
+         
          //cardStartDateInput.value = cardDate;
          let cardDateFormated = cardDate.split(" ")[0].trim();
-         cardStartDateInput.setAttribute("value", cardDateFormated);
+         cardStartDateInput.value = cardDateFormated;
          
         /* alert(cardStartDateInput.getAttribute("value"))*/
        }
@@ -3823,6 +3860,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           
           
           
+
+          
+          
           let cardAttachments = null
           if (taskCard) {
             cardAttachments = taskCard.getAttribute("data-card-attachment");
@@ -3860,6 +3900,16 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                };
                
                 elm.setAttribute("data-card-containerid", cardContainerId );
+                
+                
+              let taskCardDueDate = taskCard.getAttribute("data-dute-date");
+              if (taskCardDueDate){
+                elm.setAttribute("data-dute-date", taskCardDueDate);
+             } else {
+                elm.setAttribute("data-dute-date", "");
+             }
+          
+          
                
                
             });
