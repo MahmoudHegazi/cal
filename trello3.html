@@ -694,7 +694,7 @@ button.close:hover {
 div.popupmenu_action_hide {
   background: white;
   width: 250px;
-  height: 700;
+  height: 700px;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -704,7 +704,7 @@ div.popupmenu_action_hide {
 div.popupmenu_action {
   background: white;
   width: 250px;
-  height: 700;
+  height: 700px;
   padding: 10px;
   position: fixed;
   right: 40%;
@@ -852,6 +852,49 @@ h5.popupmenu_action_header{
 .attachment {
   margin-top: 3px;
 }
+
+.archive_card {
+  display: none !important;
+}
+
+.archive_class_title{
+  background: red;
+}
+
+.popup_list_hide{
+  background: white;
+  width: 220px;
+  height: 100px;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position:absolute; left:30px; top:20px;
+  z-index: 100;
+  display: none;
+}
+
+.popup_list_show{
+  background: white;
+  width: 220px;
+  height: 100px;
+  padding: 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  position:absolute; left:30px; top:20px;
+  z-index: 100;
+  display: block;
+}
+.title-container{
+ position:relative; 
+}
+
+.menu_sign i {
+  cursor: pointer;
+  height: 10px;
+  width: 15px;
+}
+
+.menu_sign i:hover {
+  color: white;
+}
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -867,10 +910,10 @@ h5.popupmenu_action_header{
     <!-- Default List 1 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Client 19">
       <div class="card-body">
-        <div class="card-title">
+        <div class="card-title title-container">
           <span>Client 19</span>
 
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right" ></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu" ></i></span>
           
         </div>
         <!-- Group Of Cards -->
@@ -887,14 +930,14 @@ h5.popupmenu_action_header{
     <!-- default List2 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="To Do">
       <div class="card-body">
-        <div class="card-title">
+        <div class="card-title title-container">
         
           <!-- List Title -->
           <span>To Do</span>
           
           
           <!-- List Menu Btn -->
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
         </div>
         
         <!-- Group Of Cards -->
@@ -913,13 +956,14 @@ h5.popupmenu_action_header{
     <!-- Default List3 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Pending">
       <div class="card-body">
-        <div class="card-title">
+        <div class="card-title title-container" >
         
           <!-- List Title -->
           <span>Pending</span>
           
           <!-- List Menu Btn -->
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
+
         </div>
         
         <!-- Group Of Cards -->
@@ -979,13 +1023,13 @@ h5.popupmenu_action_header{
     <!-- Default List 4 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Done">
       <div class="card-body">
-        <div class="card-title">
+        <div class="card-title title-container">
         
           <!-- List Title -->
           <span>Done</span>
           
           <!-- List Menu Btn -->
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
         </div>
         
         <!-- Group Of Cards -->
@@ -1037,7 +1081,7 @@ h5.popupmenu_action_header{
           2 Card with only text main container contains all meta data about the card 
           updated by setCardMetaData() after each action
      -->
-<div class="card_container" data-create-string="2018-12-3 12:00AM" data-create-timestamp="1543788000000" data-card-order="0" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 0;">
+<div class="card_container" data-create-string="2018-12-3 12:00AM" data-create-timestamp="1543788000000" data-card-order="1" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 1;">
 
 <div class="card task_card" data-create-string="2018-12-3 12:00AM" data-create-timestamp="1543788000000" data-label-title="" data-label-color="" data-text="Card Without Text Todo" id="card-id-1" data-list-title="To Do" data-list-id="list-2" 
 data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, someword.docx"
@@ -1052,8 +1096,52 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
 </div>
 
 <span class="btn model_open card_actions" data-toggle="modal" data-target="" data-label-title="" data-label-color="" data-list-id="list-2" id="model-card-1" card-id="card-id-1" data-list-title="To Do" data-card-id="card-id-1">🎫</span></div><p class="card_text" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">Card Without Text Todo</p></div></div></div>
-     <!-- card example 3 end -->
+     <!-- card example 2 end -->
       
+      
+      
+         <!-- card example 4 for archive -->
+        
+        <div class="card_container archive_card" data-card-order="2"
+        data-label-title="Proiority" data-label-color="blue"
+        data-list-id="list-4" data-list-title="Done"
+        data-create-string="2021-05-12 12:00AM" data-create-timestamp="1623974400000"
+        id="card-container-4" draggable="true" style="order: 2;">
+        
+        
+        <!-- Card Content Container this contains the text -->
+        <div class="card task_card" data-label-title="Proiority"
+        data-label-color="blue" data-text="Wrong Ticket"
+        data-create-string="2021-05-23 12:00AM" data-create-timestamp="1623974400000"
+        id="card-id-4" data-list-title="new list" data-list-id="list-4"
+        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png, text.docx, file.pdf, myanimated.gif, code.html, somenote.csv, animation1.gif, mywordfile.docx, knownfile.crt">
+        
+        
+        <div class="card_metadata" data-label-title="Proiority"
+        data-label-color="blue" data-list-title="Done" data-list-id="list-4">
+        
+        <div class="card_metadata_container">
+        
+        <!-- Card Label -->
+        <div class="label_class card_label blue" data-label-title="Proiority"
+        data-label-color="blue" data-list-title="Done" data-list-id="list-5">Proiority</div>
+        
+        <!-- Card Menu Btn -->
+        
+        <span class="btn model_open card_actions"
+        data-toggle="modal" data-target=""  data-label-title="Proiority"
+        data-label-color="blue" data-list-id="list-4" id="model-card-4"
+        card-id="card-id-4" data-card-id="card-id-4">&#127915;</span>
+        </div>
+        
+        <!-- Card Text -->
+        <p class="card_text" data-label-title="Proiority" data-label-color="blue"
+        data-list-title="new list" data-list-id="list-5">Wrong Ticket</p>
+        </div></div></div>
+        <!-- card example 1 end -->
+        
+        
+        
        </div>
           <!-- end of cards Container-->
          <button class="add_new_card_btn btn"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
@@ -1461,7 +1549,7 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
           <!-- close POPUP menu -->
           <span class="btn btn-danger aside_button_close">Close</span>
           <h5 class="popupmenu_action_header">CheckList</h5>
-          <form id="labels_form">
+          <form id="checklist_form">
             <div class="form-group">
               <input type="text" id="checklist_input"
               class="form-control" placeholder="CheckList">
@@ -1509,7 +1597,7 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
           <h5 class="popupmenu_action_header">
              Attachment
            </h5>
-          <form id="labels_form">
+          <form id="atachment_form">
             <div class="form-group">
               <label>Upload File</label>
               <input type="file" name="attachment_source" class="form-control" id="attachment_source" placeholder="upload attachment">
@@ -1536,7 +1624,7 @@ data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, somewo
     </div>
      <!-- end of first action section model -->
     <div class="aside-flex-item">
-        <div class="aside_button btn-light">Archive</div>
+        <div class="aside_button btn-danger" id="arachive_card_btn">Archive</div>
     </div>
     
   </div>
@@ -1614,6 +1702,29 @@ let attachmentContainer = document.querySelector("#attachment_container");
 
 let cardDateModel = document.querySelector("#card_createdate_model");
 let cardStartDateInput = document.querySelector("#startdate");
+
+let cardArchiveList = [];
+
+
+
+
+
+function updateArchiveList() {
+  const AlltaskCards = document.querySelectorAll(".task_card");
+  cardArchiveList = [];
+  let allArchived = document.querySelectorAll(".card_container.archive_card");
+  allArchived.forEach( (archiveElement, index)=> {
+    let arachive_id = "arachive-" + index;
+    let cardTitle = archiveElement.querySelector('.card_text');
+    if (cardTitle) {
+      cardArchiveList.push({id: arachive_id, title: cardTitle, element:archiveElement});
+        }        
+        //alert(cardArchiveList.length);
+      
+  });
+}
+
+
 
 /* Function to check when add new label 
 for equal text and color label and not allow */
@@ -1816,6 +1927,30 @@ var edit_label_colors = document.querySelectorAll(".model_label_container");
 const model_label_text = document.querySelector("#label_title_text");
 
 
+
+/* Remove Open Menu */
+function removeOpenPopList() {
+  let allShowPop = document.querySelectorAll(".popup_list_show");
+  if (allShowPop){
+    for (var i=0; i<allShowPop.length; i++){
+        allShowPop[i].classList.remove("popup_list_show");
+        allShowPop[i].classList.add("popup_list_hide");
+        break;
+                    
+    };
+    
+    return true;
+  } 
+  return false;
+}
+
+window.addEventListener("click", (event)=> {
+   if (!event.target.classList.contains("list_imenu")){
+     
+     removeOpenPopList();
+   }
+});
+              
 /* UpdateLabelFunction */
 
 
@@ -2146,12 +2281,11 @@ function hidelabelsContainer(set=false){
       labelsContainer.style.display = "none";
       labelAlert.style.display = "none";
       showLabelsBtn.style.display = "none";
-     
-      
       labelOpen = false;
    }
 
 }
+
 
 
 function labelMenuLevel1(){
@@ -2176,6 +2310,7 @@ function hideLabels(){
    }
 
 }
+
 
 newCardMenu.addEventListener("click", hidelabelsContainer);
   
@@ -2426,7 +2561,8 @@ class TodoList {
     let listBody = document.createElement("div");
     listBody.classList.add("card-body");    
     let listTitle = document.createElement("div");
-    listTitle.classList.add("card-title");    
+    listTitle.classList.add("card-title");
+    listTitle.classList.add("title-container");
     let listTitleText = document.createElement("span");
     listTitleText.innerText = this.title;
     let MenuIconContainer = document.createElement("span");
@@ -2494,6 +2630,7 @@ let todoSystem = {
    pdfIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/512/file-pdf-icon.png',
    gifIcon: 'https://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/gif-icon.png',
    defaultIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png',
+   listMenuOpen: false,
    
    newCardBtn: null,
    createTimeList: () => {
@@ -2712,9 +2849,22 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    },
    openCardModel: (event)=> {
       hidePopAction();
+      let card_title = document.getElementById("model_card_title");
       if (attachmentContainer.innerHTML != ""){attachmentContainer.innerHTML = "";}
       if (cardDateModel.innerText != ""){cardDateModel.innerText = "";}
       if (cardStartDateInput){cardStartDateInput.setAttribute("value", "");}
+      if (modelCardTitle) {
+         modelCardTitle.innerText = "";
+         
+      }
+      
+      
+      if (modelCardTitle){
+      if (modelCardTitle.classList.contains("archive_class_title")){
+        modelCardTitle.classList.remove("archive_class_title");
+      };
+      };
+
       
       
       
@@ -2726,7 +2876,23 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
+      let archiveBtnModel = document.querySelector("#arachive_card_btn");
       
+      let cardContainer = document.querySelector(`#${openBtn.getAttribute("data-card-containerid")}`);
+      if (cardContainer){
+        
+        if (archiveBtnModel) {
+           archiveBtnModel.setAttribute("data-card-container", openBtn.getAttribute("data-card-containerid"));
+         };
+      } else {
+        if (archiveBtnModel){
+          archiveBtnModel.setAttribute("data-card-container", "");
+        }
+        
+        
+      };
+       
+       
       let cardDate = openBtn.getAttribute("data-card-date");
       
       if (cardDateModel){
@@ -3181,14 +3347,26 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        model_label_text.innerText = labelText.innerText;
 
        break;
+     } 
+     
      }
-     
-   };
-     
      /* Update system then break */
      setCardsMetaData();
      return true;
-   }
+   },
+   archiveCard: (event)=> {
+       let targetCardContainerId = event.target.getAttribute("data-card-container");
+       
+       if (targetCardContainerId){
+         let targetContainer = document.getElementById(targetCardContainerId);
+         //targetContainer.querySelector()
+         if (targetContainer){
+           targetContainer.classList.add("archive_card");
+           modelCardTitle.innerText += " [Archived]";
+           modelCardTitle.classList.add("archive_class_title")
+           }
+        }
+    }
 };
 
     
@@ -3204,7 +3382,15 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   description_saveBtn.addEventListener("click", todoSystem.saveDescription);
   /* update label call */
   edit_label_btn.addEventListener("click", todoSystem.updateLabelModel);
-    
+   
+   
+  /* Archive Function */
+  let addCardToArchiveBtn = document.querySelector("#arachive_card_btn");
+  if (addCardToArchiveBtn){
+    addCardToArchiveBtn.addEventListener("click",todoSystem.archiveCard);
+  }
+
+
     
   /* This for correct handle cards added from backend it will add event listener on card     inserted by PHP and let you open the card model */
   allExitModelOpen.forEach( (openbtn)=> {
@@ -3237,6 +3423,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
     hidePopAction();
     let listsColumns = document.querySelectorAll("div.drop-columns"); 
     
+    updateArchiveList();
 
     let cards_id = 1;
     let list_id = 1;
@@ -3275,6 +3462,34 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        let listCardsContainer = list.querySelector("div.cards_container");
        let listForm = list.querySelector("div.new-card-form");
        let getListTitle = list.getAttribute("data-list-title");
+       
+       
+       
+       if (listTitle && !listTitle.classList.contains("title-container")) {
+         listTitle.classList.add("title-container");
+         
+         
+       }
+       if (listTitle && !listTitle.querySelector(".pop_list_menu")){
+     
+         let newlistElm = document.createElement("div");
+         newlistElm.classList.add("pop_list_menu", "popup_list_hide");
+         
+         listTitle.appendChild(newlistElm);
+         
+         let listMenuI = list.querySelector(".menu_sign i");
+         if (listMenuI)  {
+            listMenuI.classList.add("list_imenu");
+            
+            listMenuI.addEventListener("click", ()=> {
+               removeOpenPopList();
+               newlistElm.classList.add("popup_list_show");
+               
+            });
+         }
+         
+         
+       }
        
        
        
@@ -3384,7 +3599,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           // asgin the list Title to the card
           card.setAttribute("data-list-id", currentListId);
           card.setAttribute("data-list-title", list.getAttribute("data-list-title"));
-          card.setAttribute("id", `card-container-${cards_id}`);
+          
+          let cardContainerId = `card-container-${cards_id}`;
+          card.setAttribute("id", cardContainerId);
           
           
          
@@ -3441,9 +3658,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                };
                
                if (taskCard){
-                 elm.setAttribute("data-card-date", `${cardDate}`);
-                 elm.setAttribute("data-card-timestamp", `${cardTimeStamp}`);
+                 elm.setAttribute("data-card-date", cardDate);
+                 elm.setAttribute("data-card-timestamp", cardTimeStamp);
                };
+               
+                elm.setAttribute("data-card-containerid", cardContainerId );
                
                
             });
