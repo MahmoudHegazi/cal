@@ -710,7 +710,7 @@ div.popupmenu_action {
   right: 40%;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   display: fixed;
-  top: 20%;
+  top: 15%;
 }
 
 
@@ -838,6 +838,17 @@ h5.popupmenu_action_header{
   text-align: left;
   max-height: 50px;
   overflow: hidden;
+}
+
+#attachment_container {
+  height: 250px;
+  overflow: auto;
+  width: 95%;
+  padding: 5px;
+}
+
+.attachment {
+  margin-top: 3px;
 }
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
@@ -988,7 +999,7 @@ h5.popupmenu_action_header{
         <div class="card task_card" data-label-title="Proiority"
         data-label-color="blue" data-text="Ticket With Only Label But without description"
         id="card-id-1" data-list-title="new list" data-list-id="list-4"
-        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png, text.docx, file.pdf">
+        data-card-attachment="myimage.png, task.csv, exam.txt, screenshot.png, text.docx, file.pdf, myanimated.gif, code.html, somenote.csv, animation1.gif, mywordfile.docx, knownfile.crt">
         
         
         <div class="card_metadata" data-label-title="Proiority"
@@ -1023,7 +1034,7 @@ h5.popupmenu_action_header{
 <div class="card_container" data-card-order="0" data-label-title="" data-label-color="" data-list-id="list-2" data-list-title="To Do" id="card-container-1" draggable="true" style="order: 0;">
 
 <div class="card task_card" data-label-title="" data-label-color="" data-text="Card Without Text Todo" id="card-id-1" data-list-title="To Do" data-list-id="list-2" 
-data-card-attachment="image1.png, report.csv, file.txt, image2.png, file1.txt"
+data-card-attachment="image1.png, report.csv, file.txt, videocomment.gif, someword.docx"
 >
 
 <div class="card_metadata" data-label-title="" data-label-color="" data-list-title="To Do" data-list-id="list-2">
@@ -1476,6 +1487,7 @@ data-card-attachment="image1.png, report.csv, file.txt, image2.png, file1.txt"
            </h5>
           <form id="labels_form">
             <div class="form-group">
+              <label>Upload File</label>
               <input type="file" name="attachment_source" class="form-control" id="attachment_source" placeholder="upload attachment">
   
               <hr />
@@ -1488,6 +1500,7 @@ data-card-attachment="image1.png, report.csv, file.txt, image2.png, file1.txt"
           </form>
            
            <!-- show card attachments -->
+            <h5> Card Attachments </h5>
            <div id="attachment_container">
             
            </div>          
@@ -2452,6 +2465,7 @@ let todoSystem = {
    textIcon: 'https://icon-library.com/images/small-file-icon/small-file-icon-6.jpg',
    imageIcon: 'https://freepngimg.com/thumb/graphic_design/55592-3-gallery-free-hq-image.png',
    pdfIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/512/file-pdf-icon.png',
+   gifIcon: 'https://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/gif-icon.png',
    defaultIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png',
    
    newCardBtn: null,
@@ -2623,9 +2637,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                
        /* Set Image To attachments Element depend on kown extensions */
          if (formatedExtension === "png" || formatedExtension === "jpg" || 
-             formatedExtension === "gif" || formatedExtension === "tiff" ||
+             formatedExtension === "tiff" ||
              formatedExtension === "tif" || formatedExtension === "eps" ||
-             formatedExtension === "raw") {
+             formatedExtension === "raw" || formatedExtension === "SVG") {
              AttachImage.setAttribute("src", todoSystem.imageIcon);
          } else if (formatedExtension === "pdf" || formatedExtension === "ps") {
              AttachImage.setAttribute("src", todoSystem.pdfIcon);
@@ -2636,9 +2650,13 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          } else if (formatedExtension === "csv" || formatedExtension === "xlsx" ||                                   formatedExtension === "xlsb" || formatedExtension === "xlsm") {
              AttachImage.setAttribute("src", todoSystem.excelIcon);
            
-          }else {
+          } else if (formatedExtension === "gif") {
+
+             AttachImage.setAttribute("src", todoSystem.gifIcon);
+           
+          } else {
           /* textIcon  wordIcon imageIcon defaultIcon */
-             AttachImage.setAttribute("src", todoSystem.defaultIcon);
+             
          }
  
        }
