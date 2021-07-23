@@ -873,17 +873,22 @@ h5.popupmenu_action_header{
 }
 
 .popup_list_show{
-  background: white;
+  background: ghostwhite;
   width: 220px;
-  height: 100px;
+  height: auto;
+  max-height: 600px;
   padding: 10px;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
   position:absolute; left:30px; top:20px;
   z-index: 100;
   display: block;
 }
-.title-container{
- position:relative; 
+.title-container-menu{
+ position:relative;
+ display: inline-block;
+ margin-left: auto;
+ float: right;
+ right: 30px;
 }
 
 .menu_sign i {
@@ -894,6 +899,44 @@ h5.popupmenu_action_header{
 
 .menu_sign i:hover {
   color: white;
+}
+
+/* archive titme */
+.show_archive_btn {
+  background: lavender;
+  margin-top: auto;
+  padding: 5px;
+  text-align: center;
+
+}
+
+.list_imenu {
+  color: black;
+}
+
+.list_archive_items {
+  margin-top: 10px;
+  min-height: 20px;
+  height: auto;
+  max-height: 600px;
+  overflow: auto;
+}
+.archive_item  {
+    background: antiquewhite;
+    padding: 5px;
+    max-width: 100%;
+    overflow: hidden;
+    margin-top: 2px;
+}
+.backupbtn {
+ float: right;
+ cursor: pointer;
+ color: green;
+ font-size: 18px;
+}
+
+.backupbtn:hover {
+  color: lightblue;
 }
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
@@ -910,11 +953,13 @@ h5.popupmenu_action_header{
     <!-- Default List 1 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Client 19">
       <div class="card-body">
-        <div class="card-title title-container">
+        <div class="card-title">
           <span>Client 19</span>
-
-          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu" ></i></span>
           
+         
+          <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu" ></i></span>
+          <div class="title-container-menu">
+          </div>
         </div>
         <!-- Group Of Cards -->
         <div class="cards_container"></div>
@@ -930,7 +975,7 @@ h5.popupmenu_action_header{
     <!-- default List2 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="To Do">
       <div class="card-body">
-        <div class="card-title title-container">
+        <div class="card-title">
         
           <!-- List Title -->
           <span>To Do</span>
@@ -938,6 +983,8 @@ h5.popupmenu_action_header{
           
           <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
+          </div>
+          <div class="title-container-menu">
         </div>
         
         <!-- Group Of Cards -->
@@ -956,13 +1003,16 @@ h5.popupmenu_action_header{
     <!-- Default List3 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Pending">
       <div class="card-body">
-        <div class="card-title title-container" >
+        <div class="card-title">
         
           <!-- List Title -->
           <span>Pending</span>
           
+          
           <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
+          <div class="title-container-menu">
+          </div>
 
         </div>
         
@@ -1023,13 +1073,16 @@ h5.popupmenu_action_header{
     <!-- Default List 4 -->
     <div class="border-default-list drop-list drop-columns card" data-list-title="Done">
       <div class="card-body">
-        <div class="card-title title-container">
+        <div class="card-title">
         
           <!-- List Title -->
           <span>Done</span>
           
+          
           <!-- List Menu Btn -->
           <span class="menu_sign"><i class="fa fa-ellipsis-h float_right list_imenu"></i></span>
+          </div>
+        <div class="title-container-menu">
         </div>
         
         <!-- Group Of Cards -->
@@ -1705,9 +1758,9 @@ let cardStartDateInput = document.querySelector("#startdate");
 
 let cardArchiveList = [];
 
+ 
 
-
-
+let listArchiveArray = [];
 
 function updateArchiveList() {
   const AlltaskCards = document.querySelectorAll(".task_card");
@@ -1945,7 +1998,7 @@ function removeOpenPopList() {
 }
 
 window.addEventListener("click", (event)=> {
-   if (!event.target.classList.contains("list_imenu")){
+   if (!event.target.classList.contains("list_imenu") && !event.target.classList.contains("pop_list_menu") && !event.target.classList.contains("show_archive_btn")){
      
      removeOpenPopList();
    }
@@ -3363,7 +3416,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          if (targetContainer){
            targetContainer.classList.add("archive_card");
            modelCardTitle.innerText += " [Archived]";
-           modelCardTitle.classList.add("archive_class_title")
+           modelCardTitle.classList.add("archive_class_title");
+           setCardsMetaData();
            }
         }
     }
@@ -3444,6 +3498,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        list.addEventListener("dragleave",  dragLeave);
        list.addEventListener("dragend",  clearDropEffect);
        
+       let AlllistArchive = list.querySelectorAll('.archive_card');
+       /*   archive */
+       
+
+           
        
        
       
@@ -3462,7 +3521,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        let listCardsContainer = list.querySelector("div.cards_container");
        let listForm = list.querySelector("div.new-card-form");
        let getListTitle = list.getAttribute("data-list-title");
-       
+       let listMenuTitile = list.querySelector("title-container-menu");
        
        
        if (listTitle && !listTitle.classList.contains("title-container")) {
@@ -3470,12 +3529,114 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          
          
        }
-       if (listTitle && !listTitle.querySelector(".pop_list_menu")){
-     
-         let newlistElm = document.createElement("div");
-         newlistElm.classList.add("pop_list_menu", "popup_list_hide");
+       if (listTitle){
+
          
-         listTitle.appendChild(newlistElm);
+         let newlistElm = document.createElement("div");
+         let archiveContainerDiv = document.createElement("div");
+         archiveContainerDiv.classList.add("list_archive_items");
+         let newShowArchives = document.createElement("div");
+         newShowArchives.classList.add("show_archive_btn");
+         
+         if (getListTitle){
+            let listTileShown = getListTitle;
+            if (getListTitle.length > 15){
+              listTileShown = getListTitle.slice(0, 15) + "..";
+            }
+            
+            newShowArchives.innerText = `Show ${listTileShown} Archive`;
+         }
+         
+         newlistElm.classList.add("pop_list_menu", "popup_list_hide");
+        
+
+           let listArchive = list.querySelectorAll(".archive_card")
+
+           
+           if (listArchive){
+             archiveContainerDiv.innerHTML = "";
+             listArchive.forEach( (listAr, arIndex)=> {
+             
+               let cardTitle = listAr.querySelector('.card_text');
+               if (cardTitle) {                
+     
+                 let newArchiveDiV = document.createElement("div");
+                 let archiveFileText = document.createElement("span");
+                 let newbackupBtn = document.createElement("i");
+                 
+                 newArchiveDiV.setAttribute("id", `arachive-${arIndex}-${currentListId}`);
+                 newbackupBtn.setAttribute("data-archive-id", `arachive-${arIndex}-${currentListId}`);
+                 
+                 newbackupBtn.classList.add("fa", "fa-cloud-upload", "float-right", "backupbtn");
+                 newbackupBtn.setAttribute("title", "Backup File");
+                 newArchiveDiV.classList.add("archive_item");
+                 let containerId = listAr.getAttribute("id");
+                 if (containerId){
+                   
+                   newbackupBtn.setAttribute("data-container-card-id", containerId);
+                   
+                   /* Backup Card Function */
+                   newbackupBtn.addEventListener("click", (event)=> {
+                     let archiveElmId = event.target.getAttribute("data-container-card-id");
+                     let archiveElmItem = document.querySelector(`#${archiveElmId}`);
+                     if (!archiveElmItem){
+                       return false;
+                     }
+                     if ( !archiveElmItem.classList.contains("archive_card") ) {
+                        return false;
+                     }
+                     let archiveId = event.target.getAttribute("data-archive-id");
+                     let containerArchiveCardElm = document.querySelector(`#${archiveId}`);
+                     if (!containerArchiveCardElm) {
+                       return false;
+                     }
+                     
+                     archiveElmItem.classList.remove("archive_card");                    
+                     /* remove backup element from list */
+                     containerArchiveCardElm.remove();
+                     /* updateSystem Call same function */
+                     setCardsMetaData();
+
+                   });
+                 }
+                 archiveFileText.innerText = cardTitle.innerText.slice(0, 20);
+                 newArchiveDiV.appendChild(archiveFileText);
+                 newArchiveDiV.appendChild(newbackupBtn);
+                 archiveContainerDiv.appendChild(newArchiveDiV);
+               }
+               
+               ;
+             });
+           }
+
+         
+        
+         if (!listMenuTitile){
+           
+           newlistElm.appendChild(newShowArchives);
+           let newTitleContainer = document.createElement("div");
+           newTitleContainer.classList.add("title-container-menu");
+
+         
+           newlistElm.appendChild(archiveContainerDiv);
+           newTitleContainer.appendChild(newlistElm);
+           listTitle.appendChild(newTitleContainer);
+           
+         } else {
+        
+           newlistElm.appendChild(newShowArchives);
+           if (!listMenuTitile.classList.contains("title-container-menu")) {
+             listMenuTitile.classList.add("title-container-menu");
+           }
+           listMenuTitile.appendChild(newlistElm);
+           listMenuTitile.appendChild(archiveContainerDiv);
+           listTitle.appendChild(listMenuTitile);
+           
+         }
+         
+         
+   
+
          
          let listMenuI = list.querySelector(".menu_sign i");
          if (listMenuI)  {
