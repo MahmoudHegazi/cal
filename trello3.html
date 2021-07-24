@@ -977,7 +977,7 @@ h5.popupmenu_action_header{
 
 
 .checklist-child-container {
-  margin-top: 5px;
+  margin-top: 10px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -1010,6 +1010,45 @@ h5.popupmenu_action_header{
   cursor:pointer;
 }
 
+.step_container .step_title{
+   width: 80%;
+   max-width: 80%;
+   overflow: hidden;
+   font-size: 16px;
+   align-self: flex-start;
+}
+
+.step_container input[type='checkbox']{
+  cursor: pointer;
+}
+
+
+.step_container {
+    padding: 10px;
+    font-size: 16px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    margin-left: 10px;
+    border: 1px solid antiquewhite;
+    max-width: 100%;
+
+    
+}
+
+.checklist-container h6{
+ text-align: left;
+ padding: 5px;
+ font-size: 16px;
+ margin-left: 10px;
+ max-width: 90%;
+ overflow: hideen;
+ 
+ 
+}
+.step_container:hover {
+  background: lightgray;
+}
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -1515,7 +1554,7 @@ h5.popupmenu_action_header{
           <hr />
           <div class="checklists_container">
   
-          
+          <!--
           
                <div class="checklist-container">                
                 <h6>Finish Hello World Task 1</h6>
@@ -1528,42 +1567,8 @@ h5.popupmenu_action_header{
                   </div>
                </div>
                
-               <div class="checklist-container">
-                
-                <h6>Finish Hello World Task 2</h6>
-                <div class="checklist-child-container-active" id="checklist-child-1">
-                 <div>
-                 <label for="checkbox-id-1">Hello World Step1</label>
-                 <input id="checkbox-id-1" type="checkbox" class="checklist-box">
-                 </div>
-                 <input type="button" class="btn btn-info" value="Add New" id="add_new_check1">
-               </div>
-              </div>
-              
-               <div class="checklist-container">
-                
-                <h6>Finish Hello World Task 3</h6>
-                <div class="checklist-child-container-active" id="checklist-child-2">
-                <div>
-                <label for="checkbox-id-2">Hello World Step2</label><input id="checkbox-id-2" type="checkbox" class="checklist-box">
-                </div>
-                <input type="button" class="btn btn-info" value="Add New" id="add_new_check2">
-                
-               </div>
-            </div>
-            
-            <div class="checklist-container">
-                
-                <h6>Finish Hello World Task 4</h6>
-                <div class="checklist-child-container-active" id="checklist-child-3">
-                
-                <div>
-                <label for="checkbox-id-3">Hello World Step3</label>
-                <input id="checkbox-id-3" type="checkbox" class="checklist-box">
-                </div>
-                 <input type="button" class="btn btn-info" value="Add New" id="add_new_check3">
-               </div>
-            </div>
+ -->
+
 
     </div>
           
@@ -1856,6 +1861,46 @@ let submitDueDateBtn = document.querySelector("#submit_ticket_date");
 
 
 
+
+function hide_check_form_normal(hidebtn){
+  let initalId_containerid = hidebtn.getAttribute("data-inital-id");
+  let show_BtnId = hidebtn.getAttribute("data-show-id");  
+  let show_Btn = document.querySelector(`#${show_BtnId}`);
+  let initalContainer = document.querySelector(`#${initalId_containerid}`);  
+  let checboxTitleId = hidebtn.getAttribute("data-checkbox-title");
+  let checkboxTtitle = document.querySelector(`#${checboxTitleId}`);  
+  let textSpanId = hidebtn.getAttribute("data-span");  
+  let textSpanElm = document.querySelector(`#${textSpanId}`);  
+  
+  if (!initalContainer){return false;}
+  if (!show_Btn){return false;}
+  if (!checkboxTtitle){return false;}
+  if (!textSpanElm){return false;}
+
+  if (checkboxTtitle.classList.contains('displayflex')){
+    checkboxTtitle.classList.remove("displayflex");
+  }
+  
+  if (!checkboxTtitle.classList.contains("hidden_elm")){
+    checkboxTtitle.classList.add("hidden_elm");
+  };
+  
+  if (textSpanElm.classList.contains("hidden_elm")){ 
+     textSpanElm.classList.remove("hidden_elm");
+  }
+  
+  if (show_Btn.classList.contains("hidden_elm")){ 
+     show_Btn.classList.remove("hidden_elm");
+  }
+  
+  if (!hidebtn.classList.contains("hidden_elm")){
+    hidebtn.classList.add("hidden_elm")
+  }
+  checkboxTtitle.value = "";
+}
+
+
+
 function hide_check_form(event){
   let initalId_containerid = event.target.getAttribute("data-inital-id");
   let show_BtnId = event.target.getAttribute("data-show-id");
@@ -1875,7 +1920,8 @@ function hide_check_form(event){
   if (!show_Btn){return false;}
   if (!checkboxTtitle){return false;}
   if (!textSpanElm){return false;}
-
+  
+  
   if (checkboxTtitle.classList.contains('displayflex')){
     checkboxTtitle.classList.remove("displayflex");
   }
@@ -1884,24 +1930,17 @@ function hide_check_form(event){
     checkboxTtitle.classList.add("hidden_elm");
   };
   checkboxTtitle.value = "";
-  
-  
-  
   if (textSpanElm.classList.contains("hidden_elm")){ 
      textSpanElm.classList.remove("hidden_elm");
   }
-  
   event.target.classList.add("hidden_elm");
   
   if (show_Btn.classList.contains("hidden_elm")){ 
      show_Btn.classList.remove("hidden_elm");
   }
-  
   checkboxTtitle.value = "";
-  
-  
-
 }
+
 
 
 function show_check_form(event){
@@ -1953,7 +1992,57 @@ function show_check_form(event){
 
 
 }
-          
+
+function addCheckListOption(event){
+  let checkBoxId = event.target.getAttribute("data-sytem-id");
+  
+  let checkboxTitleInputId = event.target.getAttribute("data-title-id");
+  let checkboxTitleInput = document.querySelector(`#${checkboxTitleInputId}`);
+  
+  let stepsContainerid = event.target.getAttribute("data-checksteps");
+  let stepsContainer = document.querySelector(`#${stepsContainerid}`);
+  
+
+ 
+  if (!checkBoxId || !checkboxTitleInput || !stepsContainer ){  return false; }
+  if (checkboxTitleInput.value.trim() == ""){ return false; }
+
+  let hideElm = document.querySelector(`#hide_${checkBoxId}`);
+  if (!hideElm) {return false;}
+  
+
+  let newCheckOption = document.createElement("div");
+  newCheckOption.classList.add("displayflex", "step_container");
+  let checkOptionHTML =
+  `
+   <span class="step_title" data-checkbox-id="checkbox-id-${checkBoxId}">${checkboxTitleInput.value}</span>
+   <input name="checkbox_${checkBoxId}" id="checkbox_id-${checkBoxId}" type="checkbox" class="checklist-box">
+  `;
+  newCheckOption.innerHTML = checkOptionHTML;
+  stepsContainer.appendChild(newCheckOption);
+  
+
+  
+  
+   let currenCardId = listTitle.getAttribute("data-card-id");
+   let currentCard = document.querySelector(`#${currenCardId}`);
+   
+  if (!currentCard){ return false;}
+  
+  let currentCardValue = currentCard.getAttribute("data-checklist");
+  currentCard.setAttribute("data-checklist", `${currentCardValue}|_._|${checkboxTitleInput.value}`);
+  
+  hide_check_form_normal(hideElm);
+  checkboxTitleInput.value = "";
+  
+  return true;
+  /*
+    data-title-id="checkbox_title_${lastId}"
+          data-sytem-id="${lastId}" data-title="checkbox_title_${lastId}"
+          data-checksteps="checklist_steps_${lastId}" 
+  
+  */
+}
 let submitCreateCheckList = document.querySelector("#checkList_submit_input1");
 
 function addNewCheckList(event) {
@@ -1964,6 +2053,14 @@ function addNewCheckList(event) {
    if (listTitle.value.trim() === "") {return false;}
    let allCheckLists = document.querySelectorAll("div.checklists_container");
 
+   let currenCardId = listTitle.getAttribute("data-card-id");
+   let currentCard = document.querySelector(`#${currenCardId}`);
+   
+   if (!currentCard){ return false;}
+   
+   
+   
+   
    
    let lastId = allCheckLists.length;
    
@@ -1972,15 +2069,12 @@ function addNewCheckList(event) {
    newCheckContainer.classList.add("checklists_container");  
    const containerHTML = 
     `
-         <div class="checklist-container">                
-            <h6 class="checklist_title">${listTitle.value.slice(0, 60)}</h6>
+         <div class="checklist-container" data-card-id="${currenCardId}" >                
+            <h6 class="checklist_title"><mark>${listTitle.value.slice(0, 60)}</mark></h6>
+            <div class="checklist_steps" id="checklist_steps_${lastId}">
+            </div>
             <div class="checklist-child-container" id="checklist-child-${lastId}"
-              data-order="${lastId}">    
-              
-
-
-            
-            
+              data-order="${lastId}">        
             <i  class="actionicon hidden_elm fa fa-minus"
             style="" id="hide_${lastId}"
             data-show-id="show_${lastId}" data-inital-id="inital_${lastId}"
@@ -1996,26 +2090,44 @@ function addNewCheckList(event) {
             
             
             <div class="inital_checkbox" id="inital_${lastId}">
-            
-              <label for="checkbox-id-${lastId}">Hello World Step</label>
-              <input name="checkbox_${lastId}" id="checkbox_id-${lastId}" type="checkbox" class="checklist-box">
-              
+
             </div>
             
           <div id="checkbox_title_${lastId}" class="hidden_elm">
-          <input class="form-control check_title" type="text" placeholder="Enter Step Title" name="checkbox_title_${lastId}">  
-          <input type="button" class="btn btn-info" value="Add New" id="add_new_check${lastId}">
+          
+          <input id="step_title_${lastId}" class="form-control check_title" type="text" placeholder="Enter Step Title" name="">  
+                    
+          <button type="button" data-title-id="step_title_${lastId}"
+          data-sytem-id="${lastId}"
+          data-checksteps="checklist_steps_${lastId}" 
+          id="submit_step${lastId}" data-card-id="${currenCardId}" class="btn btn-primary">Submit</button>
           </div>
+          
+         
         </div>
     `;
+    
+    let currentCardCheckList = currentCard.getAttribute("data-checklist");
+    
+    if (!currentCardCheckList || currentCardCheckList == ""){
+       currentCard.setAttribute("data-checklist", `${listTitle.value}|_._|`);
+    } else {
+       currentCard.setAttribute("data-checklist", `${currentCardCheckList}|||.|||${listTitle.value}`);
+    }
+    
+    
+    
     newCheckContainer.innerHTML = containerHTML;
     checkListsContainer.appendChild(newCheckContainer);
     
     let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
     let hideBtn = checkListsContainer.querySelector(`#hide_${lastId}`);
+    let addNewOption = checkListsContainer.querySelector(`#submit_step${lastId}`);
+    
     showBtn.addEventListener("click", show_check_form);
     hideBtn.addEventListener("click", hide_check_form);
-    
+    addNewOption.addEventListener("click", addCheckListOption);
+    listTitle.value = "";
     
 }
                
@@ -3162,6 +3274,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (modeldueDateString){ modeldueDateString.innerText = "";};
       if (endDateCard.value) {endDateCard.value = "";};
       
+
       if (endDateCard.value) {
          endDateCard.value = "";
       }
@@ -3216,6 +3329,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         
       }
        
+      
+      let checkListsContainer = document.querySelector("#checklist_title_input");
+      if (checkListsContainer) {
+        checkListsContainer.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"))
+      }
       
       if (submitDueDateBtn && currentCard.id){
         submitDueDateBtn.setAttribute("data-card-id", currentCard.id);
