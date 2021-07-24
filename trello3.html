@@ -947,6 +947,69 @@ h5.popupmenu_action_header{
   padding: 4px;
   color: white;
 }
+.checklists-container{
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 600px;
+  min-height: 100px;
+  overflow: auto;
+}
+.checklist-container {
+  display: block;
+  height: auto;
+  max-height: 100%;
+  padding: 5px;
+  width: 97%;
+  background: white;
+  margin-top: 10px;
+  
+  
+}
+.checklist-child-container-active {
+  margin-top: 5px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  
+  
+}
+
+
+.checklist-child-container {
+  margin-top: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
+  
+}
+
+.checklist-box {
+  margin-left: 5px;
+  padding: 10px;
+
+}
+.inital_checkbox {
+  display: none;
+}
+
+
+
+.hidden_elm {
+  display: none;
+}
+
+.displayflex{
+  display: flex;
+}
+.actionicon {
+  color:black;
+  font-size: 20px;
+  margin-right:2px;
+  cursor:pointer;
+}
+
 /* 
 #model_labels_container, #model_pop_header, .model_label_container .model_label
 */
@@ -1402,17 +1465,17 @@ h5.popupmenu_action_header{
            <button type="button" class="close" data-dismiss="modal"> &times;</button>
         </div>
         
-      <!-- Modal body -->
-      <div class="modal-body model_main_body" style="height:fit-content">
+<!-- Modal body -->
+<div class="modal-body model_main_body" style="height:fit-content">
       
-      <div id="model_body_flex">  
-        <div id="model_main">  
+  <div id="model_body_flex">  
+    <div id="model_main">  
          <div class="container list_title_container">
            <!-- card List It got from card by system and data-list-title  -->
            <span>in list: </span><a id="list-title"><!-- Card title text --></a>
          </div>
          
-         <div class="container">
+      <div class="container">
            <h5>Labels: </h5>
            <div class="container label-containers">
              <!-- it will get the current card label class by setCardMetaData and data-label-color attribute -->
@@ -1433,30 +1496,80 @@ h5.popupmenu_action_header{
             <!-- New Description textarea input -->
            <textarea id="card_description_input" 
              placeholder="add a more detailed description" class="form-control"
-           style="height:100px;"></textarea>
+           style="height:50px;"></textarea>
            
            <!-- submit description add button -->
            <button class="btn btn-success" id="description_save" type="button">Save</button>
-        </div>
+         </div>
         
         <!-- Activity and comments section -->
         <div class="activve_container">
-          <h4><i class="title_fa fa fa-reorder"></i>Activity</h4>
+          <h4><i class="title_fa fa fa-reorder"></i>CheckList</h4>
+          <div class="form-group">
+            <label>Add New Check List</label>
+            <input type="text" class="form-control" id="checklist_title_input" value="" placeholder="CheckList Title">
 
-           <div><input id="model_comment" class="form-control"></div>
-           
-           <div class="save_container"  style="display:none;">
-             <button id="save_btn" type="button" class="btn btn-info">Save</button>
-             <span class="comment_icons">
-              <span><i class="fa fa-camera"></i></span>
-              <span><i class="fa fa-paperclip"></i></span>
-              <span><i class="fa fa-file"></i></span>
-              <span><i class="fa fa-plus"></i></span>
-             </span>
-           </div>
-                 <input id="card_id" type="hidden" value="" class="form-control">
-         </div>
-       </div>
+            <input type="button" class="btn btn-primary" id="checkList_submit_input1" value="Add CheckList" >            
+            
+          </div>
+          <hr />
+          <div class="checklists_container">
+  
+          
+          
+               <div class="checklist-container">                
+                <h6>Finish Hello World Task 1</h6>
+                  <div class="checklist-child-container-active" id="checklist-child-0">
+                   <div>
+                     <label for="checkbox-id-0">Hello World Step</label>
+                     <input id="checkbox-id-0" type="checkbox" class="checklist-box">
+                   </div>
+                   <input type="button" class="btn btn-info" value="Add New" id="add_new_check0">
+                  </div>
+               </div>
+               
+               <div class="checklist-container">
+                
+                <h6>Finish Hello World Task 2</h6>
+                <div class="checklist-child-container-active" id="checklist-child-1">
+                 <div>
+                 <label for="checkbox-id-1">Hello World Step1</label>
+                 <input id="checkbox-id-1" type="checkbox" class="checklist-box">
+                 </div>
+                 <input type="button" class="btn btn-info" value="Add New" id="add_new_check1">
+               </div>
+              </div>
+              
+               <div class="checklist-container">
+                
+                <h6>Finish Hello World Task 3</h6>
+                <div class="checklist-child-container-active" id="checklist-child-2">
+                <div>
+                <label for="checkbox-id-2">Hello World Step2</label><input id="checkbox-id-2" type="checkbox" class="checklist-box">
+                </div>
+                <input type="button" class="btn btn-info" value="Add New" id="add_new_check2">
+                
+               </div>
+            </div>
+            
+            <div class="checklist-container">
+                
+                <h6>Finish Hello World Task 4</h6>
+                <div class="checklist-child-container-active" id="checklist-child-3">
+                
+                <div>
+                <label for="checkbox-id-3">Hello World Step3</label>
+                <input id="checkbox-id-3" type="checkbox" class="checklist-box">
+                </div>
+                 <input type="button" class="btn btn-info" value="Add New" id="add_new_check3">
+               </div>
+            </div>
+
+    </div>
+          
+          
+        </div>
+     </div>
     </div>
     
     <!-- main end -->
@@ -1695,34 +1808,25 @@ window.addEventListener('DOMContentLoaded', (event) => {
 
 // the object store drop and drag data     position: absolute;
 let data;
-
-
 /* Global Variables */
 const addNewListContainer = document.getElementById("static_add_list");
-
 const addNewListBtn = document.getElementById("add_list_btn");
 const addNewListinput = document.getElementById("new_list_name");
 const addNewListsubmit = document.getElementById("new_list_submit");
-
 const canelAddNewList = document.getElementById("cancel_add_list");
 const canelAddNewCard = document.getElementById("cancel_add_card");
-
 const newCardDefaultHolder = document.getElementById("form_template_holder"); 
 const newCardForm = document.getElementById("new-card-form"); 
 const newCardMenu = document.getElementById("card_add_menu"); 
 const newCardSubmit = document.getElementById("new_card_submit");
 const cardTitle_input = document.getElementById("card_title");
-
 const labelsContainer = document.getElementById("label_container_div"); 
 const labelContainers = document.querySelectorAll("div.label_container");
 const customLabelContainer = document.querySelector("div#add_new_label_container");
-
 const labelAlert = document.getElementById("label_notes"); 
 const addNewLabelName = document.getElementById("label_title"); 
 const addNewLabelBtn = document.getElementById("add_newlabel"); 
 let submitCreateLabel = document.getElementById("add_newlabel_step2");
-
-
 let modelMainContainer = document.querySelector("#model_main");
 let modelCardHeader = document.querySelector(".modal-header");
 let modelCardTitle = document.getElementById("model_card_title");
@@ -1732,12 +1836,9 @@ let modelList = document.getElementById("list-title");
 let description_input = document.getElementById("card_description_input");
 let description_saveBtn = document.getElementById("description_save");
 let allExitModelOpen = document.querySelectorAll(".model_open");
-
 let modelLabelsContainerChilds = document.querySelectorAll(".model_label_container");
-
 /* Model Label Custom Color and Edit Color */
 let customlabelContainer = document.getElementById("customlabeledt");
-
 let modelLabelsContainer = document.getElementById("model_labels_container");
 let submitcontainer_label = document.getElementById("model_label_edit_submitcontainer"); 
 let submitLabelCustomModelBtn = document.getElementById("add_labelbtn_edit_model");
@@ -1746,24 +1847,186 @@ let flex_colors_container = document.getElementById("flexcontainer_colors");
 let model_custom_label_title = document.getElementById("edit_custom_label_title");
 let addcustomLabelCancel = document.getElementById("cancel_custom_edit");
 let flexColorsEditLabel = document.querySelectorAll(".flex-color");
-
 let firstactioveLabel = document.querySelector("#model_labels_container .model_label_container");
-
 /* Container which hold the attachments for all cards dynamic */
 let attachmentContainer = document.querySelector("#attachment_container");
-
 let cardDateModel = document.querySelector("#card_createdate_model");
 let cardStartDateInput = document.querySelector("#startdate");
 let submitDueDateBtn = document.querySelector("#submit_ticket_date");
 
-let cardArchiveList = [];
 
+
+function hide_check_form(event){
+  let initalId_containerid = event.target.getAttribute("data-inital-id");
+  let show_BtnId = event.target.getAttribute("data-show-id");
+  
+  let show_Btn = document.querySelector(`#${show_BtnId}`);
+  let initalContainer = document.querySelector(`#${initalId_containerid}`);
+  
+  let checboxTitleId = event.target.getAttribute("data-checkbox-title");
+  let checkboxTtitle = document.querySelector(`#${checboxTitleId}`);
+  
+  let textSpanId = event.target.getAttribute("data-span");  
+  let textSpanElm = document.querySelector(`#${textSpanId}`);  
+  
+  
+  
+  if (!initalContainer){return false;}
+  if (!show_Btn){return false;}
+  if (!checkboxTtitle){return false;}
+  if (!textSpanElm){return false;}
+
+  if (checkboxTtitle.classList.contains('displayflex')){
+    checkboxTtitle.classList.remove("displayflex");
+  }
+  
+  if (!checkboxTtitle.classList.contains("hidden_elm")){
+    checkboxTtitle.classList.add("hidden_elm");
+  };
+  checkboxTtitle.value = "";
+  
+  
+  
+  if (textSpanElm.classList.contains("hidden_elm")){ 
+     textSpanElm.classList.remove("hidden_elm");
+  }
+  
+  event.target.classList.add("hidden_elm");
+  
+  if (show_Btn.classList.contains("hidden_elm")){ 
+     show_Btn.classList.remove("hidden_elm");
+  }
+  
+  checkboxTtitle.value = "";
+  
+  
+
+}
+
+
+function show_check_form(event){
+  let initalId_containerid = event.target.getAttribute("data-inital-id");
+  let initalContainer = document.querySelector(`#${initalId_containerid}`);
+  
+  let hide_BtnId = event.target.getAttribute("data-hide-id");
+  let hide_Btn = document.querySelector(`#${hide_BtnId}`);
+
+  let checboxTitleId = event.target.getAttribute("data-checkbox-title");
+  let checkboxTtitle = document.querySelector(`#${checboxTitleId}`);
+  
+  let textSpanId = event.target.getAttribute("data-span");  
+  let textSpanElm = document.querySelector(`#${textSpanId}`);  
+  
+  
+  
+  
+  if (!initalContainer){return false;}
+  if (!hide_BtnId){return false;}
+  if (!checkboxTtitle){return false;}
+  if (!textSpanElm){return false;}
+  
+  
+  if (checkboxTtitle.classList.contains("hidden_elm")){
+    checkboxTtitle.classList.remove("hidden_elm");
+  }
+  
+  checkboxTtitle.value = "";
+  
+  if (!checkboxTtitle.classList.contains('displayflex')){
+    checkboxTtitle.classList.add("displayflex");
+  }
+  
+/*
+  if (initalContainer.classList.contains("inital_checkbox")){
+    initalContainer.classList.remove("inital_checkbox");
+  }
+  */
+  if (!textSpanElm.classList.contains("hidden_elm")){ 
+     textSpanElm.classList.add("hidden_elm");
+  }
+  
+  event.target.classList.add("hidden_elm"); 
+  if (hide_Btn.classList.contains("hidden_elm")){ 
+     hide_Btn.classList.remove("hidden_elm");
+  }
  
 
+
+}
+          
+let submitCreateCheckList = document.querySelector("#checkList_submit_input1");
+
+function addNewCheckList(event) {
+
+   let checkListsContainer = document.querySelector("div.checklists_container");
+   let TargetBtn = event.target;
+   let listTitle = document.querySelector("#checklist_title_input");
+   if (listTitle.value.trim() === "") {return false;}
+   let allCheckLists = document.querySelectorAll("div.checklists_container");
+
+   
+   let lastId = allCheckLists.length;
+   
+
+   let newCheckContainer = document.createElement("div");
+   newCheckContainer.classList.add("checklists_container");  
+   const containerHTML = 
+    `
+         <div class="checklist-container">                
+            <h6 class="checklist_title">${listTitle.value.slice(0, 60)}</h6>
+            <div class="checklist-child-container" id="checklist-child-${lastId}"
+              data-order="${lastId}">    
+              
+
+
+            
+            
+            <i  class="actionicon hidden_elm fa fa-minus"
+            style="" id="hide_${lastId}"
+            data-show-id="show_${lastId}" data-inital-id="inital_${lastId}"
+            data-checkbox-title="checkbox_title_${lastId}" title="Cancel"
+            data-span="show_span_${lastId}">
+            </i>
+           
+            <i id="show_${lastId}" data-inital-id="inital_${lastId}"
+            data-hide-id="hide_${lastId}" class="fa fa-plus actionicon"
+            data-checkbox-title="checkbox_title_${lastId}" title="add New Step"
+            data-span="show_span_${lastId}"></i>                      
+            <span id="show_span_${lastId}">Add New Step</span>
+            
+            
+            <div class="inital_checkbox" id="inital_${lastId}">
+            
+              <label for="checkbox-id-${lastId}">Hello World Step</label>
+              <input name="checkbox_${lastId}" id="checkbox_id-${lastId}" type="checkbox" class="checklist-box">
+              
+            </div>
+            
+          <div id="checkbox_title_${lastId}" class="hidden_elm">
+          <input class="form-control check_title" type="text" placeholder="Enter Step Title" name="checkbox_title_${lastId}">  
+          <input type="button" class="btn btn-info" value="Add New" id="add_new_check${lastId}">
+          </div>
+        </div>
+    `;
+    newCheckContainer.innerHTML = containerHTML;
+    checkListsContainer.appendChild(newCheckContainer);
+    
+    let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
+    let hideBtn = checkListsContainer.querySelector(`#hide_${lastId}`);
+    showBtn.addEventListener("click", show_check_form);
+    hideBtn.addEventListener("click", hide_check_form);
+    
+    
+}
+               
+
+submitCreateCheckList.addEventListener("click", addNewCheckList);
+
+let cardArchiveList = [];
 let listArchiveArray = [];
 
+
 function updateArchiveList() {
-  const AlltaskCards = document.querySelectorAll(".task_card");
   cardArchiveList = [];
   let allArchived = document.querySelectorAll(".card_container.archive_card");
   allArchived.forEach( (archiveElement, index)=> {
@@ -1771,12 +2034,9 @@ function updateArchiveList() {
     let cardTitle = archiveElement.querySelector('.card_text');
     if (cardTitle) {
       cardArchiveList.push({id: arachive_id, title: cardTitle, element:archiveElement});
-        }        
-        //alert(cardArchiveList.length);
-      
+        }    
   });
 }
-
 
 
 /* Function to check when add new label 
@@ -1856,7 +2116,7 @@ function hide_custom_label() {
    /* remove error class*/
    if (model_custom_label_title.classList.contains("errorinput")) {
         model_custom_label_title.classList.remove("errorinput");
-   };
+   }
    
    }
    return true;  
@@ -1941,14 +2201,14 @@ function addNewModelLabel(){
        model_custom_label_title.value = labelTitleValue;
        model_custom_label_title.removeEventListener("focus", focusInput);
        
-     };
+     }
      model_custom_label_title.addEventListener("focus", focusInput);
      
      return false;
    } else {
     if (model_custom_label_title.classList.contains("errorinput")) {
         model_custom_label_title.classList.remove("errorinput");
-     };
+     }
    }
    
 
@@ -1959,8 +2219,7 @@ function addNewModelLabel(){
         <input name="model_color" data-label-type="custom"  value="${colorClass}" type="radio" >
         <span class="label_txt" data-label-type="custom" >${model_custom_label_title.value}</span>        
         <input data-label-type="custom" class="model_custom_title" placeholder="Label  Title">
-        `
-
+        `;
 
    modelLabelsContainer.appendChild(newDiv);
    hide_custom_label();
@@ -1976,9 +2235,7 @@ addcustomLabelBtnMenu.addEventListener("click",show_custom_label);
 const edit_label_btn = document.querySelector("#edit_label_btn");
 const edit_label_form = document.querySelector("#labels_form");
 var edit_label_colors = document.querySelectorAll(".model_label_container");
-
 const model_label_text = document.querySelector("#label_title_text");
-
 
 
 /* Remove Open Menu */
@@ -2006,12 +2263,6 @@ window.addEventListener("click", (event)=> {
 });
               
 /* UpdateLabelFunction */
-
-
-
-
-
-
 /* Function Used to Hide The POP up Menu For Card Model Aside Actions */
 function hidePopAction(event){
   let allShownPOP = document.querySelectorAll(".popupmenu_action");
@@ -2034,9 +2285,6 @@ function hidePopAction(event){
     return false;
   
 }
-
-
-
 /* Close Hide POPups part */
 
 let allClose = document.querySelectorAll(".close");
@@ -2090,7 +2338,6 @@ allAsideMenuActionsBtn1.forEach( (asideBtn)=> {
 });
 
 
-let modelCommentInput = document.getElementById("model_comment");
 let stepOneContiner = document.getElementById("label_group1");
 let stepTwoContiner = document.getElementById("add_new_label_container");
 let showLabelsBtn = document.getElementById("show_labels_btn");
@@ -2113,19 +2360,6 @@ const allLabelsColors = document.querySelectorAll(".colors");
 
 
 
-
-
-
-/* function to show comment options in the model */
-let saveOptionsDiv = document.querySelector(".save_container");
-function show_comment_options(){
-  saveOptionsDiv.style.display = "block";
-}
-function hide_comment_options(){
-  saveOptionsDiv.style.display = "none";
-}
-modelCommentInput.addEventListener("focus", show_comment_options)
-modelCommentInput.addEventListener("focusout", hide_comment_options)
 
 function newLabelSubmit(data){
 
@@ -2318,8 +2552,8 @@ function hidelabelsContainer(set=false){
                    cardCheckboxs[i].checked = false;
                    break;
             }
-         };
-      };
+         }
+      }
 
    if (labelOpen === false || set == true) {
       currentStep = "one";
@@ -2407,15 +2641,12 @@ function formatAMPM(date) {
    };
    if (!dragedElm_list_id) {
      return false;
-   };
-   
+   };   
    
    // if not found target_list_id target is not valid
    if (!ev.target.getAttribute("data-list-id") || !dragedElm.getAttribute("data-list-id")){
       return false;
    }
-   
-   
    
    if (target_list_id != dragedElm_list_id) {
    
@@ -2439,8 +2670,7 @@ function formatAMPM(date) {
          });  
      };
      
-     targetList.classList.add("active_drop_list");
-     
+     targetList.classList.add("active_drop_list");     
      
      
      // this part for height of dropped effect
@@ -2477,7 +2707,7 @@ function dragLeave(event) {
      if (lastTargetContainer){
      lastTargetContainer.style.height = "auto";
      console.log('yes');
-     };
+     }
      
      /* remove active class dropend */
      let old_active = document.querySelectorAll("div.active_drop_list");
@@ -2486,10 +2716,10 @@ function dragLeave(event) {
          old_active.forEach( (oldactive)=> {
             oldactive.classList.remove("active_drop_list");
          });  
-     };
+     }
   }
 
-};
+}
 
 
  function drop(ev) {
@@ -2507,7 +2737,7 @@ function dragLeave(event) {
         loopIndex += 1;
         // get the cards_container of that list
         let target_cards_container = get_list_parent.querySelector("div.cards_container");
-        console.log("found list container", get_list_parent.className, loopIndex);
+        //console.log("found list container", get_list_parent.className, loopIndex);
      
       /* get heighestorder remove this for remove yellow */
       let current_list = document.getElementById(target_cards_container.getAttribute("data-list-id"));
@@ -2533,7 +2763,7 @@ function dragLeave(event) {
          old_active.forEach( (oldactive)=> {
             oldactive.classList.remove("active_drop_list");
          });  
-     };
+     }
      
      
       } else {
@@ -2554,13 +2784,13 @@ function dragLeave(event) {
   
    data = null;
    return true;
- };
+ }
  
    function clearDropEffect() {
      lastTargetContainer = null;
      if (lastTargetContainer){
      lastTargetContainer.style.height = "auto";
-     console.log('yes');
+     //console.log('yes');
      };
      
      /* remove active class dropend */
@@ -2664,7 +2894,7 @@ class TodoList {
     return listContainer;
     
   }
- };
+ }
  
 
 
@@ -2946,8 +3176,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (modelCardTitle){
       if (modelCardTitle.classList.contains("archive_class_title")){
         modelCardTitle.classList.remove("archive_class_title");
-      };
-      };
+      }
+      }
 
       
       
@@ -2984,7 +3214,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         }
         
         
-      };
+      }
        
       
       if (submitDueDateBtn && currentCard.id){
@@ -3191,14 +3421,12 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
    /* Create New Card */
    addNewCard: (event)=> {
-
    
        let usedBtn = event.target;
        if (event.target.nodeName == "I"){
           //console.log(event.target.parentElement);
           usedBtn = event.target.parentElement;
-       };
-       
+          };      
        
        
        if (isCreateCardOpen) {
@@ -3221,8 +3449,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         
         // Add new Card form
         todoSystem.newCardBtn = usedBtn;
-        usedBtn.style.display = "none";
-         
+        usedBtn.style.display = "none";         
          
          //let listBody = card_parentContainer.querySelector(".card_body");
 
@@ -3232,15 +3459,12 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          
          // show the form to get the data 
          let UpdatedForm = todoSystem.createCardOpen(card_parentContainertitle, card_parentContainerId, usedBtn);
-         
-        
         if (cardsContainer){
           let allTasks = document.querySelectorAll(`#${card_parentContainerId} .cards_container .card_container`);
           let last_order = 0;
           if (allTasks) {
             last_order = allTasks.length;
-          }
-
+            }
           
           /* // asgin the card template with all meta and append it to the body */
           //cardsContainer.appendChild(todoSystem.taskCardTemplate(last_order));
@@ -3269,8 +3493,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           colorSelected = true;
           color_class = radioelm.value;
         } 
-     });
-     
+     });     
      
      // if user not selected color
      if (colorSelected == false){
@@ -3288,8 +3511,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      newLabelSubmit(data);
 
      /* update system and set meta this can send fresh request of app state to server */
-     setCardsMetaData();
-     
+     setCardsMetaData();     
      
    },
    saveDescription: (event)=> {
@@ -3491,14 +3713,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   if (addCardToArchiveBtn){
     addCardToArchiveBtn.addEventListener("click",todoSystem.archiveCard);
   }
-
-
     
   /* This for correct handle cards added from backend it will add event listener on card     inserted by PHP and let you open the card model */
   allExitModelOpen.forEach( (openbtn)=> {
   openbtn.addEventListener("click",todoSystem.openCardModel);
-  });
-  
+  });  
 
   /*  this responsble for restart the system important to use after any updates */
   /* Apply order to cards   loop over columns [lists] and then get the cards to set the order of cards and status */
@@ -3516,7 +3735,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          old_active.forEach( (oldactive)=> {
             oldactive.classList.remove("active_drop_list");
          });
-     };
+     }
      
   }
   let unqiueAttachIndex = 1;
@@ -3550,12 +3769,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        let AlllistArchive = list.querySelectorAll('.archive_card');
        /*   archive */
        
-
-           
-       
-       
-      
-       
        /* if this default list created with board add the border time stamp*/
        if (list.classList.contains("border-default-list")){       
           list.setAttribute("data-list-createdate", todoSystem.borderTimeString);
@@ -3579,7 +3792,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          
        }
        if (listTitle){
-
          
          let newlistElm = document.createElement("div");
          let archiveContainerDiv = document.createElement("div");
@@ -3604,12 +3816,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             closeBtnArchive.classList.add("close_btn_archive");
             newShowArchives.appendChild(closeBtnArchive);
                  
-         }
-         
+         }         
          newlistElm.classList.add("pop_list_menu", "popup_list_hide");
         
 
-           let listArchive = list.querySelectorAll(".archive_card")
+           let listArchive = list.querySelectorAll(".archive_card");
 
            
            if (listArchive){
@@ -3678,7 +3889,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                  archiveContainerDiv.appendChild(newArchiveDiV);
                }
                
-               ;
+               
              });
            }
 
@@ -3722,12 +3933,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             });
          }
          
-         
-       }
-       
-       
-       
-        
+         }  
         
        let alllabel_container = list.querySelectorAll("#label_group1 .label_container .label_icon");
        if (alllabel_container.length){
@@ -3735,7 +3941,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             labelIcon.setAttribute("data-list-id", currentListId);
             labelIcon.setAttribute("data-list-title", getListTitle);
             if (labelIcon.querySelector("input")){
-               labelIcon.setAttribute("data-color", labelIcon.querySelector("input").value)
+               labelIcon.setAttribute("data-color", labelIcon.querySelector("input").value);
                labelIcon.querySelector("input").setAttribute("data-list-id", currentListId); 
                labelIcon.querySelector("input").setAttribute("data-list-title", getListTitle);
                labelIcon.querySelector("input").setAttribute("data-label-title", labelIcon.innerText.trim());
@@ -3766,14 +3972,12 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                }
          );
          
-         submitCreateLabel.addEventListener("click", todoSystem.addNewLabel)
+         submitCreateLabel.addEventListener("click", todoSystem.addNewLabel);
        };
        
        // submitCreateLabel.add
-
        
-       // add for input too
-        
+       // add for input too        
        
        // add event on create new task button
        listCardBtn.addEventListener("click", todoSystem.addNewCard);
@@ -3814,8 +4018,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          listForm.querySelector("form").setAttribute("data-list-title", listTitleBackend);
          
          listForm.querySelector("form").setAttribute("data-list-id", currentListId);
-         listForm.setAttribute("data-list-title", listTitleBackend)
-         listForm.setAttribute("data-list-id", currentListId) 
+         listForm.setAttribute("data-list-title", listTitleBackend);
+         listForm.setAttribute("data-list-id", currentListId);
          }
          
        
@@ -3929,7 +4133,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           if (card.querySelector("div.task_card .card_metadata")){
             card.querySelector("div.task_card .card_metadata").setAttribute("data-list-title", list.getAttribute("data-list-title"));
             card.querySelector("div.task_card .card_metadata").setAttribute("data-list-id", currentListId);
-            console.log("found");
+            //console.log("found");
           }
           
           if (card.querySelector("div.task_card .card_metadata .card_label")){
@@ -3946,10 +4150,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           
           card.setAttribute("draggable", true);
           card.addEventListener("drag",  drag );
-
-          
-          cards_id += 1;
-          
+          cards_id += 1;          
     
        });
        list_id += 1;
@@ -4013,7 +4214,7 @@ function showAll(){
   });
   
   }
-};
+}
 
 function search_labels(event){
 
