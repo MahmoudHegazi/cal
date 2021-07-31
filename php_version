@@ -1,15 +1,16 @@
 <?php
+
 $servername = "localhost";
 $username = "root";
 $password = "root";
 $dbname = "task-board";
-
 // Create connection
 $conn = new mysqli($servername, $username, $password, $dbname);
 // Check connection
 if ($conn->connect_error) {
   die("Connection failed: " . $conn->connect_error);
 }
+
 
 /* POSTS requests to make operations */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -95,7 +96,47 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       } else {
         $result = array("code"=> 404, "id"=> $cardid, "message"=>$conn->error);
       }
-      /* archive card end */
+      /* unarchive card end */
+    } else if ($reqType == 'update_description') {
+      /* 6- (AJAX) update card Description request  [reqData->type == 'update_description']  */
+
+      $cardId = intval($reqData->id);
+      $cardDescription = $reqData->description;
+
+      $sql = "UPDATE card SET description='$cardDescription' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"description is saved");
+      } else {
+        $result = array("code"=> 404, "id"=> $cardId, "message"=>$conn->error);
+      }
+      /* archive update card Description end */
+    } else if ($reqType == 'update_due_date'){
+      /* 7- (AJAX) update card Due Date request  [reqData->type == 'update_description']  */
+
+      $cardId = intval($reqData->id);
+      $cardDueDate = $reqData->due_date;
+
+      $sql = "UPDATE card SET due_date='$cardDueDate' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"Due Date is updated");
+      } else {
+        $result = array("code"=> 404, "id"=> $cardId, "message"=>$conn->error);
+      }
+      /* archive update card Due Date end */
+
+    } else if ($reqType == 'add_attchment_url') {
+      /* 8- (AJAX) update Attchment link request  [reqData->type == 'add_attchment_url'] note as attchments is string we update the all value  */
+
+      $cardId = intval($reqData->id);
+      $attachmentsString = $reqData->card_attachments;
+
+      $sql = "UPDATE card SET card_attachment='$attachmentsString' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"Attchments updated successfully");
+      } else {
+        $result = array("code"=> 404, "id"=> $cardId, "message"=>$conn->error);
+      }
+      /* update Attchment link request end */
     } else {
       /* unkown Request type return 422 */
       $result = array("code"=> 422, "message"=>'unkown request type please provide type for the request');
@@ -133,13 +174,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       height: 100%;
       margin: auto;
       padding: auto;
-      background-image: url("https://trello.com/images/backgrounds/purple-blur.png");
+      background-image: url("https://trello-backgrounds.s3.amazonaws.com/SharedBackground/2286x1600/24baa6609b89fb8eb0cc0aceb70eaf36/photo-1557682250-33bd709cbe85.jpg");
       /* Full height */
       /* Center and scale the image nicely */
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      background-size: cover;
+      /*
       background-position: left;
       background-size: cover;
       width: fit-content;
       background-repeat: repeat;
+      */
       color: #172b4d;
       font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
       font-size: 14px;
@@ -1160,7 +1207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .currentdraged {
       background-color: #A89C94FF;
       animation-name: example;
-      animation-duration: 12s;
+      animation-duration: 4s;
     }
 
     @keyframes example {
@@ -1186,6 +1233,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
  } */
 
   /* return card for A list  */
+
+function showAddCardLabels($conn) {
+  $row0;
+  $htmlLabels = '';
+  $sql0 = "SELECT * FROM labels ORDER BY id ASC";
+  $result0 = $conn->query($sql0);
+
+
+  if ($result0->num_rows > 0) {
+     while($row0 = $result0->fetch_assoc()) {
+       $htmlLabels .= '
+
+       <div class="label_container">
+         <div class="label_icon '. $row0['color'] .' selectable">
+           <input name="selected_color" value="'. $row0['color'] .'" type="radio" data-label-id="'. $row0['id'] .'">
+           <span>'. $row0['title'] .'</span>
+         </div>
+       </div>
+
+       ';
+     }
+   }
+   mysqli_close($conn);
+   return $htmlLabels;
+
+};
 
 function showCards($conn, $list_id){
     $row1;
@@ -1314,8 +1387,6 @@ function showLists($conn){
   } else {
    echo "0 results";
   }
-
-  mysqli_close($conn);
   return $htmlCode;
 }
 
@@ -1331,93 +1402,10 @@ function showLists($conn){
 
  <div class="container-fluid listcontainer ">
 
-    <!-- Default List 1 -->
-
-
-    <!--
-    <div class="border-default-list drop-list drop-columns card" data-list-title="To Do"
-     id="list-2" data-list-id="list-2" data-list-order="1" data-list-createdate="7/10/2021 8:59 am"
-     data-list-timestamp="1625900349123" style="order: 1;">
-      <div class="card-body" data-list-title="To Do" data-list-id="list-2">
-        <div class="card-title" data-list-title="To Do" data-list-id="list-2">
-
-        -->
-
-          <!-- List Title
-          <span class="list_title_text">To Do</span>
-          -->
-          <!-- List Menu Btn
-
-         <span class="menu_sign"><i class="fa fa-ellipsis-h float_right"></i></span>
-        </div>  -->
-        <!-- Group Of Cards
-      <div class="cards_container" data-list-title="To Do" data-list-id="list-2">
-      -->
-          <!-- new Card -
-        </div>
-      -->
-              <!-- Cards Container Ends
-
-         <button class="add_new_card_btn btn" data-list-title="To Do" data-list-id="list-2"><i class="fa fa-plus plus_sign"></i> Add New Card</button>
-      </div>
-    </div>
- -->
-
-
- <!-- Card Example -->
-
-
- <!--
- <div class="card_container" data-card-order="2" data-label-title="Important" data-label-color="darkblue" data-list-id="list-3"
-     data-list-title="Pending" id="card-container-3" draggable="true" style="order:2;">
-
-           <div class="card task_card" data-label-title="Important" data-label-color="darkblue"
-           data-text="Card Generated By DB5" id="card-id-3" data-list-title="Pending" data-list-id="list-3" data-card-description="Card Generated By DB5 description">
-
-
-              <div class="card_metadata" data-label-title="Important" data-label-color="darkblue"
-              data-list-title="Pending" data-list-id="list-3">
-
-                <div class="card_metadata_container">
-
-                  <div class="label_class
-                  card_label darkblue" data-label-title="Important" data-label-color="darkblue"
-                  data-list-title="Pending" data-list-id="list-3">Important
-                  </div>
-
-                  <span class="btn btn-primary model_open card_actions" data-toggle="modal"
-                  data-target="#myModal1" data-label-title="Important" data-label-color="darkblue"
-                  data-list-id="list-3" id="model-card-3" card-id="card-id-3" data-list-title="Pending"
-                  data-card-id="card-id-3" data-card-description="Card Generated By DB5 description">
-                  <i class="fa fa-edit" data-card-id="card-id-3" id="modeli-card-3"></i>
-                  </span>
-             </div>
-
-                <p class="card_text" data-label-title="Important" data-label-color="darkblue" data-list-title="Pending" data-list-id="list-3">
-                Card Generated By DB5</p>
-          </div>
-         </div>
-           </div>
-
-
--->
 
 <!-- Show Lists and Cards FROM DB -->
 <?php echo showLists($conn); ?>
 
-  <!-- created New List -->
-  <!--
-    <div class="drop-list card" data-list-title="new" id="static_add_list">
-      <div class="card-body">
-                   <button type="button" class="add_new_list_btn btn stretched-link" id="add_list_btn"> <i class="fa fa-plus plus_sign pluslist"></i> Add New List</button>
-         <form id="add-newlist-form">
-          <input class="form-control" placeholder="enter list title.." id="new_list_name" type="text" style="display:none;">
-          <input class="btn btn-primary" id="new_list_submit" type="button" style="display:none;" value="Add List">
-          <button type="button" id="cancel_add_list" style="display: none;"><i class="fa fa-close" style="font-size: 26"></i></button>
-         </form>
-      </div>
-    </div>
-  -->
  <!-- columns end List -->
 </div>
 </div>
@@ -1457,7 +1445,11 @@ function showLists($conn){
                placeholder="Search Labels.." type="text" id="label_search_text"></textarea>
              <h4 id="selectTitle">Select Label: </h4>
 
+             <!-- (PHP) code PHP to display the labels -->
              <!--  Card Default Labels Select -->
+             <?php echo showAddCardLabels($conn); ?>
+
+             <!--
              <div class="label_container">
                 <div class="label_icon green selectable">
                  <input name="selected_color" value="green" type="radio">
@@ -1486,7 +1478,6 @@ function showLists($conn){
                 <span>Desgin Team</span>
               </div>
            </div>
-
 
 
             <div class="label_container">
@@ -1520,6 +1511,8 @@ function showLists($conn){
                  <span>Important</span>
                </div>
             </div>
+
+          -->
           </div>
 
           <!--  card label end ----->
@@ -1870,15 +1863,19 @@ function showLists($conn){
             <div class="form-group">
               <label>Upload File</label>
               <input type="file" name="attachment_source" class="form-control" id="attachment_source" placeholder="upload attachment">
-
+              <button id="upload_attachment_btn" type="button"
+                class="btn btn-light margin-top-mid">Upload</button>
+            </div>
+          </form>
               <hr />
+              <div>
               <label>Attach a link</label>
               <input name="attachment_link" type="link" id="attachment_link"
                 placeholder="Paste any link here" class="form-control">
-              <button id="attach_link_btn" type="submit"
+              <button id="attach_link_btn" type="button"
                 class="btn btn-light margin-top-mid">Attach</button>
-            </div>
-          </form>
+              </div>
+
 
            <!-- show card attachments -->
             <h5> Card Attachments </h5>
@@ -1960,6 +1957,10 @@ let attachmentContainer = document.querySelector("#attachment_container");
 let cardDateModel = document.querySelector("#card_createdate_model");
 let cardStartDateInput = document.querySelector("#startdate");
 let submitDueDateBtn = document.querySelector("#submit_ticket_date");
+
+let attachLinkBtn = document.querySelector("#attach_link_btn");
+let attachLinkInput = document.querySelector("#attachment_link");
+
 
 
 
@@ -3220,6 +3221,7 @@ let todoSystem = {
    imageIcon: 'https://freepngimg.com/thumb/graphic_design/55592-3-gallery-free-hq-image.png',
    pdfIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/512/file-pdf-icon.png',
    gifIcon: 'https://icons.iconarchive.com/icons/untergunter/leaf-mimes/512/gif-icon.png',
+   websiteIcon: 'images/rsz_websitelogo.png',
    defaultIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png',
    listMenuOpen: false,
 
@@ -3381,13 +3383,24 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        AttachImage.setAttribute("width", "40");
        AttachImage.setAttribute("height", "40");
 
-
        AttachImage.setAttribute("src", "https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png");
-
        /* SHow file name only without dot */
-       let fileNameOnly = attach.split(".")[0];
+       let fileExtension;
+       let fileNameOnly;
 
-       let fileExtension = attach.split(".")[1];
+       if (attach.split(".")[2]) {
+         fileNameOnly = attach.split(".")[1];
+         fileExtension = attach.split(".")[2];
+       } else {
+         fileNameOnly = attach.split(".")[0];
+         fileExtension = attach.split(".")[1];
+       }
+
+       if (attach.split(".").length == 0) {
+         AttachImage.setAttribute("src", todoSystem.websiteIcon);
+         AttachUrl.setAttribute("href", "");
+       }
+
        if (fileExtension){
          let formatedExtension = fileExtension.trim().toLowerCase();
          /* Add the file extension to the img, url */
@@ -3415,9 +3428,15 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
              AttachImage.setAttribute("src", todoSystem.gifIcon);
 
-          } else {
+          } else if (formatedExtension === "com" || formatedExtension === "net" ||
+           formatedExtension === "org" || formatedExtension === "gov" || formatedExtension === "za" || formatedExtension === "co"||
+           formatedExtension === "io" || formatedExtension === "ru" || formatedExtension === "in" || formatedExtension === "ir" ||
+           formatedExtension === "us") {
+             /*Must known TLDS  */
+             AttachImage.setAttribute("src", todoSystem.websiteIcon);
+          }else {
           /* textIcon  wordIcon imageIcon defaultIcon */
-
+          AttachImage.setAttribute("src", todoSystem.defaultIcon);
          }
 
        }
@@ -3428,28 +3447,25 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          AttachTitle.innerText = attach;
        }
 
-
-
-
-
        AttachUrl.appendChild(AttachImage);
        AttachUrl.appendChild(AttachTitle);
        attachmentContainer.appendChild(AttachUrl);
        attachFragment.appendChild(attachmentContainer);
 
      });
-
      if (attachContainerElm){
        attachContainerElm.appendChild(attachFragment);
      }
 
    },
-   submitDueDate: (event)=> {
+   submitDueDate: async (event)=> {
      let endDate = document.querySelector("#enddate");
      let SelectedCardId = event.target.getAttribute("data-card-id");
      let modeldueDateString = document.querySelector("#card_duedate_model");
      let selectedCard = document.querySelector(`#${SelectedCardId}`);
      let cardModelBtn = selectedCard.querySelector(".card_actions");
+     let cardDbID = event.target.getAttribute("data-card-dbid");
+
 
      if (!cardModelBtn || !selectedCard){return false;}
 
@@ -3459,10 +3475,36 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      if (!endDate.value) {
        return false;
      }
-      selectedCard.setAttribute("data-dute-date", endDate.value);
-      cardModelBtn.setAttribute("data-dute-date", endDate.value);
-      modeldueDateString.innerText = endDate.value;
-      setCardsMetaData();
+
+     let cardDueDateData = {
+       type: 'update_due_date',
+       id: cardDbID,
+       due_date: endDate.value,
+     };
+
+     /* 7- (AJAX) update Card Due Date Request */
+
+     let result;
+
+     try {
+       let response = await postData(window.location.href, cardDueDateData);
+       result = await response.json();
+     } catch (err){
+       console.log(err);
+       return false;
+     }
+     if (!result){return false;}
+      /* (AJAX) Add New Card Request end */
+
+     if (result.code == 200){
+       selectedCard.setAttribute("data-dute-date", endDate.value);
+       cardModelBtn.setAttribute("data-dute-date", endDate.value);
+       modeldueDateString.innerText = endDate.value;
+       setCardsMetaData();
+       return true;
+     } else {
+       return false
+     }
    },
    openCardModel: (event)=> {
       hidePopAction();
@@ -3475,6 +3517,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-id", "");}
       if (modeldueDateString){ modeldueDateString.innerText = "";};
       if (endDateCard.value) {endDateCard.value = "";};
+      if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-dbid", "");}
+      if (attachLinkBtn){attachLinkBtn.setAttribute("data-card-dbid", "");}
 
 
       if (endDateCard.value) {
@@ -3507,8 +3551,18 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let currentCard = document.getElementById(openBtn.getAttribute("data-card-id"));
       let archiveBtnModel = document.querySelector("#arachive_card_btn");
       let cardDueDate = openBtn.getAttribute("data-dute-date");
+      let cardDbId = openBtn.getAttribute("data-card-dbid");
+
+      if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-dbid", cardDbId);}
+      if (attachLinkBtn){
+        attachLinkBtn.setAttribute("data-card-dbid", cardDbId);
+        attachLinkBtn.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
+      }
 
 
+
+
+      if (!cardDbId || cardDbId == "") {return false;}
       if (cardDueDate && endDateCard){
          endDateCard.value = cardDueDate;
 
@@ -3600,6 +3654,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       modelList.innerText = listTitle;
       description_saveBtn.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
       description_saveBtn.setAttribute("data-openbtn-id", openBtn.getAttribute("id"));
+      description_saveBtn.setAttribute("data-card-dbid", cardDbId);
+
 
       if (openBtn.getAttribute("data-card-description")){
           model_description.innerText = openBtn.getAttribute("data-card-description");
@@ -3745,8 +3801,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         create_date: ticketStringDate,
       };
 
-      console.log(cardData);
-
       /* 2- (AJAX) Add New Card Request*/
 
       let result;
@@ -3882,22 +3936,45 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      setCardsMetaData();
 
    },
-   saveDescription: (event)=> {
+   saveDescription: async (event)=> {
      setCardsMetaData();
      let descriptionValue = description_input.value;
      let cardid = event.target.getAttribute("data-card-id");
      let card = document.getElementById(cardid);
-
+     let cardbdId = event.target.getAttribute("data-card-dbid");
      let descriptionFiled = document.getElementById("ticket_description");
 
      let cardSavedDescriptionBtn = event.target.getAttribute("data-openbtn-id");
      let saver = document.getElementById(cardSavedDescriptionBtn);
      if (saver && card && description_input.value.trim() != "") {
-       saver.setAttribute("data-card-description", description_input.value);
-       card.setAttribute("data-card-description", description_input.value);
-       descriptionFiled.innerText = description_input.value;
-       description_input.value = "";
-       return true;
+
+
+       /*6- (AJAX) save description Request */
+       let descriptData = {
+         type: 'update_description',
+         id: cardbdId,
+         description: description_input.value
+       };
+       let result;
+       try {
+         let response = await postData(window.location.href, descriptData);
+         result = await response.json();
+       } catch (err){
+         console.log(err);
+         return false;
+       }
+       if (!result){return false;}
+
+       if (result.code == 200) {
+         saver.setAttribute("data-card-description", description_input.value);
+         card.setAttribute("data-card-description", description_input.value);
+         descriptionFiled.innerText = description_input.value;
+         description_input.value = "";
+         return true;
+       } else {
+         return false;
+       }
+       /* End of request */
      } else {
        return false;
      }
@@ -4078,6 +4155,60 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
            }
         }
+    },
+    addAttchment: async (event)=> {
+      /* If no attachment value stop the function */
+      if (!attachLinkInput || attachLinkInput.value == "") {
+        return false;
+      }
+
+      let cardDbId = event.target.getAttribute("data-card-dbid");
+      let cardHtmlId = event.target.getAttribute("data-card-id");
+      let selectedCard = document.getElementById(cardHtmlId);
+      if (!selectedCard){ return false;}
+      let cardActionBtn = selectedCard.querySelector(".card_actions");
+      if (!cardActionBtn){ return false;}
+
+
+      let cardAttachments = selectedCard.getAttribute("data-card-attachment");
+
+      /*We see of no attachment for any reason set it else check the empty case */
+      if (cardAttachments === null) {
+        selectedCard.setAttribute("data-card-attachment", "");
+        cardAttachments = "";
+      }
+
+      let cardAttachText = cardAttachments;
+      /* First if attachment empty no Separator else add Separator */
+      if (cardAttachments.trim() === "") {
+        cardAttachText = attachLinkInput.value;
+      } else {
+        cardAttachText += ",|" + attachLinkInput.value;
+      }
+
+      /* 8- (AJAX) add attchment link AJAX request */
+      let attchment_data = {type: "add_attchment_url", id: cardDbId, card_attachments: cardAttachText};
+      let result;
+      try {
+        let response = await postData(window.location.href, attchment_data);
+        result = await response.json();
+      } catch (err){
+        console.log(err);
+        return false;
+      }
+      if (!result){return false;}
+       /* (AJAX) Add New Card Request end */
+
+      if (result.code == 200){
+        selectedCard.setAttribute("data-card-attachment", cardAttachText);
+        cardActionBtn.setAttribute("data-card-attachment", cardAttachText);
+        attachmentContainer.innerHTML = "";
+        todoSystem.generateAttachments(selectedCard.getAttribute("data-card-attachment"), attachmentContainer);
+        return true;
+      } else {
+        return false;
+      }
+
     }
 };
 
@@ -4094,6 +4225,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   description_saveBtn.addEventListener("click", todoSystem.saveDescription);
   /* update label call */
   edit_label_btn.addEventListener("click", todoSystem.updateLabelModel);
+  /* attach attchment link  */
+  attachLinkBtn.addEventListener("click", todoSystem.addAttchment);
 
 
   /* Archive Function */
@@ -4231,30 +4364,32 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                  newArchiveDiV.setAttribute("id", `arachive-${unqiueAttachIndex}-${currentListId}`);
                  newbackupBtn.setAttribute("data-archive-id", `arachive-${unqiueAttachIndex}-${currentListId}`);
                  unqiueAttachIndex += 1;
-                 newbackupBtn.classList.add("fa", "fa-cloud-upload", "float-right", "backupbtn", "mydick");
+                 newbackupBtn.classList.add("fa", "fa-cloud-upload", "float-right", "backupbtn");
                  newbackupBtn.setAttribute("title", "Backup File");
                  newArchiveDiV.classList.add("archive_item");
                  let containerId = listAr.getAttribute("id");
-
-                 if (containerId){
+                 let cardDbId = listAr.getAttribute("data-card-dbid");
+                 if (cardDbId){
 
                    newbackupBtn.setAttribute("data-container-card-id", containerId);
+                   newbackupBtn.setAttribute("data-card-dbid", cardDbId);
+                   newbackupBtn.setAttribute("data-list-id", currentListId);
+                   //newbackupBtn.setAttribute("data-list-dbid", cardDbId);
+
                    /* Backup Card Function */
+
                    newbackupBtn.addEventListener("click", async (event)=> {
-                     if (!listAr.getAttribute("data-card-dbid")){
-                       return false;
-                     }
-                     let archiveElmId = event.target.getAttribute("data-container-card-id");
-                     let archiveElmItem = document.querySelector(`#${archiveElmId}`);
-                     if (!archiveElmItem){
-                       return false;
-                     }
-                     if ( !archiveElmItem.classList.contains("archive_card") ) {
-                        return false;
-                     }
+
+                     let cardDbId = event.target.getAttribute("data-card-dbid");
+                     let archiveCardList = document.getElementById(event.target.getAttribute("data-list-id"));
+                     let selectedArchivedCard = archiveCardList.querySelector(`.archive_card[data-card-dbid='${cardDbId}']`);
+                     let archiveId = event.target.getAttribute("data-archive-id");
+                     let containerArchiveCardElm = document.querySelector(`#${archiveId}`);
+
+                     if (!selectedArchivedCard) {return false;}
 
                      /* 5 (AJAX) unarchive Card */
-                     let unarchive_data = {type:"unarchive_card", id: listAr.getAttribute("data-card-dbid")};
+                     let unarchive_data = {type:"unarchive_card", id: cardDbId};
                      let result;
                      try {
                        let response = await postData(window.location.href, unarchive_data);
@@ -4267,12 +4402,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
                       /* (AJAX) Add New Card Request end */
 
                      if (result.code == 200){
-                       let archiveId = event.target.getAttribute("data-archive-id");
-                       let containerArchiveCardElm = document.querySelector(`#${archiveId}`);
                        if (containerArchiveCardElm) {
                           containerArchiveCardElm.remove();
                        }
-                       archiveElmItem.classList.remove("archive_card");
+                       selectedArchivedCard.classList.remove("archive_card");
                        setCardsMetaData();
                        return true;
                      } else {
