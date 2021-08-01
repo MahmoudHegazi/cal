@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Page Title</title>
+
+<style>
+  .red {
+    background: red;
+  }
+  .green {
+    background: green;
+  }
+  
+  div {height: 100px; width: 100px;color: white;}
+</style>
+</head>
+<body>
+
+<div id="label_container"></div>
+
+
+
+<script>
+let labels_container = document.querySelector("#label_container");
+let data_label = "project,?;.|fasl&;|,green,?;.|fasl&;|,1?|s3atbbt7sl;.|/|:=?|tasks,?;.|fasl&;|,red,?;.|fasl&;|,2?|s3atbbt7sl;.|/|:=?|";
+
+function displayLabels(card_label_string) {
+   
+     let labelsList = card_label_string.split("?|s3atbbt7sl;.|/|:=?|");
+     
+     if (labelsList.length == 0) {
+       return false;
+     }
+     labelsList.forEach( (signleLabel, index)=>  {
+     
+       if (signleLabel.split(",?;.|fasl&;|,").length == 3 && signleLabel.trim() != ""){
+         let labelTemplateList = signleLabel.split(",?;.|fasl&;|,");
+         let labelTitle = labelTemplateList[0];
+         let labelColor = labelTemplateList[1];
+         let labelId = labelTemplateList[2];
+         
+         let labelContainer = document.createElement("div");
+         labelContainer.innerText = labelTitle;
+         labelContainer.classList.add(labelColor);
+         labels_container.appendChild(labelContainer);
+       }
+     });
+
+   };
+
+
+
+function removeLabel(removeIds, card_label_string) {
+
+     let newLabelString = "";
+     let labelsList = card_label_string.split("?|s3atbbt7sl;.|/|:=?|");
+     
+     if (labelsList.length == 0) {
+       return false;
+     }
+    
+     labelsList.forEach( (signleLabel, index)=>  {
+     
+       if (signleLabel.split(",?;.|fasl&;|,").length == 3 && signleLabel.trim() != ""){
+         let labelTemplateList = signleLabel.split(",?;.|fasl&;|,");
+         let labelTitle = labelTemplateList[0];
+         let labelColor = labelTemplateList[1];
+         let labelId = labelTemplateList[2];
+
+         if (removeIds.includes(labelId) != true) {
+            newLabelString += signleLabel + "?|s3atbbt7sl;.|/|:=?|";
+         }         
+       }
+     });
+     
+     return newLabelString;
+   };
+ 
+ 
+ let myNewLabels = removeLabel([], data_label);
+ displayLabels(myNewLabels);
+</script>
+</body>
+</html>
