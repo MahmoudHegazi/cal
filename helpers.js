@@ -71,36 +71,34 @@ let str1 = "?|s3atbbt7sl;.|/|:=?|mytask";
 let str2 = "?|s3atbbt7sl;.|/|:=?|something ,?;.|fasl&;|,";
 let str3 = "normal";
 
+function handleResrved2(str) {
+   let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
+   let resrevedEnd = ",?;.|fasl&;|,";
+   let functionStr = "";
+   functionStr = str.replace(resrevedBegain, "&#11088;");
+   functionStr = functionStr.replace(resrevedEnd, "&#128125;");   
+   return functionStr;   
+}
+
+
+/* or */
 function handleResrved(str) {
    let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
    let resrevedEnd = ",?;.|fasl&;|,";
    let functionStr = "";
-   
    let firstCheck = false;
    let secondCheck = false;
-   
-
-   if (str.slice(0, 21) == resrevedBegain) {
-      firstCheck = true;
-      functionStr = str.replace("?|s3atbbt7sl;.|/|:=?|", "");
+   if (str.includes(resrevedBegain)) {
+        firstCheck = true;
+        functionStr = str.replace(resrevedBegain, "&#11088;");
    } else {
-      functionStr = str;
+        functionStr = str;
+   }
+   if (functionStr.includes(resrevedEnd)) {
+        secondCheck = true;
+        functionStr = functionStr.replace(resrevedEnd, "&#128125;");
    }
    
-   
-   if (functionStr.slice(functionStr.length-13, functionStr.length) == resrevedEnd) {
-      secondCheck = true;
-      functionStr = functionStr.replace(",?;.|fasl&;|,", "");
-   }
-
-   if (firstCheck == false && secondCheck == false) {
-     return str;
-   } else {
-     return functionStr;
-   }
-   
+   return functionStr;   
 }
-
-
-alert(handleResrved(str2));
 
