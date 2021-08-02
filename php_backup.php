@@ -12,6 +12,21 @@ if ($conn->connect_error) {
 }
 
 
+/* This helper php function to escap single quote and douple in add request title */
+function escapeQoute($str) {
+  $newString = "";
+  for ($i=0; $i<strlen($str); $i++){
+    if ($str[$i] == "'") {
+      $newString .= "''";
+    } else if ($str[$i] == '"'){
+      $newString .= '""';
+    } else {
+      $newString .= $str[$i];
+    }
+  }
+  return $newString;
+};
+
 /* POSTS requests to make operations */
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $reqData = json_decode(file_get_contents('php://input'));
@@ -21,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($reqType == 'add_new_list') {
       /* 1- (PHP) Add New List Request [reqData->type == 'add_new_list'] */
-      $listTitle = $reqData->title;
+      $listTitle = escapeQoute($reqData->title);
       $listOrder = $reqData->order;
       $listTimestamp = $reqData->timestamp;
       $listDate = $reqData->create_date;
@@ -40,15 +55,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else if ($reqType == 'add_new_card') {
 
       /* 2- (PHP) Add New Card Request [reqData->type == 'add_new_card'] */
-      $cTitle = $reqData->title;
-      $cLabelTitle = $reqData->label_title;
+      $cTitle = escapeQoute($reqData->title);
+      $cLabelTitle = escapeQoute($reqData->label_title);
       $cLabelColor = $reqData->label_color;
       $cTimeStamp = $reqData->timestamp;
       $cCreateDate = $reqData->create_date;
-      $cListTitle = $reqData->list_title;
+      $cListTitle = escapeQoute($reqData->list_title);
       $cListId = intval($reqData->list_id);
       $cOrder = $reqData->card_order;
-      $labelsString = $reqData->labels_string;
+      $labelsString = escapeQoute($reqData->labels_string);
 
 
       $sql = "INSERT INTO card (title, label_title, label_color, list_title, card_order, list_id, card_timestamp, create_date, labels_string)
@@ -68,7 +83,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $listTitle = $reqData->listTitle;
       $listId = intval($reqData->listid);
       $cardOrder = $reqData->order;
+      $otherCardsArray = $reqData->otherCards;
 
+      /* update other card order in list to keep same cards order */
+      foreach ($otherCardsArray as $key => $value) {
+         $otherCardId = $otherCardsArray[$key]->id;
+         $otherCardOrder = $otherCardsArray[$key]->order;
+         $sql = "UPDATE card SET card_order='$otherCardOrder' WHERE id=$otherCardId";
+         $conn->query($sql);
+      }
       $sql = "UPDATE card SET list_title='$listTitle', list_id=$listId, card_order='$cardOrder' WHERE id=$cardId";
       if ($conn->query($sql) === TRUE) {
         $result = array("code"=> 200, "id"=> $cardId, "message"=>"The card updated successfully", "listid"=>$listId, "order"=>$cardOrder);
@@ -155,12 +178,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       /* Add New label End */
     } else if ($reqType == 'edit_label') {
       /* 10- (PHP) Edit Label request  [reqData->type == 'edit_label'] */
-      $labelTitle = $reqData->title;
-      $labelColor = $reqData->color;
-      $labelId = $reqData->id;
-      $cardId = $reqData->card_id;
+      $labelString = $reqData->label_string;
+      $cardId = $reqData->id;
 
-      $sql = "UPDATE card SET label_color='$labelColor', label_title='$labelTitle' WHERE id=$cardId";
+      $sql = "UPDATE card SET labels_string='$labelString' WHERE id=$cardId";
       if ($conn->query($sql) === TRUE) {
         /* must return added card ID */
         $result = array("code"=> 200, "id"=> $cardId, "message"=>"label updated successfully");
@@ -489,6 +510,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        color: white;
        padding: 5px;
        font-weight: bold;
+       overflow: hidden;
 
     }
 
@@ -1239,6 +1261,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       overflow: auto;
       height: 300px;
     }
+
+    .card_labels_container {
+      margin-bottom: 5px;
+    }
+
+    #themodel_label_container .thelabel {
+      padding: 5px;
+      color: white;
+      border: 1px solid transparent;
+      border-radius: 8%;
+      width: fit-content;
+    }
+    #themodel_label_container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      gap: 15px;
+      flex-flow: row wrap;
+    }
     /* small animation */
     .currentdraged {
       background-color: #A89C94FF;
@@ -1283,7 +1325,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
          $htmlLabels2 .= '
 
          <div class="model_label_container '. $row2['color'] .'">
-             <input name="model_color" value="'. $row2['color'] .'" type="radio" data-label-id="'. $row2['id'] .'">
+             <input name="model_color" value="'. $row2['color'] .'" type="checkbox" data-label-id="'. $row2['id'] .'">
              <span class="label_txt">'. $row2['title'] .'</span>
          </div>
 
@@ -1378,7 +1420,7 @@ function showCards($conn, $list_id){
             </div>
                <p class="card_text" data-label-title="'. $row1['label_title'] .
                '"data-label-color="'. $row1['label_color'] .'" data-list-title="'. $row1['list_title'] .
-               '"data-list-id="'. $row1['list_id'] . '" data-labels="'. $row1['labels_string'] .'">' . $row1['title'] . '</p>
+               '"data-list-id="'. $row1['list_id'] . '">' . $row1['title'] . '</p>
          </div>
         </div>
           </div>
@@ -1677,11 +1719,11 @@ function showLists($conn){
            <h5>Labels: </h5>
            <div class="container label-containers">
              <!-- it will get the current card label class by setCardMetaData and data-label-color attribute -->
-             <div class="model_label">
-               <span id="label_title_text">
-                 <!--label text updated by setCardMetaData and data-label-title attribute -->
-               </span>
+
+             <div id="themodel_label_container">
+
              </div>
+
            </div>
 
 
@@ -1853,7 +1895,7 @@ function showLists($conn){
           </div>
 
           <div id="customlabeledt" style="display:none;">
-          <input id="edit_custom_label_title" placeholder="Enter Label Title" class="form-control" maxlength="50" size="50">
+          <input id="edit_custom_label_title" placeholder="Enter Label Title" class="form-control">
           <button type="button" id="add_labelbtn_edit_model" class="btn btn-info">Submit Label</button>
           <button type="button" id="cancel_custom_edit" class="btn btn-danger">Canel</button>
           </div>
@@ -1998,7 +2040,6 @@ let modelMainContainer = document.querySelector("#model_main");
 let modelCardHeader = document.querySelector(".modal-header");
 let modelCardTitle = document.getElementById("model_card_title");
 let model_description = document.getElementById("ticket_description");
-let modelLabel = document.getElementById("label_title_text");
 let modelList = document.getElementById("list-title");
 let description_input = document.getElementById("card_description_input");
 let description_saveBtn = document.getElementById("description_save");
@@ -2027,6 +2068,8 @@ let attachLinkInput = document.querySelector("#attachment_link");
 
 
 
+
+
 /* Helper functions */
 /* PostData */
 async function postData(url, data = {}) {
@@ -2038,7 +2081,7 @@ async function postData(url, data = {}) {
       });
     try {
         const newData = await response;
-        console.log(newData);
+        //console.log(newData);
         return newData;
     } catch(error) {
         console.log("error", error);
@@ -2047,6 +2090,20 @@ async function postData(url, data = {}) {
     }
 };
 
+/* Function for due date It will force date no less than today */
+function notLessDate(event) {
+  let d1 = new Date();
+  let d2 = new Date(event.target.value);
+  let day = d1.getDate() < 9 ? "0" + d1.getDate() : d1.getDate();
+  let month = d1.getMonth() < 9 ? "0" + (d1.getMonth()+1) : d1.getMonth()+1;
+  let year = d1.getFullYear();
+  let today = year + "-" + month + "-" + day;
+  if (d2 < d1) {
+    event.target.value = today;
+  }
+}
+let dateInput = document.querySelector("#enddate");
+dateInput.addEventListener("change", notLessDate);
 
 function hide_check_form_normal(hidebtn){
   let initalId_containerid = hidebtn.getAttribute("data-inital-id");
@@ -2210,7 +2267,7 @@ function addCheckListOption(event){
 
 
 
-   let currenCardId = listTitle.getAttribute("data-card-id");
+   let currenCardId = event.target.getAttribute("data-card-id");
    let currentCard = document.querySelector(`#${currenCardId}`);
 
   if (!currentCard){ return false;}
@@ -2243,14 +2300,7 @@ function addNewCheckList(event) {
    let currentCard = document.querySelector(`#${currenCardId}`);
 
    if (!currentCard){ return false;}
-
-
-
-
-
    let lastId = allCheckLists.length;
-
-
    let newCheckContainer = document.createElement("div");
    newCheckContainer.classList.add("checklists_container");
    const containerHTML =
@@ -2292,7 +2342,6 @@ function addNewCheckList(event) {
 
         </div>
     `;
-
     let currentCardCheckList = currentCard.getAttribute("data-checklist");
 
     if (!currentCardCheckList || currentCardCheckList == ""){
@@ -2300,16 +2349,11 @@ function addNewCheckList(event) {
     } else {
        currentCard.setAttribute("data-checklist", `${currentCardCheckList}|||.|||${listTitle.value}`);
     }
-
-
-
     newCheckContainer.innerHTML = containerHTML;
     checkListsContainer.appendChild(newCheckContainer);
-
     let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
     let hideBtn = checkListsContainer.querySelector(`#hide_${lastId}`);
     let addNewOption = checkListsContainer.querySelector(`#submit_step${lastId}`);
-
     showBtn.addEventListener("click", show_check_form);
     hideBtn.addEventListener("click", hide_check_form);
     addNewOption.addEventListener("click", addCheckListOption);
@@ -2482,11 +2526,12 @@ async function addNewModelLabel(){
       colorClass = "nocolor";
    }
 
+
    /* Not allow repeqated label Copy Request green */
-   let isRepeatedLabel = newLabelAllowed(model_custom_label_title.value, colorClass);
+   let isRepeatedLabel = newLabelAllowed(todoSystem.handleResrved(model_custom_label_title.value), colorClass);
    if (isRepeatedLabel == true){
 
-     let labelTitleValue = model_custom_label_title.value;
+     let labelTitleValue = todoSystem.handleResrved(model_custom_label_title.value);
      model_custom_label_title.value = "";
      model_custom_label_title.classList.add("errorinput");
      model_custom_label_title.setAttribute("placeholder",`${labelTitleValue} exist`);
@@ -2509,10 +2554,12 @@ async function addNewModelLabel(){
      }
    }
 
+   let x = todoSystem.handleResrved(model_custom_label_title.value);
+
    /* 9- (AJAX) add new label request */
    let addNewLabelData = {
      type: 'add_new_label',
-     title: model_custom_label_title.value,
+     title: x,
      color: colorClass
    };
    let result;
@@ -2534,8 +2581,8 @@ async function addNewModelLabel(){
    newDiv.classList.add("model_label_container", colorClass);
    newDiv.innerHTML =
         `
-        <input name="model_color" data-label-type=""  value="${colorClass}" type="radio" data-label-id="${result.id}">
-        <span class="label_txt" data-label-type="" >${model_custom_label_title.value}</span>
+        <input name="model_color" data-label-type=""  value="${colorClass}" type="checkbox" data-label-id="${result.id}">
+        <span class="label_txt" data-label-type="" >${x}</span>
         <input data-label-type="" class="model_custom_title" placeholder="Label  Title">
         `;
 
@@ -2554,7 +2601,6 @@ addcustomLabelBtnMenu.addEventListener("click",show_custom_label);
 const edit_label_btn = document.querySelector("#edit_label_btn");
 const edit_label_form = document.querySelector("#labels_form");
 var edit_label_colors = document.querySelectorAll(".model_label_container");
-const model_label_text = document.querySelector("#label_title_text");
 
 
 /* Remove Open Menu */
@@ -2747,16 +2793,20 @@ async function newLabelSubmit(data){
    label.setAttribute("data-label-title", label_title);
 
    newspan.appendChild(labelCheck);
+
    newspan.innerHTML = label_title;
    label.appendChild(labelCheck);
    label.appendChild(newspan);
    container.appendChild(label);
+  /*Add the created AJAX label to model edit labels */
+  let modelEditLabelNew = document.createElement("div");
+  modelEditLabelNew.classList.add("model_label_container", color_class);
 
 
    /* 9- (AJAX) add new label request */
    let addNewLabelData = {
      type: 'add_new_label',
-     title: label_title,
+     title: todoSystem.handleResrved(label_title),
      color: color_class
    };
    let result;
@@ -2773,6 +2823,16 @@ async function newLabelSubmit(data){
    if (result.code == 200){
      labelCheck.setAttribute("data-label-id", result.id);
      document.querySelector("div.addcard_labels_container").appendChild(container);
+
+     /*Add new label to model edit */
+
+
+     let labelContentHtml = `
+       <input name="model_color" value="${color_class}" type="checkbox" data-label-id="${result.id}">
+       <span class="label_txt">${label_title}</span>
+       `;
+     modelEditLabelNew.innerHTML = labelContentHtml;
+     document.querySelector("#model_labels_container").appendChild(modelEditLabelNew);
    }
 
    labelMenuLevel1();
@@ -3146,6 +3206,16 @@ async function drop(ev) {
        return false
      }
 
+     let otherCardsOrdered = [];
+     let otherCards = document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container:not(.archive_card)");
+     otherCards.forEach( (icard, index)=>{
+       let carddata = {};
+       carddata['id'] = icard.getAttribute("data-card-dbid");
+       carddata['order'] = index;
+       otherCardsOrdered.push(carddata);
+
+     });
+
 
       /*3- (AJAX) Update List-id and title and card order when card moved to another list */
       let updateCardPositionData = {
@@ -3154,6 +3224,7 @@ async function drop(ev) {
         listid: get_list_parent.getAttribute("data-list-dbid"),
         listTitle: target_cards_container.getAttribute("data-list-title"),
         order: document.getElementById(target_cards_container.getAttribute("data-list-id")).querySelector("div.cards_container").querySelectorAll(".card_container:not(.archive_card)").length,
+        otherCards: otherCardsOrdered
       };
       let result;
 
@@ -3627,11 +3698,24 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        return false
      }
    },
+   clearCheckedLabels: ()=> {
+       let themodelLabelsCheckboxes = document.querySelectorAll(".model_label_container input[type='checkbox']");
+       if (themodelLabelsCheckboxes.length > 0) {
+         themodelLabelsCheckboxes.forEach( (lc)=> {
+           lc.removeAttribute("checked");
+         });
+       }
+   },
    openCardModel: (event)=> {
       hidePopAction();
       let modeldueDateString = document.querySelector("#card_duedate_model");
       let endDateCard = document.querySelector("#enddate");
       let card_title = document.getElementById("model_card_title");
+      let themodelLabelContainer = document.querySelector("#themodel_label_container");
+      let themodelLabelsCheckboxes = document.querySelectorAll(".model_label_container input[type='checkbox']");
+      let theUpdateLabelBtn = document.querySelector("#edit_label_btn");
+
+
       if (attachmentContainer.innerHTML != ""){attachmentContainer.innerHTML = "";}
       if (cardDateModel.innerText != ""){cardDateModel.innerText = "";}
       if (cardStartDateInput){cardStartDateInput.value = ""}
@@ -3640,6 +3724,12 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (endDateCard.value) {endDateCard.value = "";};
       if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-dbid", "");}
       if (attachLinkBtn){attachLinkBtn.setAttribute("data-card-dbid", "");}
+      if (themodelLabelContainer){themodelLabelContainer.innerHTML = "";}
+      if (themodelLabelsCheckboxes){todoSystem.clearCheckedLabels();}
+      if (theUpdateLabelBtn){theUpdateLabelBtn.setAttribute("data-labels", "");}
+
+
+
 
 
       if (endDateCard.value) {
@@ -3759,21 +3849,23 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       popupTemplate.setAttribute("data-list-id", listId);
 
 
-      let modelLabelDiv = document.querySelector("#model_main .model_label");
-      modelLabelDiv.className = "";
-      modelLabelDiv.classList.add('model_label');
-      if (modelLabelDiv && labelClass){
-         //modelLabelDiv.classList.add("model_label");
-         modelLabelDiv.classList.add(labelClass);
-         /* Label text */
-         document.getElementById("label_title_text").innerText =labelText;
-      } else {
+      /* (show model labels) */
 
-         modelLabelDiv.className = "";
-         modelLabelDiv.classList.add("model_label");
-         document.getElementById("label_title_text").innerText = "";
+
+      //themodelLabelContainer.classList.add("model_label");
+      if (themodelLabelContainer){
+        if (cardLabelsString && cardLabelsString.trim() !=""){
+          todoSystem.labelsTemplate(cardLabelsString, themodelLabelContainer);
+          todoSystem.checkSelectedLabels(cardLabelsString, themodelLabelsCheckboxes);
+        } else {
+          themodelLabelContainer.innerHTML = "";
+        }
       }
 
+
+      if (theUpdateLabelBtn) {
+        theUpdateLabelBtn.setAttribute("data-labels", cardLabelsString);
+      }
 
 
       modelList.innerText = listTitle;
@@ -3792,6 +3884,42 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       openBtn.setAttribute('data-target',"#myModal1");
       popupTemplate.setAttribute("data-eventtarget-id", btnId);
 
+   },
+   checkSelectedLabels: (card_label_string, checkboxes)=> {
+
+     let labelsList = card_label_string.split("?|s3atbbt7sl;.|/|:=?|");
+
+     if (labelsList.length == 0) {
+       return false;
+     }
+     labelsList.forEach( (signleLabel, index)=>  {
+
+       if (signleLabel.split(",?;.|fasl&;|,").length == 3 && signleLabel.trim() != ""){
+         let labelTemplateList = signleLabel.split(",?;.|fasl&;|,");
+         let labelTitle = labelTemplateList[0];
+         let labelColor = labelTemplateList[1];
+         let labelId = labelTemplateList[2];
+
+         checkboxes.forEach( (checkInput)=> {
+             if (checkInput.getAttribute("data-label-id") == labelId) {
+                checkInput.setAttribute("checked", "checked");
+             }
+         });
+       }
+     });
+     return true;
+   },
+   handleResrved: (str)=> {
+      let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
+      let resrevedEnd = ",?;.|fasl&;|,";
+      let functionStr = str;
+      while (functionStr.includes(resrevedBegain)) {
+           functionStr = functionStr.replace(resrevedBegain, "&#11088;");
+      }
+      while (functionStr.includes(resrevedEnd)) {
+           functionStr = functionStr.replace(resrevedEnd, "&#128125;");
+      }
+      return functionStr;
    },
    labelsTemplate: (card_label_string, theLabelsContainer)=> {
 
@@ -3812,8 +3940,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
             newLabel.setAttribute("data-label-color", labelColor);
             newLabel.setAttribute("data-label-id", labelId);
 
-            newLabel.innerText = labelTitle;
-            newLabel.classList.add(labelColor, "label_class", "card_label");
+            newLabel.innerHTML = labelTitle;
+            newLabel.classList.add(labelColor, "label_class", "card_label", "thelabel");
             theLabelsContainer.appendChild(newLabel);
           }
         });
@@ -3821,7 +3949,6 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
    },
    updateLabelsString: (removeIds, card_label_string) => {
-
      let newLabelString = "";
      let labelsList = card_label_string.split("?|s3atbbt7sl;.|/|:=?|");
 
@@ -3978,6 +4105,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
 
 
+
       let cardData = {
         type: 'add_new_card',
         title: newCardData.title,
@@ -4030,9 +4158,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       }
 
    },
-   /* Create New Card */
-   addNewCard: (event)=> {
 
+   addNewCard: (event)=> {
+     /* Create New Card */
        let usedBtn = event.target;
        if (event.target.nodeName == "I"){
           //console.log(event.target.parentElement);
@@ -4090,11 +4218,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
         return false;
    },
-   /*  create new label*/
+
    addNewLabel: async ()=> {
-
+     /*  create new label*/
      let allLabeleRadios = document.querySelectorAll("#add_new_label_container .colors input[name='label_color']");
-
 
      if (!addNewLabelName.value){
        labelAlert.style.display = "block";
@@ -4122,7 +4249,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      labelAlert.innerText = "";
      labelAlert.style.display = "none";
       /* Here You Can Send Label Data to database */
-     let data = {title: addNewLabelName.value, color:color_class};
+
+     let validLabelName = todoSystem.handleResrved(addNewLabelName.value);
+     let data = {title: validLabelName, color:color_class};
      /* add the label and set the data to html */
      await newLabelSubmit(data);
 
@@ -4177,6 +4306,16 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
          /* Get TargetCard */
    let letSelectedCardId = description_saveBtn.getAttribute("data-card-id");
    let letSelectedCard = document.getElementById(letSelectedCardId);
+   let selectedCardLabelsContainer = letSelectedCard.querySelector(".card_labels_container");
+   let selectedCardAction = letSelectedCard.querySelector(".card_actions");
+   let letupdateLabelBtn = event.target;
+   let letmodelLabelContainer = document.querySelector("#themodel_label_container");
+
+
+
+
+
+
 
 
    let isCustomLabel = false;
@@ -4221,12 +4360,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       return false;
    }
 
-   let modelLabelTextParent =  model_label_text.parentElement;
-   if (!modelLabelTextParent){
-     console.log("no parent for textlabel");
-     return false;
-   }
 
+   /* (update labels) */
 
    /* Here user need edit custom label */
    /* I will let change only the color for now and text stay same no confilect */
@@ -4240,105 +4375,76 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
    let checkedColor = null;
    let labelText = null;
+   let labelId = null;
    edit_label_colors  = document.querySelectorAll(".model_label_container");
 
+   let newLabelsDataString = "";
+   //selectedCardLabelsContainer
    for (var i=0; i < edit_label_colors.length; i++){
-
 
 
 
      /* Here We found the new label checked can send to db */
      if (edit_label_colors[i].querySelector("input[name='model_color'").checked == true){
+
        checkedColor = edit_label_colors[i].querySelector("input[name='model_color']");
        labelText = edit_label_colors[i].querySelector("span.label_txt");
+       labelId = checkedColor.getAttribute("data-label-id");
+
 
 
        /* If not text elm stop */
        if (!labelText){
-          console.log(edit_label_colors[i], "label color with no value");
-
+          console.log(edit_label_colors[i], "HTML error label color with no value");
           return false;
        }
 
        /* If not color stop */
        if (!checkedColor.value){
-          console.log(edit_label_colors[i], "label color with no value");
+          console.log(edit_label_colors[i], "HTML error label color with no value");
           return false;
        }
+       let goodLabelTitle = todoSystem.handleResrved(labelText.innerText);
+       newLabelsDataString += `${goodLabelTitle},?;.|fasl&;|,${checkedColor.value},?;.|fasl&;|,${labelId}?|s3atbbt7sl;.|/|:=?|`;
 
-       /* Here we can set the label to custom or just leave it in db tag and color */
-       let labelCustom = checkedColor.getAttribute("data-label-type");
-       if (labelCustom == "custom"){
-         letSelectedCard.setAttribute("data-label-type", labelCustom);
-         cardMetaData.setAttribute("data-label-type", labelCustom);
-         cardText.setAttribute("data-label-type", labelCustom);
-         cardLabel.setAttribute("data-label-type", labelCustom);
-       }
+       /* (update label) */
 
-
-       /* Edit Label In All card Elm and System */
-
-       /* updatelabel */
-       letSelectedCard.setAttribute("data-label-title", labelText.innerText);
-       letSelectedCard.setAttribute("data-label-color", checkedColor.value);
-
-
-       cardParent.setAttribute("data-label-title", labelText.innerText);
-       cardParent.setAttribute("data-label-color", checkedColor.value);
-
-       cardMetaData.setAttribute("data-label-title", labelText.innerText);
-       cardMetaData.setAttribute("data-label-color", checkedColor.value);
-
-       cardText.setAttribute("data-label-title", labelText.innerText);
-       cardText.setAttribute("data-label-color", checkedColor.value);
-
-       /* Card Label Main Elm */
-       cardLabel.setAttribute("data-label-title", labelText.innerText);
-       cardLabel.setAttribute("data-label-color", checkedColor.value);
-       cardLabel.className = "";
-       cardLabel.classList.add("label_class","card_label", checkedColor.value);
-       cardLabel.innerText = labelText.innerText;
-
-       /* Card Model Action Button Important for model */
-
-       cardLabelActions.setAttribute("data-label-title", labelText.innerText);
-       cardLabelActions.setAttribute("data-label-color", checkedColor.value);
-
-       modelLabelTextParent.className = "";
-       modelLabelTextParent.classList.add("model_label", checkedColor.value);
-
-       model_label_text.innerText = labelText.innerText;
-
-       /*10- (AJAX) Edit Label request */
-       let archiveData = {
-         type: 'edit_label',
-         color: checkedColor.value,
-         title: labelText.innerText,
-         id: checkedColor.getAttribute("data-label-id"),
-         card_id: letSelectedCard.getAttribute("data-card-dbid")
-       };
-       let result;
-       try {
-         let response = await postData(window.location.href, archiveData);
-         result = await response.json();
-       } catch (err){
-         console.log(err);
-         return false;
-       }
-       if (!result){return false;}
-
-       if (result.code != 200) {
-         return false;
-       }
-
-
-       break;
      }
 
      }
-     /* Update system then break */
-     setCardsMetaData();
-     return true;
+
+     /*10- (AJAX) Edit Label request */
+
+
+     let editLabelData = {
+       type: 'edit_label',
+       id: letSelectedCard.getAttribute("data-card-dbid"),
+       label_string: newLabelsDataString,
+     };
+     let result;
+     try {
+       let response = await postData(window.location.href, editLabelData);
+       result = await response.json();
+     } catch (err){
+       console.log(err);
+       return false;
+     }
+     if (!result){return false;}
+
+     if (result.code == 200) {
+       letSelectedCard.setAttribute("data-labels", newLabelsDataString);
+       selectedCardLabelsContainer.setAttribute("data-labels", newLabelsDataString);
+       selectedCardAction.setAttribute("data-labels", newLabelsDataString);
+       letupdateLabelBtn.setAttribute("data-labels", newLabelsDataString);
+       selectedCardLabelsContainer.innerHTML = "";
+       letmodelLabelContainer.innerHTML = "";
+       todoSystem.labelsTemplate(newLabelsDataString, selectedCardLabelsContainer);
+       todoSystem.labelsTemplate(newLabelsDataString, letmodelLabelContainer);
+       setCardsMetaData();
+       return true;
+     }
+
+     return false;
    },
    archiveCard: async (event)=> {
        let targetCardContainerId = event.target.getAttribute("data-card-container");
@@ -4470,7 +4576,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
 
   /* This for correct handle cards added from backend it will add event listener on card     inserted by PHP and let you open the card model */
   allExitModelOpen.forEach( (openbtn)=> {
-  openbtn.addEventListener("click",todoSystem.openCardModel);
+    openbtn.addEventListener("click",todoSystem.openCardModel);
   });
 
   /*  this responsble for restart the system important to use after any updates */
