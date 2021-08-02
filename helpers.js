@@ -102,3 +102,18 @@ function handleResrved(str) {
    return functionStr;   
 }
 
+/* Final filter the text */
+function handleResrved(str) {
+   let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
+   let resrevedEnd = ",?;.|fasl&;|,";
+   let functionStr = str;
+
+   while (functionStr.includes(resrevedBegain)) {
+        functionStr = functionStr.replace(resrevedBegain, "&#11088;");
+   }
+   while (functionStr.includes(resrevedEnd)) {
+        functionStr = functionStr.replace(resrevedEnd, "&#128125;");
+   }
+   return functionStr;   
+}
+
