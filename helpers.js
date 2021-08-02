@@ -66,3 +66,25 @@ let myStr = "One more step,?;.|fasl&;|,red,?;.|fasl&;|,2?|s3atbbt7sl;.|/|:=?|Pri
 
 alert(checkIt(normal));
 
+/* handle title resrved words included */
+function handleResrved(str) {
+   let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
+   let resrevedEnd = ",?;.|fasl&;|,";
+   let functionStr = "";
+   if (str.length < resrevedBegain) {
+     return str;
+   }
+   if (str.slice(0, 21) == resrevedBegain) {
+      functionStr += "Hello" + str;
+   } else {
+      functionStr = str;
+   }
+   
+   if (str.slice(str.length-13, str.length) == resrevedEnd) {
+      functionStr += "Hello";
+   }
+   
+   return functionStr;
+   
+}
+
