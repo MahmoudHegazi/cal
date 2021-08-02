@@ -117,3 +117,78 @@ function handleResrved(str) {
    return functionStr;   
 }
 
+
+/* Checklist read, and read reverse */
+let checklist1 = "myTask,?;.|fasl&;|,1,?;.|fasl&;|,?|s3atbbt7sl;.|/|:=?|secondTask,?;.|fasl&;|,2,?;.|fasl&;|,\
+option1,?;.|opfasl&;|,1,?;.|opfasl&;|,true,?;.|opsprate&;|,?|s3atbbt7sl;.|/|:=?|lastTask,?;.|fasl&;|,3,?;.|fasl&;|,option1,?;.|opfasl&;|,1,?;.|opfasl&;|,false,?;.|opsprate&;|,\
+option2,?;.|opfasl&;|,2,?;.|opfasl&;|,true,?;.|opsprate&;|,option3,?;.|opfasl&;|,3,?;.|opfasl&;|,false,?;.|opsprate&;|,?|s3atbbt7sl;.|/|:=?|";
+
+
+function readyCheckList(checklist) {
+let checkListLists = checklist.split("?|s3atbbt7sl;.|/|:=?|");
+let allChecklist = [];
+checkListLists.forEach( (item)=> {if (item.trim() != "") {allChecklist.push(item);};});
+
+let checkListObjects = [];
+/* create checklist object */
+allChecklist.forEach( (chList)=> {
+   let checkListObj = {};   
+   let checkListContent = chList.split(",?;.|fasl&;|,");
+   
+   checkListObj.title = checkListContent[0];
+   checkListObj.id = checkListContent[1];
+   checkListObj.options = [];
+   
+   
+   if (checkListContent.length == 3) {
+     
+     let myOptionList = checkListContent[2].split(",?;.|opsprate&;|,");
+     /* options */
+     myOptionList.forEach( (option)=> {
+       if (option.trim() != "") {
+         let singleOptionList = option.split(",?;.|opfasl&;|,");
+         let optionObject = {};
+         optionObject.title = singleOptionList[0];
+         optionObject.id = singleOptionList[1];
+         optionObject.checked = singleOptionList[2];
+         checkListObj.options.push(optionObject);
+       }
+     });
+     
+     
+   } else {
+     checkListObj.options = [];
+   }
+   
+   checkListObjects.push(checkListObj);
+   
+   
+});
+
+return checkListObjects;
+}
+
+
+
+function reveseRead(listsArray){
+  
+  let checkListString = "";
+  
+  listsArray.forEach( (listObject)=> {
+     let listString = listObject.title + ",?;.|fasl&;|," + listObject.id + ",?;.|fasl&;|,";
+     
+     let optionsString = "";
+     
+     if (listObject.options.length > 0) {
+       listObject.options.forEach( (option)=> {
+          optionsString += option.title + ",?;.|opfasl&;|," + option.id + ",?;.|opfasl&;|," + option.checked + ",?;.|opsprate&;|,";
+       });
+     }
+     checkListString += listString + optionsString + "?|s3atbbt7sl;.|/|:=?|";
+  });
+  
+  return checkListString;
+}
+
+
+console.log(reveseRead(readyCheckList(checklist1)));
