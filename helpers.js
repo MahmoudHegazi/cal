@@ -66,25 +66,41 @@ let myStr = "One more step,?;.|fasl&;|,red,?;.|fasl&;|,2?|s3atbbt7sl;.|/|:=?|Pri
 
 alert(checkIt(normal));
 
-/* handle title resrved words included */
+/* handle title resrved words included in begain or end */
+let str1 = "?|s3atbbt7sl;.|/|:=?|mytask";
+let str2 = "?|s3atbbt7sl;.|/|:=?|something ,?;.|fasl&;|,";
+let str3 = "normal";
+
 function handleResrved(str) {
    let resrevedBegain = "?|s3atbbt7sl;.|/|:=?|";
    let resrevedEnd = ",?;.|fasl&;|,";
    let functionStr = "";
-   if (str.length < resrevedBegain) {
-     return str;
-   }
+   
+   let firstCheck = false;
+   let secondCheck = false;
+   
+
    if (str.slice(0, 21) == resrevedBegain) {
-      functionStr += "Hello" + str;
+      firstCheck = true;
+      functionStr = str.replace("?|s3atbbt7sl;.|/|:=?|", "");
    } else {
       functionStr = str;
    }
    
-   if (str.slice(str.length-13, str.length) == resrevedEnd) {
-      functionStr += "Hello";
+   
+   if (functionStr.slice(functionStr.length-13, functionStr.length) == resrevedEnd) {
+      secondCheck = true;
+      functionStr = functionStr.replace(",?;.|fasl&;|,", "");
+   }
+
+   if (firstCheck == false && secondCheck == false) {
+     return str;
+   } else {
+     return functionStr;
    }
    
-   return functionStr;
-   
 }
+
+
+alert(handleResrved(str2));
 
