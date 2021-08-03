@@ -1414,7 +1414,7 @@ function showCards($conn, $list_id){
                   data-list-title="'. $row1['list_title'] .'"
                  data-card-id="" data-card-description="'. $row1['description'] .'" data-card-timestamp="'.
                 $row1['card_timestamp']. '" data-dute-date="'. $row1['due_date'] .'" data-card-dbid="' . $row1['id'] .
-                '" data-card-containerid="" data-labels="'. $row1['labels_string'] .'">
+                '" data-card-containerid="" data-labels="'. $row1['labels_string'] .'" data-checklists="'. $row1['checklist_string'] .'">
                  &#127915;
                  </span>
             </div>
@@ -1752,7 +1752,7 @@ function showLists($conn){
 
           </div>
           <hr />
-          <div class="checklists_container">
+          <div class="checklists_container" id="model_checklists_container">
 
           <!--
 
@@ -2143,17 +2143,307 @@ function hide_check_form_normal(hidebtn){
 }
 
 
+/* (checklist) Here All Functions related to checklist */
+
+
+function readCheckList(checklist) {
+let checkListLists = checklist.split("?|s3atbbt7sl;.|/|:=?|");
+let allChecklist = [];
+checkListLists.forEach( (item)=> {if (item.trim() != "") {allChecklist.push(item);};});
+
+let checkListObjects = [];
+/* create checklist object */
+allChecklist.forEach( (chList)=> {
+   let checkListObj = {};
+   let checkListContent = chList.split(",?;.|fasl&;|,");
+
+   checkListObj.title = checkListContent[0];
+   checkListObj.id = checkListContent[1];
+   checkListObj.options = [];
+
+
+   if (checkListContent.length == 3) {
+
+     let myOptionList = checkListContent[2].split(",?;.|opsprate&;|,");
+     /* options */
+     myOptionList.forEach( (option)=> {
+       if (option.trim() != "") {
+         let singleOptionList = option.split(",?;.|opfasl&;|,");
+         let optionObject = {};
+         optionObject.title = singleOptionList[0];
+         optionObject.id = singleOptionList[1];
+         optionObject.checked = singleOptionList[2];
+         checkListObj.options.push(optionObject);
+       }
+     });
+
+
+   } else {
+     checkListObj.options = [];
+   }
+
+   checkListObjects.push(checkListObj);
+
+
+});
+
+return checkListObjects;
+}
+
+
+
+function reveseRead(listsArray){
+
+  let checkListString = "";
+
+  listsArray.forEach( (listObject)=> {
+     let listString = listObject.title + ",?;.|fasl&;|," + listObject.id + ",?;.|fasl&;|,";
+
+     let optionsString = "";
+
+     if (listObject.options.length > 0) {
+       listObject.options.forEach( (option)=> {
+          optionsString += option.title + ",?;.|opfasl&;|," + option.id + ",?;.|opfasl&;|," + option.checked + ",?;.|opsprate&;|,";
+       });
+     }
+     checkListString += listString + optionsString + "?|s3atbbt7sl;.|/|:=?|";
+  });
+
+  return checkListString;
+}
+
+
+
+function addCheckListOption(checkListId, checkListString, optionObj) {
+  let checkListArray = readCheckList(checkListString);
+  let updated = false;
+
+  let resultArray = [];
+  checkListArray.forEach( (checkList)=> {
+     if (checkList.id == checkListId) {
+        optionObj['id'] = checkList.options.length+1;
+        checkList.options.push(optionObj);
+        updated = true;
+        resultArray.push(checkList);
+
+     } else {
+       resultArray.push(checkList);
+     }
+  });
+
+  if(updated == true) {
+    return reveseRead(resultArray);
+  } else {
+    return false;
+  }
+};
+
+//console.log(addCheckListOption(1, checklist1, {title: "new option", id: "", checked: false }));
+
+
+function handleCheckListOptions(checkListsString, checkListid, optionId, bool) {
+  let newCheckListArray = readCheckList(checkListsString);
+  let newResultArray = [];
+  newCheckListArray.forEach( (aCheckList)=> {
+     if (aCheckList.id == checkListid) {
+       if (aCheckList.options.length == 0) {
+          newResultArray.push(aCheckList);
+       } else {
+          let newListOptions = [];
+          aCheckList.options.forEach( (anOption)=> {
+             if (anOption.id == optionId) {
+               anOption.checked = bool;
+               newListOptions.push(anOption);
+             } else {
+               newListOptions.push(anOption);
+             }
+
+          });
+          aCheckList.options = newListOptions;
+          newResultArray.push(aCheckList);
+       }
+
+     } else {
+       newResultArray.push(aCheckList);
+     }
+  });
+  return newResultArray;
+}
+
+//console.log(handleCheckListOptions(checklist1, 3, 2, false));
+
+
+
+function displayCheckLists(theOpenbtn) {
+   let checkListsContainer = document.querySelector("#model_checklists_container");
+   let currentCardHTMLId = theOpenbtn.getAttribute("data-card-id");
+   let currentCardDbId = theOpenbtn.getAttribute("data-card-dbid");
+   let currentCard = document.getElementById(currentCardHTMLId);
+   let theCheckListString = theOpenbtn.getAttribute("data-checklists");
+
+   if (theCheckListString.trim() != "") {
+     let theCheckListArray = readCheckList(theCheckListString);
+
+     theCheckListArray.forEach( (checkListItem, indexId)=>{
+       if (checkListItem != "") {
+
+
+         /* display options */
+         let listOptionsHtml = "";
+         if (checkListItem.options.length >0) {
+           checkListItem.options.forEach( (op)=> {
+             let checkedValue = op.checked == "true" ? "checked" : "";
+             listOptionsHtml +=
+             `
+             <div class="displayflex step_container">
+               <span class="step_title" data-checkbox-id="checkbox-id-${op.id}">${op.title}</span>
+               <input name="checkbox_${op.id}" id="checkbox_id-${op.id}" type="checkbox" class="checklist-box" ${checkedValue}>
+             </div>
+             `;
+           });
+         }
+         let newCheckContainer = document.createElement("div");
+         newCheckContainer.classList.add("checklists_container");
+         const containerHTML =
+           `
+             <div data-checklist-id="${checkListItem.id}" class="checklist-container" data-card-id="${currentCardHTMLId}" data-card-dbid="${currentCardDbId}" >
+                <h6 class="checklist_title"><mark>${checkListItem.title.slice(0, 60)}</mark></h6>
+                <div class="checklist_steps" id="checklist_steps_${checkListItem.id}">
+                  ${listOptionsHtml}
+                </div>
+                <div class="checklist-child-container" id="checklist-child-${checkListItem.id}"
+                  data-order="${checkListItem.id}">
+                <i  class="actionicon hidden_elm fa fa-minus"
+                style="" id="hide_${checkListItem.id}"
+                data-show-id="show_${checkListItem.id}" data-inital-id="inital_${checkListItem.id}"
+                data-checkbox-title="checkbox_title_${checkListItem.id}" title="Cancel"
+                data-span="show_span_${checkListItem.id}">
+                </i>
+
+                <i id="show_${checkListItem.id}" data-inital-id="inital_${checkListItem.id}"
+                data-hide-id="hide_${checkListItem.id}" class="fa fa-plus actionicon"
+                data-checkbox-title="checkbox_title_${checkListItem.id}" title="add New Step"
+                data-span="show_span_${checkListItem.id}"></i>
+                <span id="show_span_${checkListItem.id}">Add New Step</span>
+
+
+                <div class="inital_checkbox" id="inital_${checkListItem.id}">
+
+                </div>
+
+              <div id="checkbox_title_${checkListItem.id}" class="hidden_elm">
+
+              <input id="step_title_${checkListItem.id}" class="form-control check_title" type="text" placeholder="Enter Step Title" name="">
+
+              <button type="button" data-title-id="step_title_${checkListItem.id}"
+              data-sytem-id="${checkListItem.id}"
+              data-checksteps="checklist_steps_${checkListItem.id}"
+              id="submit_step${checkListItem.id}" data-card-id="${currentCardHTMLId}"
+              data-card-dbid="currentCardDbId" class="btn btn-primary">Submit</button>
+              </div>
+
+
+            </div>
+        `;
+        newCheckContainer.innerHTML = containerHTML;
+        checkListsContainer.appendChild(newCheckContainer);
+        let showBtn = checkListsContainer.querySelector(`#show_${checkListItem.id}`);
+        let hideBtn = checkListsContainer.querySelector(`#hide_${checkListItem.id}`);
+        let addNewOption = checkListsContainer.querySelector(`#submit_step${checkListItem.id}`);
+        showBtn.addEventListener("click", show_check_form);
+        hideBtn.addEventListener("click", hide_check_form);
+        addNewOption.addEventListener("click", addCheckListOption);
+    }
+
+  });
+  }
+
+
+
+
+  /*
+   let checkListsContainer = document.querySelector("div.checklists_container");
+   let TargetBtn = theOpenbtn;
+   let listTitle = document.querySelector("#checklist_title_input");
+   if (listTitle.value.trim() === "") {return false;}
+   let allCheckLists = document.querySelectorAll("div.checklists_container");
+   let currenCardId = listTitle.getAttribute("data-card-id");
+   let currentCard = document.querySelector(`#${currenCardId}`);
+
+   if (!currentCard){ return false;}
+   let lastId = allCheckLists.length;
+   let newCheckContainer = document.createElement("div");
+   newCheckContainer.classList.add("checklists_container");
+   const containerHTML =
+    `
+         <div class="checklist-container" data-card-id="${currenCardId}" >
+            <h6 class="checklist_title"><mark>${listTitle.value.slice(0, 60)}</mark></h6>
+            <div class="checklist_steps" id="checklist_steps_${lastId}">
+            </div>
+            <div class="checklist-child-container" id="checklist-child-${lastId}"
+              data-order="${lastId}">
+            <i  class="actionicon hidden_elm fa fa-minus"
+            style="" id="hide_${lastId}"
+            data-show-id="show_${lastId}" data-inital-id="inital_${lastId}"
+            data-checkbox-title="checkbox_title_${lastId}" title="Cancel"
+            data-span="show_span_${lastId}">
+            </i>
+
+            <i id="show_${lastId}" data-inital-id="inital_${lastId}"
+            data-hide-id="hide_${lastId}" class="fa fa-plus actionicon"
+            data-checkbox-title="checkbox_title_${lastId}" title="add New Step"
+            data-span="show_span_${lastId}"></i>
+            <span id="show_span_${lastId}">Add New Step</span>
+
+
+            <div class="inital_checkbox" id="inital_${lastId}">
+
+            </div>
+
+          <div id="checkbox_title_${lastId}" class="hidden_elm">
+
+          <input id="step_title_${lastId}" class="form-control check_title" type="text" placeholder="Enter Step Title" name="">
+
+          <button type="button" data-title-id="step_title_${lastId}"
+          data-sytem-id="${lastId}"
+          data-checksteps="checklist_steps_${lastId}"
+          id="submit_step${lastId}" data-card-id="${currenCardId}" class="btn btn-primary">Submit</button>
+          </div>
+
+
+        </div>
+    `;
+    let currentCardCheckList = currentCard.getAttribute("data-checklist");
+
+    if (!currentCardCheckList || currentCardCheckList == ""){
+       currentCard.setAttribute("data-checklist", `${listTitle.value}|_._|`);
+    } else {
+       currentCard.setAttribute("data-checklist", `${currentCardCheckList}|||.|||${listTitle.value}`);
+    }
+    newCheckContainer.innerHTML = containerHTML;
+    checkListsContainer.appendChild(newCheckContainer);
+    let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
+    let hideBtn = checkListsContainer.querySelector(`#hide_${lastId}`);
+    let addNewOption = checkListsContainer.querySelector(`#submit_step${lastId}`);
+    showBtn.addEventListener("click", show_check_form);
+    hideBtn.addEventListener("click", hide_check_form);
+    addNewOption.addEventListener("click", addCheckListOption);
+    listTitle.value = "";
+
+    */
+
+}
+
+
+
 
 function hide_check_form(event){
   let initalId_containerid = event.target.getAttribute("data-inital-id");
   let show_BtnId = event.target.getAttribute("data-show-id");
-
   let show_Btn = document.querySelector(`#${show_BtnId}`);
   let initalContainer = document.querySelector(`#${initalId_containerid}`);
-
   let checboxTitleId = event.target.getAttribute("data-checkbox-title");
   let checkboxTtitle = document.querySelector(`#${checboxTitleId}`);
-
   let textSpanId = event.target.getAttribute("data-span");
   let textSpanElm = document.querySelector(`#${textSpanId}`);
 
@@ -2265,7 +2555,7 @@ function addCheckListOption(event){
   stepsContainer.appendChild(newCheckOption);
 
 
-
+  /*(remove) */
 
    let currenCardId = event.target.getAttribute("data-card-id");
    let currentCard = document.querySelector(`#${currenCardId}`);
@@ -3140,7 +3430,7 @@ function dragLeave(event) {
 
      if (lastTargetContainer){
      lastTargetContainer.style.height = "auto";
-     console.log('yes');
+      //console.log('yes');
      }
 
      /* remove active class dropend */
@@ -3708,6 +3998,7 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    },
    openCardModel: (event)=> {
       hidePopAction();
+
       let modeldueDateString = document.querySelector("#card_duedate_model");
       let endDateCard = document.querySelector("#enddate");
       let card_title = document.getElementById("model_card_title");
@@ -3760,6 +4051,8 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let cardLabelsString = openBtn.getAttribute("data-labels");
 
 
+      /* Draw checklists */
+      displayCheckLists(openBtn);
       /* (remove)
       let labelText = openBtn.getAttribute("data-label-title");
       let labelClass = openBtn.getAttribute("data-label-color");
@@ -3867,19 +4160,16 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         theUpdateLabelBtn.setAttribute("data-labels", cardLabelsString);
       }
 
-
       modelList.innerText = listTitle;
       description_saveBtn.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
       description_saveBtn.setAttribute("data-openbtn-id", openBtn.getAttribute("id"));
       description_saveBtn.setAttribute("data-card-dbid", cardDbId);
-
 
       if (openBtn.getAttribute("data-card-description")){
           model_description.innerText = openBtn.getAttribute("data-card-description");
       } else {
           model_description.innerText = "";
       }
-
       let btnId =  event.target.getAttribute("id");
       openBtn.setAttribute('data-target',"#myModal1");
       popupTemplate.setAttribute("data-eventtarget-id", btnId);
