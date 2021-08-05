@@ -140,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $cardId = intval($reqData->id);
       $cardDueDate = $reqData->due_date;
 
-      $sql = "UPDATE card SET due_date='$cardDueDate' WHERE id=$cardId";
+      $sql = "UPDATE card SET due_date='$cardDueDate', is_complete=0 WHERE id=$cardId";
       if ($conn->query($sql) === TRUE) {
         $result = array("code"=> 200, "id"=> $cardId, "message"=>"Due Date is updated");
       } else {
@@ -169,7 +169,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       $sql = "INSERT INTO labels (title, color) VALUES ('$labelTitle', '$labelColor')";
       if ($conn->query($sql) === TRUE) {
-        /* must return added card ID */
+        /* return label ID */
         $labelId = $conn->insert_id;
         $result = array("code"=> 200, "id"=> $labelId, "message"=>"New label added successfully");
       } else {
@@ -183,13 +183,61 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       $sql = "UPDATE card SET labels_string='$labelString' WHERE id=$cardId";
       if ($conn->query($sql) === TRUE) {
-        /* must return added card ID */
+        /* always return card ID */
         $result = array("code"=> 200, "id"=> $cardId, "message"=>"label updated successfully");
       } else {
          $result = array("code"=> 400, "message"=>$conn->error);
       }
       /* edit label End */
 
+    } else if ($reqType == 'add_new_checklist') {
+      /* 11- (PHP) add new checkList request  [reqData->type == 'add_new_checklist'] */
+      $checkListString = $reqData->checkListString;
+      $cardId = $reqData->card_id;
+
+      $sql = "UPDATE card SET checklist_string='$checkListString' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        /* always return  card ID */
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"checkList added successfully");
+      } else {
+         $result = array("code"=> 400, "message"=>$conn->error);
+      }
+      /* add new checkList End */
+    } else if ($reqType == 'add_new_checklist_option') {
+      /* 12- (PHP) add new checkList option request  [reqData->type == 'add_new_checklist_option'] */
+      $checkListString = $reqData->checkListString;
+      $cardId = $reqData->card_id;
+      $sql = "UPDATE card SET checklist_string='$checkListString' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        /* always return  card ID */
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"checkList option added successfully");
+      } else {
+         $result = array("code"=> 400, "message"=>$conn->error);
+      }
+      /* end add new checklist option request */
+    } else if ($reqType == 'update_checklist_options'){
+      /* 13- (PHP)  update checklist options status request  [reqData->type == 'update_checklist_options'] */
+      $checkListString = $reqData->checkListString;
+      $cardId = $reqData->card_id;
+      $sql = "UPDATE card SET checklist_string='$checkListString' WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        /* always return card ID */
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"checkList option updated successfully");
+      } else {
+         $result = array("code"=> 400, "message"=>$conn->error);
+      }
+      /* end checklist option update hardest project since start code */
+    }  else if ($reqType == 'resolve_card'){
+      /* 14- (PHP)  resolve ticket Card when recive this request set is_complete to 1  [reqData->type == 'resolve_card'] */
+      $cardId = $reqData->id;
+      $sql = "UPDATE card SET is_complete=1 WHERE id=$cardId";
+      if ($conn->query($sql) === TRUE) {
+        /* always return card ID */
+        $result = array("code"=> 200, "id"=> $cardId, "message"=>"card marked is completed");
+      } else {
+         $result = array("code"=> 400, "message"=>$conn->error);
+      }
+      /* end resolve card request */
     } else {
       /* unkown Request type return 422 */
       $result = array("code"=> 422, "message"=>'unkown request type please provide type for the request');
@@ -234,12 +282,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       background-repeat: no-repeat;
       background-attachment: fixed;
       background-size: cover;
-      /*
-      background-position: left;
-      background-size: cover;
-      width: fit-content;
-      background-repeat: repeat;
-      */
       color: #172b4d;
       font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Noto Sans,Ubuntu,Droid Sans,Helvetica Neue,sans-serif;
       font-size: 14px;
@@ -261,9 +303,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 
-    div.mask_list {
-
-    }
 
     /* columns that hold lists and cards */
     div.listcontainer{
@@ -377,9 +416,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     /* cards */
 
-    .cards_container {
-
-    }
 
     .task_card {
       background: rgba(250,255,255,.9);
@@ -392,11 +428,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     .cards_container{
-      display: flex;
-      flex-flow: column nowrap;
-      justify-conntent: center;
-      align-items: stretch;
+      display: block;
+      max-height: 62vh;
+      overflow: auto;
     }
+
     .card_container{
       padding: 1px;
 
@@ -476,8 +512,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-size:1.5em;
       height: auto;
       color: rgb(120, 120, 120);
-
-
     }
 
     button#card_add_menu {
@@ -582,7 +616,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     .nocolor {
       background: transparent;
-      /*box-shadow: -8px 0 #b3bac5;*/
       display: none;
     }
 
@@ -753,10 +786,36 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     .card_metadata .label_class {
       display: inline-block;
 
-
     }
-
-
+    div.completed_model_due {
+      background: #61bd4f;
+      color: #fff;
+      border-radius: 3px;
+    }
+    .date_metadata {
+      background: khaki;
+      padding: 5px;
+      width: fit-content;
+      margin-right: auto;
+      margin-left: 12px;
+      margin-bottom: 15px;
+    }
+    span#overdue_cell{
+      background: #EC9488;
+      padding: 0 4px;
+      color: #FFFFFF;
+      margin: auto 0 auto 8px;
+      text-transform: uppercase;
+      line-height: 16px;
+      font-size: 12px;
+      border-radius: 2px;
+    }
+    span.overdue_cell_hidden {
+      display: none;
+    }
+    span.overdue_cell_show {
+      display: block;
+    }
     /* model css */
 
     .label-containers {
@@ -775,10 +834,25 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       font-weight: bold;
       color: gray;
     }
-    .activve_container, .description_container, .list_title_container  {
-      margin-top: 20px;
+    .activve_container, .description_container  {
+      margin-top: 10px;
     }
 
+    #due_date_model1 {
+      margin-left: 5px;
+    }
+    .passeddue_class {
+      background: #eb5a46;
+      border-radius: 3px;
+      color: #fff;
+    }
+    .is_due_now {
+      width: fit-content;
+      padding: 5px;
+    }
+    .is_due_now:hover {
+      opacity: 0.8;
+    }
     .comment_icons {
       margin-left: auto;
       float: right;
@@ -890,6 +964,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       color: white;
 
     }
+
     .aside_button_close{
      margin-left: auto;
      float: right;
@@ -1229,15 +1304,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       cursor: pointer;
     }
 
+    .option_real_parent {
+       border: 1px solid antiquewhite;
+       padding: 10px;
+       text-align: left;
 
+    }
     .step_container {
-        padding: 10px;
+        margin-top: 3px;
         font-size: 16px;
         display: flex;
         justify-content: space-around;
         align-items: center;
         margin-left: 10px;
-        border: 1px solid antiquewhite;
+        /* border: 1px solid antiquewhite;  */
         max-width: 100%;
 
 
@@ -1253,10 +1333,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 
     }
+
+    /*
     .step_container:hover {
       background: lightgray;
     }
-
+*/
     .addcard_labels_container {
       overflow: auto;
       height: 300px;
@@ -1280,6 +1362,52 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       align-items: center;
       gap: 15px;
       flex-flow: row wrap;
+    }
+    .skills_holder {
+      display: flex;
+      width: 80%;
+      gap: 5px;
+      margin-left: auto;
+      margin-right: auto;
+      height: 10px;
+      align-items: flex-start;
+      justify-content: center;
+      background: white;
+    }
+    .skills_container {
+
+      border-radius: 10px;
+      background: lightgray;
+      width: 95%;
+      height: 90%;
+
+    }
+
+    .skills {
+      text-align: right;
+      color: transparent;
+      text-align: center;
+      border-radius: 10px;
+      height: 90%;
+    }
+
+    .skill_text {
+      height: 95%;
+      font-size: 14px;
+    }
+    div.hidden_cell {
+      display: none;
+    }
+
+    .finished_option {width: 100%; background-color: #04AA6D;}
+    .not_finished_option {width: 0%; background-color: #04AA6D;}
+
+    #resolve_btn{
+      display: none;
+    }
+    .completed_card {
+      background: #61bd4f;
+      color: #fff;
     }
     /* small animation */
     .currentdraged {
@@ -1375,7 +1503,29 @@ function showCards($conn, $list_id){
      // show all cords with same order and metdata for a list
      $cardsHTML = '';
      $lastorder = 0;
+
+
      while($row1 = $result1->fetch_assoc()) {
+       /*  if card has due date return "" for non hidden elm else hide the due date label */
+       $due_date_class = ($row1['due_date'] != '') ? "" : "hidden_elm";
+
+       /* simple php step to check if the card passed due date and show html class completed_card */
+       $cardDateStatusClass = "";
+       $dueShortCut = "";
+       $cardDueTitle = "";
+       $completeClass = "";
+       if ($row1['due_date'] && $row1['is_complete'] == 0) {
+         $cardDateStatusClass = (date($row1['due_date']) > date("Y-m-d")) ? "" : " passeddue_class";
+         $dateAsUnixTimestamp = strtotime($row1['due_date']);
+         $dueShortCut = date("M", $dateAsUnixTimestamp) . " " . date("d", $dateAsUnixTimestamp);
+         $cardDueTitle = (date($row1['due_date']) > date("Y-m-d")) ? "this card is due later" : "this card is overdue";
+       }
+       if ($row1['is_complete'] == 1) {
+         $cardDateStatusClass = "completed_card";
+         $dateAsUnixTimestamp = strtotime($row1['due_date']);
+         $dueShortCut = date("M", $dateAsUnixTimestamp) . " " . date("d", $dateAsUnixTimestamp);
+         $cardDueTitle = "this card is complete";
+       }
 
        /* Very Simple Render The PHP Cards Inside their html list check showLists()  !!!
        description title list_id card_order card_id list_title label_color label_title*/
@@ -1392,7 +1542,7 @@ function showCards($conn, $list_id){
           data-list-id="' . $row1['list_id'] . '" data-card-description="' . $row1['description'] . '" data-dute-date="' .
           $row1['due_date'] . '" data-create-timestamp="'. $row1['card_timestamp'] . '" data-card-dbid="' . $row1['id'] . '"'.
           'data-create-string="' . $row1['create_date'] . '"
-          data-card-attachment="' . $row1['card_attachment'] . '" data-labels="'. $row1['labels_string'] .'">
+          data-card-attachment="' . $row1['card_attachment'] . '" data-labels="'. $row1['labels_string'] .'" data-checklists="'. $row1['checklist_string'] .'">
 
              <div class="card_metadata"
                data-label-title="'. $row1['label_title'] . '" data-label-color="' . $row1['label_color'] .
@@ -1400,12 +1550,6 @@ function showCards($conn, $list_id){
                data-list-id="' . $row1['list_id'] . '">
 
                <div class="card_metadata_container">
-<!--
-                 <div class="label_class
-                 card_label ' . $row1['label_color'] . '" data-label-title="' . $row1['label_title'] .
-                 '" data-label-color="' . $row1['label_color'] . '" data-list-title="' . $row1['list_title'] .
-                 '" data-list-id="' . $row1['list_id'] . '" data-labels="'. $row1['labels_string'] .'"></div>
--->
 
                  <div class="label_class card_labels_container" data-labels="'. $row1['labels_string'] .'"></div>
                  <span class="btn model_open card_actions" data-toggle="modal"
@@ -1414,13 +1558,14 @@ function showCards($conn, $list_id){
                   data-list-title="'. $row1['list_title'] .'"
                  data-card-id="" data-card-description="'. $row1['description'] .'" data-card-timestamp="'.
                 $row1['card_timestamp']. '" data-dute-date="'. $row1['due_date'] .'" data-card-dbid="' . $row1['id'] .
-                '" data-card-containerid="" data-labels="'. $row1['labels_string'] .'" data-checklists="'. $row1['checklist_string'] .'">
+                '" data-card-containerid="" data-labels="'. $row1['labels_string'] .'" data-checklists="'. $row1['checklist_string'] .'" data-complete-status="' . $row1['is_complete'] .  '">
                  &#127915;
                  </span>
             </div>
                <p class="card_text" data-label-title="'. $row1['label_title'] .
                '"data-label-color="'. $row1['label_color'] .'" data-list-title="'. $row1['list_title'] .
                '"data-list-id="'. $row1['list_id'] . '">' . $row1['title'] . '</p>
+               <div class="is_due_now '. $due_date_class . '' . $cardDateStatusClass . '" title="' . $cardDueTitle . '"><span>&#128337;</span><span class="card_due_label"> '. $dueShortCut . '</span></div>
          </div>
         </div>
           </div>
@@ -1464,10 +1609,10 @@ function showLists($conn){
          '<!-- Start Of Cards -->'.
          $list_cards .
 
-         '</div>'.
+         '</div></div>'.
          '<button class="add_new_card_btn btn" data-list-title="'.$row['title'].
          '" data-list-id="" data-list-dbid="' . $row['id'] . '"><i class="fa fa-plus plus_sign"></i> Add New Card</button>'.
-         '</div>'.
+         ''.
          '</div>';
          $lastorder = intval($row['list_order']) +1;
 
@@ -1555,70 +1700,6 @@ function showLists($conn){
                <?php echo showAddCardLabels($conn); ?>
              </div>
 
-             <!--
-             <div class="label_container">
-                <div class="label_icon green selectable">
-                 <input name="selected_color" value="green" type="radio">
-                 <span>Copy Request</span>
-                </div>
-             </div>
-
-            <div class="label_container">
-              <div class="label_icon red selectable">
-                <input name="selected_color" value="red" type="radio">
-                <span>One more step</span>
-                </div>
-            </div>
-
-
-            <div class="label_container">
-              <div class="label_icon blue selectable">
-                <input name="selected_color" value="blue" type="radio">
-                <span>Proiority</span>
-              </div>
-            </div>
-
-            <div class="label_container">
-              <div class="label_icon orange selectable">
-                <input name="selected_color" value="orange" type="radio">
-                <span>Desgin Team</span>
-              </div>
-           </div>
-
-
-            <div class="label_container">
-              <div class="label_icon purple selectable">
-                <input name="selected_color" value="purple" type="radio">
-                <span>Proudct Marketing</span>
-              </div>
-           </div>
-
-
-
-            <div class="label_container">
-               <div class="label_icon lightblue selectable">
-                 <input name="selected_color" value="lightblue" type="radio">
-                 <span>Help</span>
-               </div>
-           </div>
-
-
-            <div class="label_container">
-              <div class="label_icon lightgreen selectable">
-                 <input name="selected_color" value="lightgreen" type="radio">
-                 <span>Meeting</span>
-              </div>
-           </div>
-
-
-            <div class="label_container selectable">
-               <div class="label_icon darkblue selectable">
-                 <input name="selected_color" value="darkblue" type="radio">
-                 <span>Important</span>
-               </div>
-            </div>
-
-          -->
           </div>
 
           <!--  card label end ----->
@@ -1715,8 +1796,12 @@ function showLists($conn){
            <span>in list: </span><a id="list-title"><!-- Card title text --></a>
          </div>
 
+         <div class="date_metadata hidden_cell" id="due_container">
+            <span>Due Date:</span> <span id="due_date_model1">8/6/2021</span>
+            <span id="overdue_cell" class="overdue_cell_hidden">OVERDUE</span>
+         </div>
+
       <div class="container">
-           <h5>Labels: </h5>
            <div class="container label-containers">
              <!-- it will get the current card label class by setCardMetaData and data-label-color attribute -->
 
@@ -1728,7 +1813,7 @@ function showLists($conn){
 
 
          <div class="description_container">
-           <h4><i class="title_fa fa fa-pencil"></i>Description: </h4>
+           <h5>Description: </h5>
             <!-- text description depend on open button card menu and data-card-id attribute -->
             <p id="ticket_description"></p>
 
@@ -1752,22 +1837,7 @@ function showLists($conn){
 
           </div>
           <hr />
-          <div class="checklists_container" id="model_checklists_container">
-
-          <!--
-
-               <div class="checklist-container">
-                <h6>Finish Hello World Task 1</h6>
-                  <div class="checklist-child-container-active" id="checklist-child-0">
-                   <div>
-                     <label for="checkbox-id-0">Hello World Step</label>
-                     <input id="checkbox-id-0" type="checkbox" class="checklist-box">
-                   </div>
-                   <input type="button" class="btn btn-info" value="Add New" id="add_new_check0">
-                  </div>
-               </div>
-
- -->
+          <div class="checklists_container" id="model_checklists_container" data-checklists="">
 
 
     </div>
@@ -1823,55 +1893,7 @@ function showLists($conn){
 
              <!-- (PHP) show labels for edit card form -->
              <?php echo showEditCardLabels($conn); ?>
-             <!--
-             <div class="model_label_container green">
-                 <input name="model_color" value="green" type="radio">
-                 <span class="label_txt">Copy Request</span>
-             </div>
 
-            <div class="model_label_container red">
-                <input name="model_color" value="red" type="radio">
-                <span class="label_txt">One more step</span>
-            </div>
-
-
-            <div class="model_label_container blue">
-                <input name="model_color" value="blue" type="radio">
-                <span class="label_txt">Proiority</span>
-            </div>
-
-            <div class="model_label_container orange">
-                <input name="model_color" value="orange" type="radio">
-                <span class="label_txt">Desgin Team</span>
-           </div>
-
-
-
-            <div class="model_label_container purple">
-                <input name="model_color" value="purple" type="radio">
-                <span class="label_txt">Proudct Marketing</span>
-           </div>
-
-
-
-            <div class="model_label_container lightblue">
-                 <input name="model_color" value="lightblue" type="radio">
-                 <span class="label_txt">Help</span>
-           </div>
-
-
-            <div class="model_label_container lightgreen">
-                 <input name="model_color" value="lightgreen" type="radio">
-                 <span class="label_txt">Meeting</span>
-           </div>
-
-
-             <div class="model_label_container darkblue">
-                 <input name="model_color" value="darkblue" type="radio">
-                 <span class="label_txt">Important</span>
-            </div>
-
-          -->
 
          </div>
          <!--  card label end ----->
@@ -1948,9 +1970,10 @@ function showLists($conn){
              <input type="date" class="form-control" name="startdate" value="" id="startdate">
               <label for="enddate">End Date</label>
               <input type="date" class="form-control" name="enddate" value="" id="enddate">
-              <button type="button" class="btn btn-primary" id="submit_ticket_date">Submit Due Date</button>
+              <button type="button" class="btn btn-primary" id="submit_ticket_date" title="Tip: Setting the due date will mark the card as incomplete even if the card is resolved">Submit Due Date</button>
             </div>
           </form>
+          <div><button class="btn btn-success" id="resolve_btn">Resolve Card</button></div>
         </div>
 
       <!-- Attachment action -->
@@ -2009,7 +2032,7 @@ function showLists($conn){
 
 </div>
 
-</div>
+
 <script>
 
 window.addEventListener('DOMContentLoaded', (event) => {
@@ -2144,6 +2167,26 @@ function hide_check_form_normal(hidebtn){
 
 
 /* (checklist) Here All Functions related to checklist */
+function readCheckList1(checklist) {
+let checkListLists = checklist.split("?|s3atbbt7sl;.|/|:=?|");
+let allChecklist = [];
+checkListLists.forEach( (item)=> {if (item.trim() != "") {allChecklist.push(item);};});
+
+let checkListObjects = [];
+/* create checklist object */
+allChecklist.forEach( (chList)=> {
+   let checkListObj = {};
+   let checkListContent = chList.split(",?;.|fasl&;|,");
+
+   checkListObj.title = checkListContent[0];
+   checkListObj.id = checkListContent[1];
+   checkListObjects.push(checkListObj);
+
+
+});
+return checkListObjects;
+}
+
 
 
 function readCheckList(checklist) {
@@ -2214,14 +2257,15 @@ function reveseRead(listsArray){
 
 
 
-function addCheckListOption(checkListId, checkListString, optionObj) {
+function addCheckListOptionHelper(checkListId, checkListString, optionObj) {
   let checkListArray = readCheckList(checkListString);
   let updated = false;
-
+  let newBtnId;
   let resultArray = [];
   checkListArray.forEach( (checkList)=> {
      if (checkList.id == checkListId) {
         optionObj['id'] = checkList.options.length+1;
+        newBtnId = checkList.options.length+1;
         checkList.options.push(optionObj);
         updated = true;
         resultArray.push(checkList);
@@ -2232,7 +2276,7 @@ function addCheckListOption(checkListId, checkListString, optionObj) {
   });
 
   if(updated == true) {
-    return reveseRead(resultArray);
+    return {string: reveseRead(resultArray), id: newBtnId};
   } else {
     return false;
   }
@@ -2267,12 +2311,62 @@ function handleCheckListOptions(checkListsString, checkListid, optionId, bool) {
        newResultArray.push(aCheckList);
      }
   });
-  return newResultArray;
+  return reveseRead(newResultArray);
 }
 
 //console.log(handleCheckListOptions(checklist1, 3, 2, false));
 
+/* function to handle checkbox when checked or not */
+async function changeCheckOptionState(event) {
+  const juCheckListsContainer = document.querySelector("#model_checklists_container");
+  const juCheckListsString = juCheckListsContainer.getAttribute("data-checklists");
+  const juOptionId = event.target.getAttribute("data-checkbox-indexid");
+  const juOptionListId = event.target.getAttribute("data-list-id");
+  const juCheckStatus = event.target.checked;
+  const jucardDbId = event.target.getAttribute("data-card-dbid");
+  const jucardHTMLID = event.target.getAttribute("data-card-id");
+  const juCurrentCard = document.getElementById(jucardHTMLID);
+  const currentOptionBarid = event.target.getAttribute("data-bar-id");
+  const currentOptionBar = document.getElementById(currentOptionBarid);
 
+  if (!juCurrentCard){return false;}
+  const juActionBtn = juCurrentCard.querySelector(".card_actions");
+  if (!juActionBtn){return false;}
+  if (juCheckListsString == "" || juOptionId == "" || juOptionId == "" || juOptionListId == "") {return false;}
+  let updatedCheckListString = handleCheckListOptions(juCheckListsString, juOptionListId, juOptionId, juCheckStatus);
+  let currentBarClass =  juCheckStatus == true ? "finished_option" : "not_finished_option";
+  if (currentOptionBar){
+    if (currentOptionBar.classList.contains("finished_option")){ currentOptionBar.classList.remove("finished_option"); }
+    if (currentOptionBar.classList.contains("not_finished_option")){ currentOptionBar.classList.remove("not_finished_option"); }
+    currentOptionBar.classList.add(currentBarClass);
+  }
+
+  /* 13- (AJAX) Send request to update checlist checkbox (checked or unchcked) */
+  let checkListOptionUpdateData = {
+    type: 'update_checklist_options',
+    checkListString: updatedCheckListString,
+    card_id: jucardDbId
+  };
+  let result;
+  try {
+    let response = await postData(window.location.href, checkListOptionUpdateData);
+    result = await response.json();
+  } catch (err){
+    console.log(err);
+    return false;
+  }
+  if (!result){return false;}
+
+  if (result.code != 200){
+    return false;
+  }
+
+  juCheckListsContainer.setAttribute("data-checklists", updatedCheckListString);
+  juCurrentCard.setAttribute("data-checklists", updatedCheckListString);
+  juActionBtn.setAttribute("data-checklists", updatedCheckListString);
+  console.log(updatedCheckListString);
+
+}
 
 function displayCheckLists(theOpenbtn) {
    let checkListsContainer = document.querySelector("#model_checklists_container");
@@ -2281,7 +2375,7 @@ function displayCheckLists(theOpenbtn) {
    let currentCard = document.getElementById(currentCardHTMLId);
    let theCheckListString = theOpenbtn.getAttribute("data-checklists");
 
-   if (theCheckListString.trim() != "") {
+   if (theCheckListString) {
      let theCheckListArray = readCheckList(theCheckListString);
 
      theCheckListArray.forEach( (checkListItem, indexId)=>{
@@ -2290,16 +2384,53 @@ function displayCheckLists(theOpenbtn) {
 
          /* display options */
          let listOptionsHtml = "";
+         let optionFragment = document.createDocumentFragment();
+         let hasOptions = false;
          if (checkListItem.options.length >0) {
+           hasOptions = true;
            checkListItem.options.forEach( (op)=> {
              let checkedValue = op.checked == "true" ? "checked" : "";
-             listOptionsHtml +=
-             `
-             <div class="displayflex step_container">
-               <span class="step_title" data-checkbox-id="checkbox-id-${op.id}">${op.title}</span>
-               <input name="checkbox_${op.id}" id="checkbox_id-${op.id}" type="checkbox" class="checklist-box" ${checkedValue}>
-             </div>
-             `;
+             let checkedSkillsClass = op.checked == "true" ? "finished_option" : "not_finished_option";
+
+
+             let staticSkillsTemplate = `<div class="skills_holder"><div class="skills_container"><div class="skills ${checkedSkillsClass}" id="skillsbar_${op.id}">.</div></div></div>`;
+             let juOptionRealContainer = document.createElement("div");
+             let juOptionSkills = document.createElement("div");
+             let juOptionContainer = document.createElement("div");
+             let juOptionTitle = document.createElement("span");
+             let juOptionInput = document.createElement("input");
+
+             juOptionRealContainer.classList.add("option_real_parent");
+             juOptionContainer.classList.add("displayflex", "step_container");
+             juOptionTitle.classList.add("step_title");
+             juOptionInput.classList.add("checklist-box","checklist_optionitem");
+
+             juOptionTitle.setAttribute("data-checkbox-id",`checkbox-id-${op.id}`);
+             juOptionInput.setAttribute("name",`checkbox_${op.id}`);
+             juOptionInput.setAttribute("id",`checkbox_id-${op.id}`);
+             juOptionInput.setAttribute("type","checkbox");
+             juOptionInput.setAttribute("data-list-id",`${checkListItem.id}`);
+             juOptionInput.setAttribute("data-checkbox-indexid",`${op.id}`);
+             juOptionInput.setAttribute("data-card-id",`${currentCardHTMLId}`);
+             juOptionInput.setAttribute("data-card-dbid",`${currentCardDbId}`);
+             juOptionInput.setAttribute("data-bar-id",`skillsbar_${op.id}`);
+
+
+             if (checkedValue == "checked") {
+               juOptionInput.setAttribute("checked","true");
+             }
+
+             juOptionTitle.innerHTML = op.title;
+             juOptionSkills.innerHTML = staticSkillsTemplate;
+
+             juOptionInput.addEventListener("click", changeCheckOptionState);
+
+             juOptionContainer.appendChild(juOptionTitle);
+             juOptionContainer.appendChild(juOptionInput);
+             juOptionRealContainer.appendChild(juOptionSkills);
+             juOptionRealContainer.appendChild(juOptionContainer);
+             optionFragment.appendChild(juOptionRealContainer);
+
            });
          }
          let newCheckContainer = document.createElement("div");
@@ -2309,7 +2440,7 @@ function displayCheckLists(theOpenbtn) {
              <div data-checklist-id="${checkListItem.id}" class="checklist-container" data-card-id="${currentCardHTMLId}" data-card-dbid="${currentCardDbId}" >
                 <h6 class="checklist_title"><mark>${checkListItem.title.slice(0, 60)}</mark></h6>
                 <div class="checklist_steps" id="checklist_steps_${checkListItem.id}">
-                  ${listOptionsHtml}
+
                 </div>
                 <div class="checklist-child-container" id="checklist-child-${checkListItem.id}"
                   data-order="${checkListItem.id}">
@@ -2339,7 +2470,7 @@ function displayCheckLists(theOpenbtn) {
               data-sytem-id="${checkListItem.id}"
               data-checksteps="checklist_steps_${checkListItem.id}"
               id="submit_step${checkListItem.id}" data-card-id="${currentCardHTMLId}"
-              data-card-dbid="currentCardDbId" class="btn btn-primary">Submit</button>
+              data-card-dbid="currentCardDbId" class="btn btn-primary" data-checklist-id="${checkListItem.id}">Submit</button>
               </div>
 
 
@@ -2347,6 +2478,12 @@ function displayCheckLists(theOpenbtn) {
         `;
         newCheckContainer.innerHTML = containerHTML;
         checkListsContainer.appendChild(newCheckContainer);
+        /* add options */
+
+        if (hasOptions == true){
+          let optionsBasktContianer = checkListsContainer.querySelector(`#checklist_steps_${checkListItem.id}`);
+          optionsBasktContianer.appendChild(optionFragment);
+        }
         let showBtn = checkListsContainer.querySelector(`#show_${checkListItem.id}`);
         let hideBtn = checkListsContainer.querySelector(`#hide_${checkListItem.id}`);
         let addNewOption = checkListsContainer.querySelector(`#submit_step${checkListItem.id}`);
@@ -2356,81 +2493,9 @@ function displayCheckLists(theOpenbtn) {
     }
 
   });
+
+
   }
-
-
-
-
-  /*
-   let checkListsContainer = document.querySelector("div.checklists_container");
-   let TargetBtn = theOpenbtn;
-   let listTitle = document.querySelector("#checklist_title_input");
-   if (listTitle.value.trim() === "") {return false;}
-   let allCheckLists = document.querySelectorAll("div.checklists_container");
-   let currenCardId = listTitle.getAttribute("data-card-id");
-   let currentCard = document.querySelector(`#${currenCardId}`);
-
-   if (!currentCard){ return false;}
-   let lastId = allCheckLists.length;
-   let newCheckContainer = document.createElement("div");
-   newCheckContainer.classList.add("checklists_container");
-   const containerHTML =
-    `
-         <div class="checklist-container" data-card-id="${currenCardId}" >
-            <h6 class="checklist_title"><mark>${listTitle.value.slice(0, 60)}</mark></h6>
-            <div class="checklist_steps" id="checklist_steps_${lastId}">
-            </div>
-            <div class="checklist-child-container" id="checklist-child-${lastId}"
-              data-order="${lastId}">
-            <i  class="actionicon hidden_elm fa fa-minus"
-            style="" id="hide_${lastId}"
-            data-show-id="show_${lastId}" data-inital-id="inital_${lastId}"
-            data-checkbox-title="checkbox_title_${lastId}" title="Cancel"
-            data-span="show_span_${lastId}">
-            </i>
-
-            <i id="show_${lastId}" data-inital-id="inital_${lastId}"
-            data-hide-id="hide_${lastId}" class="fa fa-plus actionicon"
-            data-checkbox-title="checkbox_title_${lastId}" title="add New Step"
-            data-span="show_span_${lastId}"></i>
-            <span id="show_span_${lastId}">Add New Step</span>
-
-
-            <div class="inital_checkbox" id="inital_${lastId}">
-
-            </div>
-
-          <div id="checkbox_title_${lastId}" class="hidden_elm">
-
-          <input id="step_title_${lastId}" class="form-control check_title" type="text" placeholder="Enter Step Title" name="">
-
-          <button type="button" data-title-id="step_title_${lastId}"
-          data-sytem-id="${lastId}"
-          data-checksteps="checklist_steps_${lastId}"
-          id="submit_step${lastId}" data-card-id="${currenCardId}" class="btn btn-primary">Submit</button>
-          </div>
-
-
-        </div>
-    `;
-    let currentCardCheckList = currentCard.getAttribute("data-checklist");
-
-    if (!currentCardCheckList || currentCardCheckList == ""){
-       currentCard.setAttribute("data-checklist", `${listTitle.value}|_._|`);
-    } else {
-       currentCard.setAttribute("data-checklist", `${currentCardCheckList}|||.|||${listTitle.value}`);
-    }
-    newCheckContainer.innerHTML = containerHTML;
-    checkListsContainer.appendChild(newCheckContainer);
-    let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
-    let hideBtn = checkListsContainer.querySelector(`#hide_${lastId}`);
-    let addNewOption = checkListsContainer.querySelector(`#submit_step${lastId}`);
-    showBtn.addEventListener("click", show_check_form);
-    hideBtn.addEventListener("click", hide_check_form);
-    addNewOption.addEventListener("click", addCheckListOption);
-    listTitle.value = "";
-
-    */
 
 }
 
@@ -2526,16 +2591,27 @@ function show_check_form(event){
 
 }
 
-function addCheckListOption(event){
+
+async function addCheckListOption(event){
   let checkBoxId = event.target.getAttribute("data-sytem-id");
 
   let checkboxTitleInputId = event.target.getAttribute("data-title-id");
   let checkboxTitleInput = document.querySelector(`#${checkboxTitleInputId}`);
-
   let stepsContainerid = event.target.getAttribute("data-checksteps");
   let stepsContainer = document.querySelector(`#${stepsContainerid}`);
+  let checklistsContainerNew = document.querySelector("#model_checklists_container");
+  let checkListStringNew = checklistsContainerNew.getAttribute("data-checklists");
+  let currenCardId = event.target.getAttribute("data-card-id");
+  let currentCard = document.querySelector(`#${currenCardId}`);
+  let currentActionBtn = currentCard.querySelector(".card_actions");
+  let currentCardDbId = currentCard.getAttribute("data-card-dbid");
+  if (!currentCardDbId || currentCardDbId.trim() == "") {return false;}
+  let datacheckListId = event.target.getAttribute("data-checklist-id");
 
 
+  if (!currentCard){ return false;}
+  if (!currentActionBtn){ return false;}
+  if (!checklistsContainerNew || !checkListStringNew || checkListStringNew.trim() == ""){return false;}
 
   if (!checkBoxId || !checkboxTitleInput || !stepsContainer ){  return false; }
   if (checkboxTitleInput.value.trim() == ""){ return false; }
@@ -2543,54 +2619,88 @@ function addCheckListOption(event){
   let hideElm = document.querySelector(`#hide_${checkBoxId}`);
   if (!hideElm) {return false;}
 
+  let resultCheckObject = addCheckListOptionHelper(datacheckListId, checkListStringNew, {title: checkboxTitleInput.value, id: "", checked: false });
+  let newCheckListString = resultCheckObject.string;
+  let newOptionId = resultCheckObject.id;
+  /*12- (AJAX) add new checklist option request */
+  let checkListOptionData = {
+    type: 'add_new_checklist_option',
+    checkListString: newCheckListString,
+    card_id: currentCardDbId
+  };
+  let result;
+  try {
+    let response = await postData(window.location.href, checkListOptionData);
+    result = await response.json();
+  } catch (err){
+    console.log(err);
+    return false;
+  }
+  if (!result){return false;}
 
+  if (result.code != 200){
+    return false;
+  }
+
+  currentCard.setAttribute("data-checklists", newCheckListString);
+  currentActionBtn.setAttribute("data-checklists", newCheckListString);
+  checklistsContainerNew.setAttribute("data-checklists", newCheckListString);
+
+  let optionRealParent = document.createElement("div");
+  optionRealParent.classList.add("option_real_parent");
+
+  let skillBarParent = document.createElement("div");
   let newCheckOption = document.createElement("div");
+
+  let barHtml = `<div class="skills_holder"><div class="skills_container"><div class="skills not_finished_option" id="skillsbar_${newOptionId}">.</div></div></div>`;
+  skillBarParent.innerHTML = barHtml;
+
   newCheckOption.classList.add("displayflex", "step_container");
   let checkOptionHTML =
   `
-   <span class="step_title" data-checkbox-id="checkbox-id-${checkBoxId}">${checkboxTitleInput.value}</span>
-   <input name="checkbox_${checkBoxId}" id="checkbox_id-${checkBoxId}" type="checkbox" class="checklist-box">
+   <span class="step_title" data-checkbox-id="checkbox-id-${newOptionId}">${checkboxTitleInput.value}</span>
+   <input name="checkbox_${newOptionId}" id="checkbox_id-${newOptionId}" type="checkbox" class="checklist-box checklist_optionitem"
+     data-list-id="${datacheckListId}" data-checkbox-indexid="${newOptionId}" data-card-id="${currenCardId}" data-card-dbid="${currentCardDbId}" data-bar-id="skillsbar_${newOptionId}">
   `;
   newCheckOption.innerHTML = checkOptionHTML;
-  stepsContainer.appendChild(newCheckOption);
+  optionRealParent.appendChild(skillBarParent);
+  optionRealParent.appendChild(newCheckOption);
+  stepsContainer.appendChild(optionRealParent);
 
+  let newCheckOptionAdded = newCheckOption.querySelector(`#checkbox_id-${newOptionId}`);
+  newCheckOptionAdded.addEventListener("click", changeCheckOptionState);
 
-  /*(remove) */
-
-   let currenCardId = event.target.getAttribute("data-card-id");
-   let currentCard = document.querySelector(`#${currenCardId}`);
-
-  if (!currentCard){ return false;}
-
-  let currentCardValue = currentCard.getAttribute("data-checklist");
-  currentCard.setAttribute("data-checklist", `${currentCardValue}|_._|${checkboxTitleInput.value}`);
+  //handleCheckListOptions
 
   hide_check_form_normal(hideElm);
   checkboxTitleInput.value = "";
 
   return true;
-  /*
-    data-title-id="checkbox_title_${lastId}"
-          data-sytem-id="${lastId}" data-title="checkbox_title_${lastId}"
-          data-checksteps="checklist_steps_${lastId}"
 
-  */
 }
+
+
 let submitCreateCheckList = document.querySelector("#checkList_submit_input1");
 
-function addNewCheckList(event) {
+async function addNewCheckList(event) {
 
    let checkListsContainer = document.querySelector("div.checklists_container");
    let TargetBtn = event.target;
    let listTitle = document.querySelector("#checklist_title_input");
    if (listTitle.value.trim() === "") {return false;}
    let allCheckLists = document.querySelectorAll("div.checklists_container");
-
    let currenCardId = listTitle.getAttribute("data-card-id");
    let currentCard = document.querySelector(`#${currenCardId}`);
+   let actionBtn = currentCard.querySelector(".card_actions");
+   let cardDbId = currentCard.getAttribute("data-card-dbid");
+   let checklistsOptionContainer1 = document.querySelector("#model_checklists_container");
+
+
 
    if (!currentCard){ return false;}
    let lastId = allCheckLists.length;
+
+   let currentListId = document.querySelectorAll(".checklist-container").length + 1;
    let newCheckContainer = document.createElement("div");
    newCheckContainer.classList.add("checklists_container");
    const containerHTML =
@@ -2613,10 +2723,7 @@ function addNewCheckList(event) {
             data-checkbox-title="checkbox_title_${lastId}" title="add New Step"
             data-span="show_span_${lastId}"></i>
             <span id="show_span_${lastId}">Add New Step</span>
-
-
             <div class="inital_checkbox" id="inital_${lastId}">
-
             </div>
 
           <div id="checkbox_title_${lastId}" class="hidden_elm">
@@ -2626,19 +2733,51 @@ function addNewCheckList(event) {
           <button type="button" data-title-id="step_title_${lastId}"
           data-sytem-id="${lastId}"
           data-checksteps="checklist_steps_${lastId}"
-          id="submit_step${lastId}" data-card-id="${currenCardId}" class="btn btn-primary">Submit</button>
+          id="submit_step${lastId}" data-card-id="${currenCardId}" class="btn btn-primary" data-checklist-id="${currentListId}">Submit</button>
           </div>
-
-
         </div>
     `;
-    let currentCardCheckList = currentCard.getAttribute("data-checklist");
+    let currentCardCheckList = currentCard.getAttribute("data-checklists");
+    let newCheckListsAttribute = `${listTitle.value},?;.|fasl&;|,${currentListId},?;.|fasl&;|,?|s3atbbt7sl;.|/|:=?|`;
+    newCheckListsAttribute = newCheckListsAttribute.trim();
 
     if (!currentCardCheckList || currentCardCheckList == ""){
-       currentCard.setAttribute("data-checklist", `${listTitle.value}|_._|`);
+       currentCard.setAttribute("data-checklists", `${newCheckListsAttribute}`);
+       actionBtn.setAttribute("data-checklists", `${newCheckListsAttribute}`);
+       checklistsOptionContainer1.setAttribute("data-checklists", `${newCheckListsAttribute}`);
+
     } else {
-       currentCard.setAttribute("data-checklist", `${currentCardCheckList}|||.|||${listTitle.value}`);
+      let currentNewCheckListsAttribute = `${currentCardCheckList}${newCheckListsAttribute}`;
+       currentCard.setAttribute("data-checklists", `${currentNewCheckListsAttribute}`);
+       actionBtn.setAttribute("data-checklists", `${currentNewCheckListsAttribute}`);
+       checklistsOptionContainer1.setAttribute("data-checklists", `${currentNewCheckListsAttribute}`);
     }
+
+    /*11- (AJAX) add new CheckList Request  */
+    let updatedCheckListData = currentCard.getAttribute("data-checklists");
+    if (!updatedCheckListData || updatedCheckListData == "") {
+      return false;
+    }
+    updatedCheckListData = updatedCheckListData.trim();
+    let checkListData = {
+      type: 'add_new_checklist',
+      checkListString: updatedCheckListData,
+      card_id: cardDbId
+    };
+    let result;
+    try {
+      let response = await postData(window.location.href, checkListData);
+      result = await response.json();
+    } catch (err){
+      console.log(err);
+      return false;
+    }
+    if (!result){return false;}
+
+    if (result.code != 200){
+      return false;
+    }
+
     newCheckContainer.innerHTML = containerHTML;
     checkListsContainer.appendChild(newCheckContainer);
     let showBtn = checkListsContainer.querySelector(`#show_${lastId}`);
@@ -2648,7 +2787,6 @@ function addNewCheckList(event) {
     hideBtn.addEventListener("click", hide_check_form);
     addNewOption.addEventListener("click", addCheckListOption);
     listTitle.value = "";
-
 }
 
 
@@ -3139,8 +3277,6 @@ async function newLabelSubmit(data){
 
 /* Add New Card submit Handle function */
 async function submitNewCard(event){
-
-
           // get the data and append the card
           let card_parentTitle = event.target.getAttribute("data-list-title");
           let card_parentContainerId = event.target.getAttribute("data-list-id");
@@ -3706,8 +3842,13 @@ let todoSystem = {
    websiteIcon: 'rsz_websitelogo.png',
    defaultIcon: 'https://icons.iconarchive.com/icons/paomedia/small-n-flat/1024/file-empty-icon.png',
    listMenuOpen: false,
-
    newCardBtn: null,
+   isDuePassedChecker: (date_value)=> {
+     /* check if due date passed or not */
+     let dueDateObj = new Date(date_value);
+     let todayDateObj = new Date();
+     return todayDateObj > dueDateObj;
+   },
    createTimeList: () => {
      /* timestamp */
      let date_obect = new Date();
@@ -3947,7 +4088,22 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
      let selectedCard = document.querySelector(`#${SelectedCardId}`);
      let cardModelBtn = selectedCard.querySelector(".card_actions");
      let cardDbID = event.target.getAttribute("data-card-dbid");
+     let cardDueDateContainer = document.querySelector("#due_container");
+     let cardDueDateText = document.querySelector("#due_date_model1");
+     let cardDueDateOver = document.querySelector("#overdue_cell");
+     let dueDateCardLabel = selectedCard.querySelector(".is_due_now");
+     let dueDateCardLebelText = dueDateCardLabel.querySelector("span.card_due_label");
+     const mResolveBtn = document.querySelector("#resolve_btn");
+     if (dueDateCardLabel.classList.contains("completed_card")) { dueDateCardLabel.classList.remove("completed_card") };
+     if (cardDueDateContainer && cardDueDateContainer.classList.contains("completed_model_due")) { cardDueDateContainer.classList.remove("completed_model_due") };
+     if (dueDateCardLabel.classList.contains("passeddue_class")) {dueDateCardLabel.classList.remove("passeddue_class");}
+     if (dueDateCardLabel.classList.contains("hidden_elm")) {dueDateCardLabel.classList.remove("hidden_elm");}
+     if (mResolveBtn){mResolveBtn.style.display = "block";}
 
+     cardModelBtn.setAttribute("data-complete-status", "0");
+
+     if (!dueDateCardLabel || !dueDateCardLebelText){return false;}
+     if (!cardDueDateText || !cardDueDateOver) {return false;}
 
      if (!cardModelBtn || !selectedCard){return false;}
 
@@ -3982,6 +4138,31 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
        selectedCard.setAttribute("data-dute-date", endDate.value);
        cardModelBtn.setAttribute("data-dute-date", endDate.value);
        modeldueDateString.innerText = endDate.value;
+       /*(Due) */
+       const newSubmitedDate = new Date(endDate.value);
+       const newSubmitedDay = newSubmitedDate.getDate();
+       const newSubmitedMonth = newSubmitedDate.toLocaleString('default', { month: 'short' });
+       const datelabelString = newSubmitedMonth + " " + newSubmitedDay;
+       dueDateCardLebelText.innerText = " " + datelabelString;
+       cardDueDateText.innerText = endDate.value;
+       cardDueDateOver.style.display = "inline";
+
+
+       /* Check if passed and display the DUe or not */
+       let isDuePassed = todoSystem.isDuePassedChecker(endDate.value);
+       if (isDuePassed == true) {
+         if (cardDueDateOver) { cardDueDateOver.style.display = "inline"; };
+         cardDueDateContainer.setAttribute("title", "this card is due date later");
+         if (!dueDateCardLabel.classList.contains("passeddue_class")) {dueDateCardLabel.classList.add("passeddue_class");}
+         dueDateCardLabel.setAttribute("title", "this card is overdue");
+
+       } else {
+         if (cardDueDateOver) { cardDueDateOver.style.display = "none"; };
+         cardDueDateContainer.setAttribute("title", "this card is due later");
+         if (dueDateCardLabel.classList.contains("passeddue_class")) {dueDateCardLabel.classList.remove("passeddue_class");}
+         dueDateCardLabel.setAttribute("title", "this card is due later");
+       }
+
        setCardsMetaData();
        return true;
      } else {
@@ -3999,12 +4180,22 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
    openCardModel: (event)=> {
       hidePopAction();
 
-      let modeldueDateString = document.querySelector("#card_duedate_model");
-      let endDateCard = document.querySelector("#enddate");
-      let card_title = document.getElementById("model_card_title");
-      let themodelLabelContainer = document.querySelector("#themodel_label_container");
-      let themodelLabelsCheckboxes = document.querySelectorAll(".model_label_container input[type='checkbox']");
-      let theUpdateLabelBtn = document.querySelector("#edit_label_btn");
+      const modeldueDateString = document.querySelector("#card_duedate_model");
+      const endDateCard = document.querySelector("#enddate");
+      const card_title = document.getElementById("model_card_title");
+      const themodelLabelContainer = document.querySelector("#themodel_label_container");
+      const themodelLabelsCheckboxes = document.querySelectorAll(".model_label_container input[type='checkbox']");
+      const theUpdateLabelBtn = document.querySelector("#edit_label_btn");
+      const theCheckListsModelContainer = document.querySelector("#model_checklists_container");
+      const cardCheckListsString = event.target.getAttribute("data-checklists");
+      const checkListsModelContainer = document.querySelector("#model_checklists_container");
+      const cardDueDateContainer = document.querySelector("#due_container");
+      const cardDueDateText = document.querySelector("#due_date_model1");
+      const cardDueDateOver = document.querySelector("#overdue_cell");
+      const resolveCard = document.querySelector("#resolve_btn");
+
+
+
 
 
       if (attachmentContainer.innerHTML != ""){attachmentContainer.innerHTML = "";}
@@ -4018,7 +4209,17 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       if (themodelLabelContainer){themodelLabelContainer.innerHTML = "";}
       if (themodelLabelsCheckboxes){todoSystem.clearCheckedLabels();}
       if (theUpdateLabelBtn){theUpdateLabelBtn.setAttribute("data-labels", "");}
-
+      if (checkListsModelContainer){checkListsModelContainer.setAttribute("data-checklists", "");}
+      if (cardDueDateContainer && cardDueDateContainer.classList.contains("completed_model_due")) { cardDueDateContainer.classList.remove("completed_model_due"); };
+      if (cardDueDateContainer && !cardDueDateContainer.classList.contains("hidden_cell")) { cardDueDateContainer.classList.add("hidden_cell");  };
+      if (cardDueDateText && cardDueDateText.innerText.trim() != "") {cardDueDateText.innerText = "";}
+      if (cardDueDateText) {cardDueDateText.setAttribute("title", "");}
+      if (resolveCard) {resolveCard.style.display = "none";}
+      if (!cardDueDateText) {return false};
+      if (!resolveCard) {return false};
+      resolveCard.setAttribute("data-card-dbid", "");
+      resolveCard.setAttribute("data-card-id", "");
+      cardDueDateOver.style.display = "none";
 
 
 
@@ -4040,8 +4241,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       }
       }
 
-
-
+      /* Add Card Checklist string in the current checklists Container to get it later easy for every card */
+      if (cardCheckListsString && cardCheckListsString.trim() != "") {
+        checkListsModelContainer.setAttribute("data-checklists", cardCheckListsString);
+      }
 
       let openBtn = event.target;
       let popupTemplate = document.getElementById("myModal1");
@@ -4062,6 +4265,11 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
       let archiveBtnModel = document.querySelector("#arachive_card_btn");
       let cardDueDate = openBtn.getAttribute("data-dute-date");
       let cardDbId = openBtn.getAttribute("data-card-dbid");
+      let cardCompleteStatus = openBtn.getAttribute("data-complete-status");
+
+      resolveCard.setAttribute("data-card-dbid", cardDbId);
+      resolveCard.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
+
 
       if (submitDueDateBtn){submitDueDateBtn.setAttribute("data-card-dbid", cardDbId);}
       if (attachLinkBtn){
@@ -4069,8 +4277,36 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         attachLinkBtn.setAttribute("data-card-id", openBtn.getAttribute("data-card-id"));
       }
 
+      /* Due Date*/
+      if (cardDueDate && cardDueDate.trim() != "") {
+        resolveCard.style.display = "block";
 
+        let isDuePassed = todoSystem.isDuePassedChecker(cardDueDate);
 
+        if (isDuePassed == true && cardCompleteStatus == "0") {
+          resolveCard.style.display = "block";
+          if (cardDueDateOver) { cardDueDateOver.style.display = "inline"; };
+          cardDueDateContainer.setAttribute("title", "this card is overdue.");
+          resolveCard.style.display = "block";
+        } else if (cardCompleteStatus == "1"){
+          resolveCard.style.display = "none";
+          if (cardDueDateOver) { cardDueDateOver.style.display = "none"; };
+          cardDueDateContainer.setAttribute("title", "this card is complete.");
+          cardDueDateContainer.classList.add("completed_model_due");
+        } else if (isDuePassed == false && cardCompleteStatus == "0") {
+          if (cardDueDateOver) { cardDueDateOver.style.display = "none"; };
+          cardDueDateContainer.setAttribute("title", "this card is due date later.");
+          resolveCard.style.display = "block";
+
+        } else {
+          resolveCard.style.display = "none";
+          if (cardDueDateOver) { cardDueDateOver.style.display = "none"; };
+          cardDueDateContainer.setAttribute("title", "");
+        }
+
+        cardDueDateContainer.classList.remove("hidden_cell");
+        cardDueDateText.innerText = cardDueDate;
+      }
 
       if (!cardDbId || cardDbId == "") {return false;}
       if (cardDueDate && endDateCard){
@@ -4823,7 +5059,46 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
         return false;
       }
 
-    }
+    },
+    resolveCardTask: async (event)=> {
+      const selectedCardId = event.target.getAttribute("data-card-id");
+      const selectedCardDbId = event.target.getAttribute("data-card-dbid");
+      const theCardResolveBtn = document.querySelector("#resolve_btn");
+      const theSelectedCard = document.getElementById(selectedCardId);
+      const theSelectedCardAction = theSelectedCard.querySelector(".card_actions");
+      const theSelectedCardDateLabel = theSelectedCard.querySelector(".is_due_now");
+      const theDueModelContainer = document.querySelector("#due_container");
+      const theOverDueSpan = document.querySelector("#overdue_cell");
+      if (!theCardResolveBtn || !theSelectedCard || !theSelectedCardAction || !theSelectedCardDateLabel || !theDueModelContainer || !theOverDueSpan) {return false;}
+      /*(AJAX) 14- request to complete the card */
+
+      theSelectedCardAction.setAttribute("data-complete-status", "1");
+      let resolveData = {type:"resolve_card", id: selectedCardDbId};
+      let result;
+      try {
+        let response = await postData(window.location.href, resolveData);
+        result = await response.json();
+      } catch (err){
+        console.log(err);
+        return false;
+      }
+      if (!result){return false;}
+
+      if (result.code == 200){
+        if (theSelectedCardDateLabel.classList.contains("passeddue_class")) { theSelectedCardDateLabel.classList.remove("passeddue_class") };
+        if (!theSelectedCardDateLabel.classList.contains("completed_card")) { theSelectedCardDateLabel.classList.add("completed_card") };
+        if (!theDueModelContainer.classList.contains("completed_model_due")) { theDueModelContainer.classList.add("completed_model_due") };
+        theOverDueSpan.style.display = "none";
+        theSelectedCardDateLabel.setAttribute("title", "this card is complete");
+        theCardResolveBtn.style.display = "none";
+        return true;
+      } else {
+
+        return false;
+      }
+
+
+  }
 };
 
 
@@ -4841,6 +5116,9 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
   edit_label_btn.addEventListener("click", todoSystem.updateLabelModel);
   /* attach attchment link  */
   attachLinkBtn.addEventListener("click", todoSystem.addAttchment);
+
+  const theDueResloveBtn = document.querySelector("#resolve_btn");
+  theDueResloveBtn.addEventListener("click", todoSystem.resolveCardTask);
 
 
 
@@ -5221,11 +5499,10 @@ let cardCheckboxs1 = document.querySelectorAll("#label_group1 .label_icon input[
           card.style.order = cIndex;
 
           /* add id to card */
-          card.querySelector(".task_card").setAttribute("id", `card-id-${cards_id}`)
+          card.querySelector(".task_card").setAttribute("id", `card-id-${cards_id}`);
 
-
-
-
+          /* (Due) show due date on card */
+          /*  show description icon on card */
 
 
           let cardAttachments = null
